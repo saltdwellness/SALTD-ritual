@@ -1,0 +1,16 @@
+
+<div class="pt-40 pb-40 px-6 max-w-4xl mx-auto min-h-screen">
+  <span class="text-[11px] font-black uppercase tracking-[0.8em] text-killian mb-12 block text-center">The Document</span>
+  <h1 class="text-5xl md:text-8xl font-black tracking-tighter text-center mb-24 text-gradient-dark italic">{{ page.title }}</h1>
+  
+  <div class="prose prose-xl max-w-none text-black/60 font-light leading-relaxed italic space-y-12">
+    {{ page.content }}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Page Content",
+  "settings": []
+}
+{% endschema %}

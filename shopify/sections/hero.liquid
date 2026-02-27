@@ -1,0 +1,32 @@
+
+<section class="relative h-screen flex items-center justify-center overflow-hidden bg-[#F9F9F9]">
+  <div class="relative z-10 text-center px-6">
+    <h1 class="text-7xl md:text-[14rem] font-black tracking-tighter leading-none mb-6 text-gradient-dark select-none">
+      {{ section.settings.title }}<span class="text-killian">.</span>
+    </h1>
+    <p class="text-[10px] md:text-xs font-black uppercase tracking-[1em] text-black/30">
+      {{ section.settings.subtitle }}
+    </p>
+    
+    {% if section.settings.button_label != blank %}
+      <div class="mt-20">
+        <a href="{{ section.settings.button_link }}" class="inline-block bg-killian text-white px-16 py-6 rounded-full font-black text-[11px] uppercase tracking-[0.5em] hover:bg-black transition-all shadow-xl">
+          {{ section.settings.button_label }}
+        </a>
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "SALTD Hero",
+  "settings": [
+    { "type": "text", "id": "title", "label": "Title", "default": "SALTD" },
+    { "type": "text", "id": "subtitle", "label": "Subtitle", "default": "Stay Hydrated, Tastefully." },
+    { "type": "text", "id": "button_label", "label": "Button Label", "default": "Enter the Apothecary" },
+    { "type": "url", "id": "button_link", "label": "Button Link" }
+  ],
+  "presets": [{ "name": "SALTD Hero" }]
+}
+{% endschema %}

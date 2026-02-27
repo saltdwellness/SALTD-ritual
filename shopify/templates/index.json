@@ -1,0 +1,14 @@
+
+{
+  "sections": {
+    "hero": {
+      "type": "hero",
+      "settings": {
+        "title": "SALTD",
+        "subtitle": "Stay Hydrated, Tastefully.",
+        "button_label": "Enter the Apothecary"
+      }
+    }
+  },
+  "order": ["hero"]
+}

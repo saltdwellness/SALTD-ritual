@@ -1,0 +1,58 @@
+
+<footer class="bg-white border-t border-black/5 py-32 px-6">
+  <div class="max-w-7xl mx-auto md:px-12">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-20">
+      <div class="md:col-span-1">
+        <h2 class="text-2xl font-black tracking-tight mb-8 text-black">SALTD<span class="text-killian">.</span></h2>
+        <p class="text-[13px] text-black/30 font-medium leading-relaxed uppercase tracking-wider max-w-[200px]">
+          The ritual baseline for human restoration.
+        </p>
+      </div>
+      
+      <div class="flex flex-col gap-6 text-[11px] font-black uppercase tracking-[0.4em] text-black/30">
+        <h3 class="text-killian mb-2">Discovery</h3>
+        {% for link in linklists.footer.links %}
+          <a href="{{ link.url }}" class="hover:text-black transition-colors">{{ link.title }}</a>
+        {% endfor %}
+      </div>
+
+      <div class="flex flex-col gap-6 text-[11px] font-black uppercase tracking-[0.4em] text-black/30">
+        <h3 class="text-killian mb-2">Concierge</h3>
+        <a href="/account" class="hover:text-black transition-colors">My Account</a>
+        <a href="/pages/contact" class="hover:text-black transition-colors">Support</a>
+      </div>
+
+      <div class="md:col-span-1">
+        <h3 class="text-[11px] font-black uppercase tracking-[0.4em] text-black/20 mb-8">Newsletter</h3>
+        <div class="relative group">
+          {% form 'customer' %}
+            <input 
+              type="email" 
+              name="contact[email]"
+              placeholder="EMAIL ADDRESS" 
+              class="w-full bg-transparent border-b border-black/10 py-4 text-[11px] font-black uppercase tracking-[0.2em] text-black outline-none focus:border-killian transition-all"
+            />
+            <button type="submit" class="absolute right-0 bottom-4 text-[11px] font-black uppercase tracking-[0.2em] text-black/40 group-focus-within:text-killian transition-colors">
+              SUBMIT
+            </button>
+          {% endform %}
+        </div>
+      </div>
+    </div>
+    
+    <div class="mt-40 pt-10 border-t border-black/5 flex flex-col md:flex-row justify-between items-center text-[10px] font-bold uppercase tracking-[0.5em] text-black/20 gap-8">
+      <p>© {{ 'now' | date: "%Y" }} {{ shop.name }} — RITUAL WELLNESS COLLECTIVE</p>
+      <div class="flex gap-12">
+        <a href="#" class="hover:text-black transition-colors">PRIVACY</a>
+        <a href="#" class="hover:text-black transition-colors">TERMS</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "Footer",
+  "settings": []
+}
+{% endschema %}

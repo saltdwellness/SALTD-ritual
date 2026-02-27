@@ -1,0 +1,49 @@
+
+<div class="pt-40 pb-40 px-6 max-w-7xl mx-auto min-h-screen">
+  <header class="mb-24">
+    <h1 class="text-6xl md:text-[8rem] font-black tracking-tighter mb-8 text-gradient-dark leading-none">The Member<br/><span class="italic text-black/10">Portal.</span></h1>
+    <div class="flex items-center gap-6">
+      <p class="text-[11px] font-black uppercase tracking-[0.6em] text-killian">Verified Ritualist</p>
+      <div class="w-16 h-px bg-black/10"></div>
+      <a href="/account/logout" class="text-[11px] font-black uppercase tracking-[0.6em] text-black/20 hover:text-black">Sign Out</a>
+    </div>
+  </header>
+
+  <div class="grid grid-cols-1 lg:grid-cols-12 gap-12">
+    <!-- Orders -->
+    <div class="lg:col-span-8 bg-white rounded-[2.5rem] border border-black/5 p-12 shadow-sm">
+      <h3 class="text-3xl font-black tracking-tighter uppercase italic mb-12">Order Archives</h3>
+      {% if customer.orders.size > 0 %}
+        <div class="space-y-6">
+          {% for order in customer.orders %}
+            <div class="p-8 border border-black/5 rounded-3xl flex flex-col md:flex-row justify-between items-center gap-6">
+              <div>
+                <p class="text-[10px] font-black text-killian uppercase tracking-widest">{{ order.name }}</p>
+                <p class="font-black text-xl">{{ order.total_price | money }}</p>
+              </div>
+              <div class="text-right">
+                <span class="px-4 py-2 bg-black/5 rounded-full text-[9px] font-black uppercase tracking-widest">{{ order.fulfillment_status_label }}</span>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="text-black/30 italic uppercase tracking-widest text-xs">No rituals recorded yet.</p>
+      {% endif %}
+    </div>
+
+    <!-- Profile -->
+    <div class="lg:col-span-4 space-y-8">
+      <div class="bg-black text-white rounded-[2.5rem] p-12 shadow-2xl">
+        <span class="text-[10px] font-black uppercase tracking-widest text-white/30 block mb-6">Identity</span>
+        <h2 class="text-3xl font-black mb-2">{{ customer.name }}</h2>
+        <p class="text-white/40 text-xs">{{ customer.email }}</p>
+      </div>
+      
+      <div class="bg-white rounded-[2.5rem] border border-black/5 p-12 text-center">
+        <p class="text-[10px] font-black uppercase tracking-widest text-black/20 mb-8">Shipping Routine</p>
+        <p class="text-xs font-medium text-black/40 leading-relaxed">{{ customer.default_address.address1 }}<br>{{ customer.default_address.city }}, {{ customer.default_address.province_code }}</p>
+      </div>
+    </div>
+  </div>
+</div>

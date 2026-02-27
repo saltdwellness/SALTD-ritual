@@ -1,0 +1,26 @@
+
+<div class="min-h-screen flex items-center justify-center bg-[#F9F9F9] px-6 py-40">
+  <div class="w-full max-w-md space-y-12">
+    <div class="text-center">
+      <h1 class="text-5xl font-black tracking-tighter italic uppercase text-gradient-dark">Authentication</h1>
+      <p class="text-[10px] font-black uppercase tracking-[0.4em] text-black/20 mt-4">Access the Apothecary Portal</p>
+    </div>
+
+    {% form 'customer_login', class: 'space-y-8' %}
+      <div class="space-y-4">
+        <input type="email" name="customer[email]" placeholder="EMAIL ADDRESS" class="w-full bg-white border border-black/5 rounded-2xl p-6 text-xs font-black uppercase tracking-widest outline-none focus:border-killian transition-all shadow-sm">
+        <input type="password" name="customer[password]" placeholder="PASSWORD" class="w-full bg-white border border-black/5 rounded-2xl p-6 text-xs font-black uppercase tracking-widest outline-none focus:border-killian transition-all shadow-sm">
+      </div>
+
+      <button type="submit" class="w-full bg-killian text-white py-6 rounded-full font-black text-[11px] uppercase tracking-[0.4em] hover:bg-black transition-all shadow-xl">
+        Enter Portal
+      </button>
+
+      <div class="text-center pt-8 space-y-4">
+        <a href="/account/register" class="text-[10px] font-black uppercase tracking-widest text-black/30 hover:text-killian transition-colors">Create Account</a>
+        <span class="px-4 opacity-10">|</span>
+        <a href="/" class="text-[10px] font-black uppercase tracking-widest text-black/30 hover:text-killian">Back to Experience</a>
+      </div>
+    {% endform %}
+  </div>
+</div>

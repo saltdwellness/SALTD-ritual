@@ -1,0 +1,51 @@
+
+<!DOCTYPE html>
+<html lang="{{ request.locale.iso_code }}" class="scroll-smooth">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ page_title }} | {{ shop.name }}</title>
+  
+  {{ content_for_header }}
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --saltd-offwhite: #F9F9F9;
+      --killian-blue: #2E5BFF;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--saltd-offwhite);
+      color: #1A1A1A;
+      -webkit-font-smoothing: antialiased;
+      margin: 0;
+      padding: 0;
+    }
+    .text-killian { color: var(--killian-blue); }
+    .bg-killian { background-color: var(--killian-blue); }
+    .text-gradient-dark {
+      background: linear-gradient(to bottom, #1A1A1A 0%, #666 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .glass-nav {
+      backdrop-filter: blur(40px) saturate(160%);
+      background-color: rgba(255, 255, 255, 0.4);
+    }
+  </style>
+</head>
+<body class="selection:bg-blue-600 selection:text-white">
+  {% section 'header' %}
+
+  <main id="MainContent" class="min-h-screen" role="main" tabindex="-1">
+    {{ content_for_layout }}
+  </main>
+
+  {% section 'footer' %}
+</body>
+</html>

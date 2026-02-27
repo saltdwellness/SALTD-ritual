@@ -1,0 +1,33 @@
+
+<div class="pt-40 pb-40 px-6">
+  <header class="max-w-7xl mx-auto mb-32">
+    <h1 class="text-6xl md:text-[10rem] font-black tracking-tighter mb-8 text-gradient-dark leading-none">{{ collection.title }}</h1>
+    <div class="flex items-center gap-6">
+      <p class="text-[11px] font-black uppercase tracking-[0.6em] text-black/20">Cellular Restoration Collective</p>
+      <div class="w-16 h-px bg-black/10"></div>
+      <p class="text-[11px] font-black uppercase tracking-[0.6em] text-killian">The Apothecary</p>
+    </div>
+  </header>
+
+  <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12">
+    {% for product in collection.products %}
+      <a href="{{ product.url }}" class="group space-y-8">
+        <div class="aspect-[4/5] bg-white rounded-[2.5rem] border border-black/5 overflow-hidden flex items-center justify-center p-8 transition-all hover:shadow-2xl hover:-translate-y-2">
+          <img src="{{ product.featured_image | img_url: '800x' }}" alt="{{ product.title }}" class="w-full h-full object-contain transition-transform duration-1000 group-hover:scale-110">
+        </div>
+        <div class="space-y-2">
+          <p class="text-[10px] font-black text-killian uppercase tracking-[0.4em]">Ritual No. {{ forloop.index }}</p>
+          <h3 class="text-3xl font-black tracking-tighter uppercase italic">{{ product.title }}</h3>
+          <p class="text-xl font-light text-black/40">{{ product.price | money }}</p>
+        </div>
+      </a>
+    {% endfor %}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Collection Grid",
+  "settings": []
+}
+{% endschema %}

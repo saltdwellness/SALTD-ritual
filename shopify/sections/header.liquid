@@ -1,0 +1,46 @@
+
+<header class="fixed top-0 left-0 right-0 z-[100] transition-all duration-500 glass-nav border-b border-black/5">
+  <div class="max-w-7xl mx-auto px-6 md:px-12 py-6 flex items-center justify-between">
+    <a href="/" class="text-2xl font-black tracking-tighter text-black shrink-0">
+      SALTD<span class="text-killian">.</span>
+    </a>
+    
+    <nav class="hidden md:flex flex-1 justify-center space-x-12 text-[10px] font-black uppercase tracking-[0.3em] text-black/40">
+      {% for link in section.settings.menu.links %}
+        <a href="{{ link.url }}" class="relative group hover:text-black transition-colors {% if link.active %}text-black{% endif %}">
+          {{ link.title }}
+          <div class="absolute -bottom-1 left-0 right-0 h-0.5 bg-killian transition-transform duration-300 {% if link.active %}scale-x-100{% else %}scale-x-0 group-hover:scale-x-100{% endif %}"></div>
+        </a>
+      {% endfor %}
+      
+      {% if shop.customer_accounts_enabled %}
+        <a href="{{ routes.account_url }}" class="hover:text-black transition-colors">Account</a>
+      {% endif %}
+    </nav>
+
+    <div class="flex items-center gap-8">
+      <a href="/cart" class="group flex items-center gap-5 text-[10px] font-black uppercase tracking-[0.3em] text-black">
+        <span class="hidden sm:inline opacity-40">Ritual Bag</span>
+        <div class="w-11 h-11 rounded-full border border-black/5 flex items-center justify-center bg-white/40 backdrop-blur-md transition-all group-hover:bg-black group-hover:text-white">
+          {{ cart.item_count }}
+        </div>
+      </a>
+    </div>
+  </div>
+</header>
+
+<div class="h-24"></div> <!-- Spacer for fixed nav -->
+
+{% schema %}
+{
+  "name": "Navigation",
+  "settings": [
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Menu",
+      "default": "main-menu"
+    }
+  ]
+}
+{% endschema %}

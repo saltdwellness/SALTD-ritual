@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#1A1A1A" />
+    <title>SALTD. | Ritual Hydration</title>
+    <meta name="description" content="High-performance electrolyte sticks in nostalgic Indian flavours. Zero sugar. One ritual." />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="SALTD. | Ritual Hydration" />
+    <meta property="og:description" content="High-performance electrolytes in nostalgic Indian flavours. Zero sugar. One ritual." />
+    <meta property="og:type" content="website" />
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;800;900&display=swap" rel="stylesheet" />
+
+    <!-- Tailwind CSS (CDN — matches how your project is set up) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Preconnect to Shopify for faster API calls -->
+    <link rel="preconnect" href="https://g1bhpi-tq.myshopify.com" />
+
+    <style>
+      body {
+        font-family: 'Inter', sans-serif;
+        background-color: #FAFAF8;
+        color: #1A1A1A;
+        -webkit-font-smoothing: antialiased;
+        overflow-x: hidden;
+      }
+      ::selection { background: #2E5BFF; color: #fff; }
+      ::-webkit-scrollbar { width: 4px; }
+      ::-webkit-scrollbar-track { background: #f1f1f1; }
+      ::-webkit-scrollbar-thumb { background: #ddd; border-radius: 10px; }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/index.tsx"></script>
+  </body>
+</html>

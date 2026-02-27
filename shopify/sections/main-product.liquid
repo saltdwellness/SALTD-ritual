@@ -1,0 +1,52 @@
+
+<div class="pt-20 pb-40 px-6 max-w-7xl mx-auto">
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-20 lg:gap-32">
+    <!-- Image Gallery -->
+    <div class="aspect-[4/5] bg-white rounded-[3rem] border border-black/5 overflow-hidden flex items-center justify-center p-12">
+      <img src="{{ product.featured_image | img_url: '1200x' }}" alt="{{ product.title }}" class="w-full h-full object-contain">
+    </div>
+
+    <!-- Details -->
+    <div class="space-y-12 py-10">
+      <div class="space-y-4">
+        <span class="text-[11px] font-black uppercase tracking-[0.8em] text-killian">Ritual No. {{ product.id | slice: -2, 2 }}</span>
+        <h1 class="text-6xl md:text-8xl font-black tracking-tighter uppercase italic leading-none text-gradient-dark">{{ product.title }}</h1>
+        <p class="text-2xl font-light text-black/40 italic">{{ product.price | money }}</p>
+      </div>
+
+      <div class="prose prose-lg text-black/60 font-light leading-relaxed">
+        {{ product.description }}
+      </div>
+
+      {% form 'product', product %}
+        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+        
+        <div class="space-y-8">
+          <div class="space-y-4">
+            <label class="text-[10px] font-black uppercase tracking-widest text-black/20">Select Variation</label>
+            <div class="flex flex-wrap gap-4">
+              {% for variant in product.variants %}
+                <button type="button" 
+                  onclick="this.form.id.value = '{{ variant.id }}'"
+                  class="px-8 py-4 rounded-2xl border border-black/5 text-[11px] font-black uppercase tracking-widest hover:border-killian transition-all focus:bg-black focus:text-white">
+                  {{ variant.title }} — {{ variant.price | money }}
+                </button>
+              {% endfor %}
+            </div>
+          </div>
+
+          <button type="submit" class="w-full bg-killian text-white py-7 rounded-full font-black text-[11px] uppercase tracking-[0.5em] hover:bg-black transition-all shadow-2xl active:scale-95">
+            Begin Ritual — Add to Bag
+          </button>
+        </div>
+      {% endform %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Product Detail",
+  "settings": []
+}
+{% endschema %}
