@@ -139,7 +139,7 @@ const WelcomeModal: React.FC<{ content: HomepageContent | null }> = ({ content }
             ))}
           </div>
           <button onClick={close}
-            className="w-full text-white py-5 text-sm font-black uppercase tracking-[0.4em] active:scale-[0.98] rounded-2xl mt-1 transition-opacity"
+            className="w-full text-white py-5 text-sm font-black uppercase tracking-[0.35em] active:scale-[0.98] rounded-2xl mt-1 transition-opacity"
             style={{ background: ACCENT }}>
             Begin Ritual
           </button>
@@ -279,7 +279,7 @@ const Hero: React.FC<{ content: HomepageContent; firstProduct: ShopifyProductFul
           <div className="flex items-center gap-3 mb-5"
             style={{ opacity: loaded ? 1 : 0, transform: loaded ? 'none' : 'translateX(-14px)', transition: 'all 0.9s ease 0.1s' }}>
             <div className="w-5 h-[2px] rounded-full" style={{ background: ACCENT }} />
-            <span className="text-xs font-black uppercase tracking-[0.45em]" style={{ color: ACCENT }}>c/o "Hydration"</span>
+            <span className="text-xs font-black uppercase tracking-[0.45em]" style={{ color: ACCENT }}>c/o Hydration</span>
           </div>
 
           {/* Headline — clamp so it never overflows on 320px screens */}
@@ -293,13 +293,18 @@ const Hero: React.FC<{ content: HomepageContent; firstProduct: ShopifyProductFul
             ))}
           </h1>
 
-          <RotatingQuote quotes={content.rotatingQuotes} loaded={loaded} />
+          <div className="border-l-[3px] pl-4 mb-7" style={{ borderColor: ACCENT, opacity: loaded ? 1 : 0, transform: loaded ? 'none' : 'translateY(12px)', transition: 'all 1s ease 0.45s' }}>
+            <p className="text-base font-medium leading-relaxed" style={{ color: 'rgba(255,255,255,0.75)' }}>
+              "Finally a hydration drink that actually tastes like something — not a lab experiment."
+            </p>
+            <p className="text-[10px] font-black uppercase tracking-[0.4em] mt-2" style={{ color: ACCENT }}>— Joshua Matthews, 27 · Verified Customer</p>
+          </div>
 
           {/* CTAs — stack on very small screens */}
           <div className="flex flex-wrap items-center gap-3 mb-8"
             style={{ opacity: loaded ? 1 : 0, transform: loaded ? 'none' : 'translateY(14px)', transition: 'all 1s ease 0.6s' }}>
             <Link to="/shop"
-              className="text-white px-7 py-4 text-sm font-black uppercase tracking-[0.4em] rounded-2xl active:scale-[0.97] transition-opacity"
+              className="text-white px-7 py-4 text-sm font-black uppercase tracking-[0.35em] rounded-2xl active:scale-[0.97] transition-opacity"
               style={{ background: ACCENT }}>
               Shop Now
             </Link>
@@ -594,7 +599,7 @@ const ImpactStatement: React.FC = () => (
   <section className="bg-[#1A1A1A] py-20 md:py-28 px-5 md:px-12 overflow-hidden">
     <div className="max-w-[1440px] mx-auto">
       <Reveal>
-        <p className="text-sm font-black uppercase tracking-[0.6em] mb-7" style={{ color: ACCENT }}>— THE FOUNDATION</p>
+        <p className="text-sm font-black uppercase tracking-[0.6em] mb-7" style={{ color: ACCENT }}>The Foundation</p>
       </Reveal>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-14 md:gap-24 items-start">
         <Reveal>
@@ -652,7 +657,7 @@ const ProductShelf: React.FC<{ products: ShopifyProductFull[]; onAddToCart: (p: 
             Our Flavours.
           </h2>
           <p className="text-base md:text-lg font-semibold leading-relaxed max-w-xl" style={{ color: 'rgba(26,26,26,0.55)' }}>
-            Three distinctly Indian flavours. Each one carrying a full electrolyte stack, zero sugar, and the kind of taste that feels like something you've had before — only better.
+            Three distinctly Indian flavours. Each one carries a complete electrolyte stack, zero sugar, and a taste that feels familiar — only better.
           </p>
         </Reveal>
       </div>
@@ -747,7 +752,7 @@ const HomeFAQSection: React.FC = () => (
           className="font-black text-[#0D0D10] leading-[1.0] tracking-[-0.04em] mb-4"
           style={{ fontSize: 'clamp(2rem, 4vw, 3.2rem)' }}
         >
-          Hydration &amp; Electrolyte FAQs
+          Hydration &amp; Electrolyte FAQ
         </h2>
         <p className="text-base text-[#1A1A1A]/55 font-medium max-w-[500px] mx-auto leading-relaxed">
           Everything you need to know about electrolytes and daily hydration.
@@ -806,7 +811,7 @@ const HowItWorks: React.FC = () => (
         {[
           { n: '01', t: '"Tear & Pour"',   d: 'One stick into 250–500ml of water. No measuring, no tools. Just tear, pour, done.' },
           { n: '02', t: '"Stir"',          d: '10 seconds. Watch it dissolve clean and clear — no clumping, no residue.' },
-          { n: '03', t: '"Drink & Track"', d: 'Sip. Feel it work. Track your daily ritual in your Account to build your streak.' },
+          { n: '03', t: '"Drink & Track"', d: 'Sip. Feel it work. Track your daily ritual and build your streak.' },
         ].map((s, i) => (
           <Reveal key={s.n} delay={i * 0.09}>
             <div className="flex flex-col gap-5 p-7 rounded-3xl border border-[#1A1A1A]/[0.07] bg-white">
@@ -839,10 +844,10 @@ const ReviewsSection: React.FC<{ products: ShopifyProductFull[] }> = ({ products
   }, []);
 
   const fallback = [
-    { name: 'Arjun M.',  role: 'Product Designer, Bangalore', rating: 5, text: 'Finally a hydration drink that doesn\'t taste like a science lab. The Kala Khatta hits exactly like I remember from childhood — tangy, bold, zero guilt.',          flavor: 'Kala Khatta',      accent: '#8A307F' },
-    { name: 'Priya S.',  role: 'Founder, Delhi',              rating: 5, text: 'Three weeks of morning runs. Recovery is noticeably faster, and I actually look forward to it — that\'s never happened with supplements before.',                         flavor: 'Banta Lime Spark', accent: '#7AB800' },
-    { name: 'Rahul K.',  role: 'Software Engineer, Pune',     rating: 5, text: 'Switched from a sugar-heavy sports drink. The difference in how I feel mid-afternoon is real. No crash, just consistent energy. Peach Himalayan is my go-to.',               flavor: 'Peach Himalayan',  accent: '#E8845A' },
-    { name: 'Sneha T.',  role: 'Creative Director, Mumbai',   rating: 5, text: 'The taste of Banta took me straight back to Marine Lines. Except now it\'s doing something useful. This is exactly what India-first hydration should look like.',             flavor: 'Banta Lime Spark', accent: '#7AB800' },
+    { name: 'Joshua Matthews', age: 27, role: 'National Calisthenics Champion, Bangalore', rating: 5, text: 'Finally a hydration drink that doesn\'t taste like a science lab. The Kala Khatta hits exactly like I remember from childhood — tangy, bold, zero guilt.',    flavor: 'Kala Khatta',      accent: '#8A307F' },
+    { name: 'Jeremiah Saji',   age: 25, role: 'Project Manager, Bangalore',                rating: 5, text: 'Three weeks of morning runs. Recovery is noticeably faster, and I actually look forward to it — that\'s never happened with supplements before.',             flavor: 'Banta Lime Spark', accent: '#7AB800' },
+    { name: 'Amritanshu Jaiswal', age: 30, role: 'Founder, ScaleX, Bangalore',            rating: 5, text: 'Switched from a sugar-heavy sports drink. The difference in how I feel mid-afternoon is real. No crash, just consistent energy. Peach Himalayan is my go-to.', flavor: 'Peach Himalayan',  accent: '#E8845A' },
+    { name: 'Ritika Saxena',   age: 30, role: 'Co-founder, ScaleX, Bangalore',            rating: 5, text: 'The taste of Banta took me straight back to Marine Lines. Except now it\'s doing something useful. This is exactly what India-first hydration should look like.', flavor: 'Banta Lime Spark', accent: '#7AB800' },
   ];
 
   const display = reviews.length >= 2
@@ -886,7 +891,7 @@ const ReviewsSection: React.FC<{ products: ShopifyProductFull[] }> = ({ products
                   <div className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-black text-white shrink-0"
                     style={{ background: r.accent }}>{r.name.charAt(0)}</div>
                   <div>
-                    <p className="text-sm font-black text-[#1A1A1A]">{r.name}</p>
+                    <p className="text-sm font-black text-[#1A1A1A]">{r.name}{(r as typeof fallback[0]).age ? `, ${(r as typeof fallback[0]).age}` : ''}</p>
                     <p className="text-xs font-medium mt-0.5" style={{ color: 'rgba(26,26,26,0.55)' }}>{r.role}</p>
                   </div>
                   <div className="ml-auto w-4 h-[2px] rounded-full" style={{ background: r.accent }} />
@@ -900,7 +905,7 @@ const ReviewsSection: React.FC<{ products: ShopifyProductFull[] }> = ({ products
           <div className="mt-10 text-center">
             <Link to="/account" className="inline-flex items-center gap-2 text-sm font-black uppercase tracking-[0.4em]"
               style={{ color: 'rgba(255,255,255,0.40)' }}>
-              Leave a review after your order <span style={{ color: ACCENT }}>→</span>
+              Leave a review <span style={{ color: ACCENT }}>→</span>
             </Link>
           </div>
         </Reveal>
@@ -945,12 +950,12 @@ const FinalCTA: React.FC<{ content: HomepageContent }> = ({ content }) => (
       style={{ backgroundImage: 'linear-gradient(white 1px,transparent 1px),linear-gradient(90deg,white 1px,transparent 1px)', backgroundSize: '80px 80px' }} />
     <div className="relative max-w-[1440px] mx-auto">
       <Reveal>
-        <p className="text-sm font-black uppercase tracking-[0.6em] text-white/40 mb-5">04 — "BEGIN"</p>
+        <p className="text-sm font-black uppercase tracking-[0.6em] text-white/70 mb-5">04 — "BEGIN"</p>
         <h2 className="font-black tracking-[-0.04em] text-white leading-[0.92] mb-6"
           style={{ fontSize: 'clamp(2.4rem, 7vw, 6rem)' }}>
           {content.ctaHeadline.split('\n').map((line, i, arr) => (
             <span key={i}>
-              {i === arr.length - 1 ? <span style={{ color: 'rgba(255,255,255,0.22)' }}>{line}</span> : line}
+              {i === arr.length - 1 ? <span style={{ color: 'rgba(255,255,255,0.55)' }}>{line}</span> : line}
               {i < arr.length - 1 && <br />}
             </span>
           ))}
@@ -959,8 +964,8 @@ const FinalCTA: React.FC<{ content: HomepageContent }> = ({ content }) => (
           "{content.ctaSubtext || content.ctaSubheadline}"
         </p>
         <div className="flex flex-col sm:flex-row gap-4">
-          <Link to="/shop"
-            className="bg-white px-9 py-5 text-sm font-black uppercase tracking-[0.4em] rounded-2xl active:scale-[0.97] text-center transition-opacity"
+          <Link to="/product/kala-khatta"
+            className="bg-white px-9 py-5 text-sm font-black uppercase tracking-[0.35em] rounded-2xl active:scale-[0.97] text-center transition-opacity"
             style={{ color: ACCENT }}>
             {content.ctaButtonPrimary || 'Start Your Ritual'}
           </Link>
