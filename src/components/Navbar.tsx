@@ -56,7 +56,7 @@ const Navbar: React.FC<NavbarProps> = ({ onCartOpen, cartCount }) => {
 
   const links = [
     { label: '"EXPERIENCE"', path: '/' },
-    { label: '"APOTHECARY"', path: '/shop' },
+    { label: '"SHOP"', path: '/shop' },
     { label: '"WHY SALTD."', path: '/ingredients' },
   ];
 
@@ -139,7 +139,7 @@ const Navbar: React.FC<NavbarProps> = ({ onCartOpen, cartCount }) => {
         <div className="md:hidden overflow-hidden transition-all duration-500 mx-auto max-w-[1440px]"
           style={{ maxHeight: menuOpen ? '300px' : '0', marginTop: 0 }}>
           <div className="rounded-2xl mt-2 px-5 py-2 border border-black/[0.06]" style={{ background: '#FFFFFF', boxShadow: '0 8px 40px rgba(0,0,0,0.14), 0 2px 8px rgba(0,0,0,0.08)' }}>
-            {[{ label:'"EXPERIENCE"', path:'/' }, { label:'"APOTHECARY"', path:'/shop' }, { label:'"WHY SALTD."', path:'/ingredients' }, { label:'"ACCOUNT"', path:'/account' }].map((l, i) => (
+            {[{ label:'"EXPERIENCE"', path:'/' }, { label:'"SHOP"', path:'/shop' }, { label:'"WHY SALTD."', path:'/ingredients' }, { label:'"ACCOUNT"', path:'/account' }].map((l, i) => (
               <Link key={l.path} to={l.path}
                 className="flex items-center justify-between py-4 border-b border-black/[0.04] last:border-0"
                 style={{ opacity: menuOpen ? 1 : 0, transform: menuOpen ? 'none' : 'translateX(-12px)', transition: `all 0.35s ease ${i * 0.05}s` }}>

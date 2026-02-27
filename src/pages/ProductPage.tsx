@@ -228,7 +228,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart }) => {
         <div className="flex items-center gap-2 text-[9px] font-black uppercase tracking-[0.4em] text-black/30">
           <Link to="/" className="hover:text-[#2E5BFF] transition-colors">Home</Link>
           <span className="text-[#2E5BFF]">·</span>
-          <Link to="/shop" className="hover:text-[#2E5BFF] transition-colors">Apothecary</Link>
+          <Link to="/shop" className="hover:text-[#2E5BFF] transition-colors">Shop</Link>
           <span className="text-[#2E5BFF]">·</span>
           <span className="text-black/60">{p.flavor}</span>
         </div>
