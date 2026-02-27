@@ -125,6 +125,7 @@ const IngredientsPage: React.FC = () => {
             {[
               {
                 mineral: 'Sodium',
+                symbol: 'Na',
                 subtitle: 'The Foundation of Effective Hydration',
                 color: '#2E5BFF',
                 supports: ['Fluid balance', 'Mental clarity', 'Muscle contraction', 'Sustained energy'],
@@ -132,6 +133,7 @@ const IngredientsPage: React.FC = () => {
               },
               {
                 mineral: 'Potassium',
+                symbol: 'K',
                 subtitle: 'Cellular Hydration & Muscle Balance',
                 color: '#8A307F',
                 supports: ['Prevent cramps', 'Improve stamina', 'Balance sodium levels', 'Maintain muscle performance'],
@@ -139,21 +141,22 @@ const IngredientsPage: React.FC = () => {
               },
               {
                 mineral: 'Magnesium',
+                symbol: 'Mg',
                 subtitle: 'Recovery & Nervous System Balance',
                 color: '#E8845A',
                 supports: ['Reduce fatigue', 'Muscle relaxation', 'Steady focus', 'Sleep quality'],
                 note: 'The mineral most Indians are chronically low in.',
               },
-            ].map(({ mineral, subtitle, color, supports, note }) => (
+            ].map(({ mineral, symbol, subtitle, color, supports, note }) => (
               <div
                 key={mineral}
                 className="rounded-3xl p-8 border border-[#0D0D10]/[0.07] bg-[#FAFAF8] hover:-translate-y-1 transition-transform"
               >
                 <div
-                  className="inline-flex items-center justify-center w-12 h-12 rounded-full mb-6 text-white text-lg font-black"
-                  style={{ background: color }}
+                  className="inline-flex items-center justify-center w-14 h-14 rounded-2xl mb-6 text-white font-black"
+                  style={{ background: color, fontSize: symbol.length > 2 ? '0.95rem' : '1.1rem', letterSpacing: '-0.03em' }}
                 >
-                  {mineral.charAt(0)}
+                  {symbol}
                 </div>
                 <h3 className="text-2xl font-black text-[#0D0D10] tracking-[-0.02em] mb-1">{mineral}</h3>
                 <p className="text-sm font-bold text-[#0D0D10]/50 mb-5">{subtitle}</p>
@@ -209,15 +212,44 @@ const IngredientsPage: React.FC = () => {
             </div>
             <div className="grid grid-cols-2 gap-4">
               {[
-                { label: 'Daily Hydration', desc: 'Use it every day without worry' },
-                { label: 'Intermittent Fasting', desc: 'Zero sugar, zero insulin spike' },
-                { label: 'Keto / Low-Carb', desc: 'Fits any carb-restricted diet' },
-                { label: 'Caffeine-Free Living', desc: 'Steady energy without crashes' },
-              ].map(({ label, desc }) => (
+                {
+                  label: 'Daily Hydration', desc: 'Use it every day without worry',
+                  icon: <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+                    <path d="M16 4 C16 4 8 14 8 20 C8 26 11.6 28 16 28 C20.4 28 24 26 24 20 C24 14 16 4 16 4Z" fill="#2E5BFF" opacity="0.25"/>
+                    <path d="M16 10 C16 10 11 17 11 21 C11 24 13 26 16 26 C19 26 21 24 21 21 C21 17 16 10 16 10Z" fill="#2E5BFF" opacity="0.7"/>
+                    <path d="M12 22 C12 24 13.8 25.5 16 25.5" stroke="white" strokeWidth="1.5" strokeLinecap="round" opacity="0.5"/>
+                  </svg>
+                },
+                {
+                  label: 'Intermittent Fasting', desc: 'Zero sugar, zero insulin spike',
+                  icon: <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+                    <circle cx="16" cy="16" r="12" stroke="#2E5BFF" strokeWidth="1.8" opacity="0.4"/>
+                    <path d="M16 8 L16 17 L21 21" stroke="#2E5BFF" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
+                    <circle cx="16" cy="16" r="2" fill="#2E5BFF" opacity="0.8"/>
+                  </svg>
+                },
+                {
+                  label: 'Keto / Low-Carb', desc: 'Fits any carb-restricted diet',
+                  icon: <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+                    <path d="M6 22 L12 14 L17 19 L22 10 L26 16" stroke="#2E5BFF" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" opacity="0.8"/>
+                    <circle cx="26" cy="16" r="3" fill="#2E5BFF" opacity="0.9"/>
+                    <path d="M6 26 L26 26" stroke="#2E5BFF" strokeWidth="1.5" opacity="0.3"/>
+                  </svg>
+                },
+                {
+                  label: 'Caffeine-Free', desc: 'Steady energy without crashes',
+                  icon: <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+                    <path d="M10 8 L10 20 C10 23.3 12.7 26 16 26 C19.3 26 22 23.3 22 20 L22 8 Z" fill="#2E5BFF" opacity="0.15" stroke="#2E5BFF" strokeWidth="1.8"/>
+                    <path d="M22 11 C24 11 26 12.5 26 15 C26 17.5 24 19 22 19" stroke="#2E5BFF" strokeWidth="1.8" strokeLinecap="round" opacity="0.7"/>
+                    <path d="M13 14 L19 14 M13 18 L17 18" stroke="#2E5BFF" strokeWidth="1.5" strokeLinecap="round" opacity="0.6"/>
+                  </svg>
+                },
+              ].map(({ label, desc, icon }) => (
                 <div
                   key={label}
                   className="p-5 rounded-2xl border border-white/[0.08] bg-white/[0.05]"
                 >
+                  <div className="mb-3 opacity-90">{icon}</div>
                   <p className="text-sm font-black text-white mb-1">{label}</p>
                   <p className="text-xs text-white/45 font-medium">{desc}</p>
                 </div>
@@ -240,21 +272,76 @@ const IngredientsPage: React.FC = () => {
             </h2>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[
-              { label: 'Gym & Strength Training', icon: '🏋️' },
-              { label: 'Yoga & Hot Yoga', icon: '🧘' },
-              { label: 'Long Office Hours', icon: '💻' },
-              { label: 'Students & Exam Prep', icon: '📚' },
-              { label: 'Intermittent Fasting', icon: '⏱️' },
-              { label: 'Runners & Cyclists', icon: '🚴' },
-              { label: 'Outdoor Workers', icon: '☀️' },
-              { label: 'Anyone Drained by Mid-Day', icon: '⚡' },
-            ].map(({ label, icon }) => (
+            {([
+              { label: 'Gym & Strength Training', icon: (
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                  <rect x="2" y="13" width="5" height="6" rx="2" fill="#2E5BFF" opacity="0.4"/>
+                  <rect x="25" y="13" width="5" height="6" rx="2" fill="#2E5BFF" opacity="0.4"/>
+                  <rect x="7" y="11" width="4" height="10" rx="2" fill="#2E5BFF" opacity="0.7"/>
+                  <rect x="21" y="11" width="4" height="10" rx="2" fill="#2E5BFF" opacity="0.7"/>
+                  <rect x="11" y="14" width="10" height="4" rx="2" fill="#2E5BFF"/>
+                </svg>
+              )},
+              { label: 'Yoga & Hot Yoga', icon: (
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                  <circle cx="16" cy="6" r="3" fill="#2E5BFF" opacity="0.8"/>
+                  <path d="M16 9 L16 19 M10 13 L16 15 L22 13 M13 19 L10 26 M19 19 L22 26" stroke="#2E5BFF" strokeWidth="2" strokeLinecap="round"/>
+                </svg>
+              )},
+              { label: 'Long Office Hours', icon: (
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                  <rect x="4" y="6" width="24" height="16" rx="3" stroke="#2E5BFF" strokeWidth="1.8" fill="#2E5BFF" opacity="0.08"/>
+                  <rect x="8" y="10" width="16" height="2" rx="1" fill="#2E5BFF" opacity="0.5"/>
+                  <rect x="8" y="14" width="10" height="2" rx="1" fill="#2E5BFF" opacity="0.35"/>
+                  <path d="M12 22 L12 26 L20 26 L20 22" stroke="#2E5BFF" strokeWidth="1.8" strokeLinecap="round"/>
+                  <line x1="9" y1="26" x2="23" y2="26" stroke="#2E5BFF" strokeWidth="1.8" strokeLinecap="round" opacity="0.5"/>
+                </svg>
+              )},
+              { label: 'Students & Exam Prep', icon: (
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                  <rect x="6" y="4" width="20" height="24" rx="3" stroke="#2E5BFF" strokeWidth="1.8" fill="#2E5BFF" opacity="0.07"/>
+                  <line x1="10" y1="10" x2="22" y2="10" stroke="#2E5BFF" strokeWidth="1.8" strokeLinecap="round" opacity="0.7"/>
+                  <line x1="10" y1="15" x2="22" y2="15" stroke="#2E5BFF" strokeWidth="1.8" strokeLinecap="round" opacity="0.5"/>
+                  <line x1="10" y1="20" x2="17" y2="20" stroke="#2E5BFF" strokeWidth="1.8" strokeLinecap="round" opacity="0.35"/>
+                </svg>
+              )},
+              { label: 'Intermittent Fasting', icon: (
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                  <circle cx="16" cy="16" r="12" stroke="#2E5BFF" strokeWidth="1.8" opacity="0.35"/>
+                  <path d="M16 8 L16 17 L21 21" stroke="#2E5BFF" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <circle cx="16" cy="16" r="2" fill="#2E5BFF"/>
+                </svg>
+              )},
+              { label: 'Runners & Cyclists', icon: (
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                  <circle cx="22" cy="8" r="3" fill="#2E5BFF" opacity="0.8"/>
+                  <path d="M22 11 L20 16 L14 18 M20 16 L22 22 M14 18 L10 24 M14 18 L16 24" stroke="#2E5BFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              )},
+              { label: 'Outdoor Workers', icon: (
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                  <circle cx="16" cy="14" r="5" fill="#2E5BFF" opacity="0.8"/>
+                  <line x1="16" y1="4" x2="16" y2="7" stroke="#2E5BFF" strokeWidth="2" strokeLinecap="round" opacity="0.6"/>
+                  <line x1="16" y1="21" x2="16" y2="24" stroke="#2E5BFF" strokeWidth="2" strokeLinecap="round" opacity="0.6"/>
+                  <line x1="6" y1="14" x2="9" y2="14" stroke="#2E5BFF" strokeWidth="2" strokeLinecap="round" opacity="0.6"/>
+                  <line x1="23" y1="14" x2="26" y2="14" stroke="#2E5BFF" strokeWidth="2" strokeLinecap="round" opacity="0.6"/>
+                  <line x1="9" y1="7" x2="11" y2="9" stroke="#2E5BFF" strokeWidth="2" strokeLinecap="round" opacity="0.4"/>
+                  <line x1="21" y1="19" x2="23" y2="21" stroke="#2E5BFF" strokeWidth="2" strokeLinecap="round" opacity="0.4"/>
+                  <path d="M6 26 C6 26 10 20 16 20 C22 20 26 26 26 26" fill="#2E5BFF" opacity="0.12"/>
+                </svg>
+              )},
+              { label: 'Anyone Drained by Mid-Day', icon: (
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                  <path d="M16 4 L19 12 L28 12 L21 18 L24 26 L16 21 L8 26 L11 18 L4 12 L13 12 Z" fill="#2E5BFF" opacity="0.2" stroke="#2E5BFF" strokeWidth="1.5" strokeLinejoin="round"/>
+                  <path d="M16 8 L18 13 L23 13 L19 16.5 L21 22 L16 18.5 L11 22 L13 16.5 L9 13 L14 13 Z" fill="#2E5BFF" opacity="0.8"/>
+                </svg>
+              )},
+            ] as Array<{label: string; icon: React.ReactNode}>).map(({ label, icon }) => (
               <div
                 key={label}
                 className="flex flex-col items-center gap-3 p-6 rounded-2xl border border-[#0D0D10]/[0.07] bg-[#FAFAF8] text-center hover:-translate-y-1 transition-transform"
               >
-                <span className="text-2xl">{icon}</span>
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{ background: '#2E5BFF14' }}>{icon}</div>
                 <span className="text-sm font-bold text-[#0D0D10]/70 leading-snug">{label}</span>
               </div>
             ))}
