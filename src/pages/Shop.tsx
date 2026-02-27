@@ -61,9 +61,9 @@ const STATIC_PRODUCTS: ShopifyProductFull[] = [
     images: { edges: [{ node: { url: '/mockups/Mockupv2-1.png', altText: 'Kala Khatta' } }] },
     variants: {
       edges: [
-        { node: { id: 'static-kk-10', title: 'Ritual Pack (10 sticks)', price: { amount: '299', currencyCode: 'INR' }, compareAtPrice: { amount: '349', currencyCode: 'INR' }, availableForSale: true, quantityAvailable: 50 } },
-        { node: { id: 'static-kk-30', title: 'Month Supply (30 sticks)', price: { amount: '799', currencyCode: 'INR' }, compareAtPrice: { amount: '999', currencyCode: 'INR' }, availableForSale: true, quantityAvailable: 30 } },
-        { node: { id: 'static-kk-sub', title: 'Monthly Ritual (30 sticks)', price: { amount: '719', currencyCode: 'INR' }, compareAtPrice: null, availableForSale: true, quantityAvailable: 99 } },
+        { node: { id: 'variant_kalakhatta_10', title: 'Ritual Pack (10 sticks)', price: { amount: '299', currencyCode: 'INR' }, compareAtPrice: { amount: '349', currencyCode: 'INR' }, availableForSale: true, quantityAvailable: 50 } },
+        { node: { id: 'variant_kalakhatta_30', title: 'Month Supply (30 sticks)', price: { amount: '799', currencyCode: 'INR' }, compareAtPrice: { amount: '999', currencyCode: 'INR' }, availableForSale: true, quantityAvailable: 30 } },
+        { node: { id: 'variant_kalakhatta_sub', title: 'Monthly Ritual (30 sticks)', price: { amount: '719', currencyCode: 'INR' }, compareAtPrice: null, availableForSale: true, quantityAvailable: 99 } },
       ],
     },
   },
@@ -80,9 +80,9 @@ const STATIC_PRODUCTS: ShopifyProductFull[] = [
     images: { edges: [{ node: { url: '/mockups/MockupV2-2.png', altText: 'Banta Lime Spark' } }] },
     variants: {
       edges: [
-        { node: { id: 'static-bls-10', title: 'Ritual Pack (10 sticks)', price: { amount: '299', currencyCode: 'INR' }, compareAtPrice: { amount: '349', currencyCode: 'INR' }, availableForSale: true, quantityAvailable: 50 } },
-        { node: { id: 'static-bls-30', title: 'Month Supply (30 sticks)', price: { amount: '799', currencyCode: 'INR' }, compareAtPrice: { amount: '999', currencyCode: 'INR' }, availableForSale: true, quantityAvailable: 30 } },
-        { node: { id: 'static-bls-sub', title: 'Monthly Ritual (30 sticks)', price: { amount: '719', currencyCode: 'INR' }, compareAtPrice: null, availableForSale: true, quantityAvailable: 99 } },
+        { node: { id: 'variant_banta_10', title: 'Ritual Pack (10 sticks)', price: { amount: '299', currencyCode: 'INR' }, compareAtPrice: { amount: '349', currencyCode: 'INR' }, availableForSale: true, quantityAvailable: 50 } },
+        { node: { id: 'variant_banta_30', title: 'Month Supply (30 sticks)', price: { amount: '799', currencyCode: 'INR' }, compareAtPrice: { amount: '999', currencyCode: 'INR' }, availableForSale: true, quantityAvailable: 30 } },
+        { node: { id: 'variant_banta_sub', title: 'Monthly Ritual (30 sticks)', price: { amount: '719', currencyCode: 'INR' }, compareAtPrice: null, availableForSale: true, quantityAvailable: 99 } },
       ],
     },
   },
@@ -99,9 +99,9 @@ const STATIC_PRODUCTS: ShopifyProductFull[] = [
     images: { edges: [{ node: { url: '/mockups/Mockupv2-1.png', altText: 'Peach Himalayan' } }] },
     variants: {
       edges: [
-        { node: { id: 'static-ph-10', title: 'Ritual Pack (10 sticks)', price: { amount: '299', currencyCode: 'INR' }, compareAtPrice: { amount: '349', currencyCode: 'INR' }, availableForSale: true, quantityAvailable: 50 } },
-        { node: { id: 'static-ph-30', title: 'Month Supply (30 sticks)', price: { amount: '799', currencyCode: 'INR' }, compareAtPrice: { amount: '999', currencyCode: 'INR' }, availableForSale: true, quantityAvailable: 30 } },
-        { node: { id: 'static-ph-sub', title: 'Monthly Ritual (30 sticks)', price: { amount: '719', currencyCode: 'INR' }, compareAtPrice: null, availableForSale: true, quantityAvailable: 99 } },
+        { node: { id: 'variant_peach_10', title: 'Ritual Pack (10 sticks)', price: { amount: '299', currencyCode: 'INR' }, compareAtPrice: { amount: '349', currencyCode: 'INR' }, availableForSale: true, quantityAvailable: 50 } },
+        { node: { id: 'variant_peach_30', title: 'Month Supply (30 sticks)', price: { amount: '799', currencyCode: 'INR' }, compareAtPrice: { amount: '999', currencyCode: 'INR' }, availableForSale: true, quantityAvailable: 30 } },
+        { node: { id: 'variant_peach_sub', title: 'Monthly Ritual (30 sticks)', price: { amount: '719', currencyCode: 'INR' }, compareAtPrice: null, availableForSale: true, quantityAvailable: 99 } },
       ],
     },
   },

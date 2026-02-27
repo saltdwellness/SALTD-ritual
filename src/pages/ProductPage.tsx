@@ -77,9 +77,9 @@ const STATIC_PRODUCTS: ShopifyProductFull[] = [
     ],
     images: { edges: [{ node: { url: '/mockups/Mockupv2-1.png', altText: 'Kala Khatta' } }] },
     variants: { edges: [
-      { node: { id: 'static-kk-10',  title: 'Ritual Pack (10 sticks)',    price: { amount: '299', currencyCode: 'INR' }, compareAtPrice: { amount: '349', currencyCode: 'INR' }, availableForSale: true, quantityAvailable: 50, sku: null } },
-      { node: { id: 'static-kk-30',  title: 'Month Supply (30 sticks)',   price: { amount: '799', currencyCode: 'INR' }, compareAtPrice: { amount: '999', currencyCode: 'INR' }, availableForSale: true, quantityAvailable: 30, sku: null } },
-      { node: { id: 'static-kk-sub', title: 'Monthly Ritual (30 sticks)', price: { amount: '719', currencyCode: 'INR' }, compareAtPrice: null, availableForSale: true, quantityAvailable: 99, sku: null } },
+      { node: { id: 'variant_kalakhatta_10',  title: 'Ritual Pack (10 sticks)',    price: { amount: '299', currencyCode: 'INR' }, compareAtPrice: { amount: '349', currencyCode: 'INR' }, availableForSale: true, quantityAvailable: 50, sku: null } },
+      { node: { id: 'variant_kalakhatta_30',  title: 'Month Supply (30 sticks)',   price: { amount: '799', currencyCode: 'INR' }, compareAtPrice: { amount: '999', currencyCode: 'INR' }, availableForSale: true, quantityAvailable: 30, sku: null } },
+      { node: { id: 'variant_kalakhatta_sub', title: 'Monthly Ritual (30 sticks)', price: { amount: '719', currencyCode: 'INR' }, compareAtPrice: null, availableForSale: true, quantityAvailable: 99, sku: null } },
     ] }, seo: { title: null, description: null },
   },
   {
@@ -109,9 +109,9 @@ const STATIC_PRODUCTS: ShopifyProductFull[] = [
     ],
     images: { edges: [{ node: { url: '/mockups/MockupV2-2.png', altText: 'Banta Lime Spark' } }] },
     variants: { edges: [
-      { node: { id: 'static-bls-10',  title: 'Ritual Pack (10 sticks)',    price: { amount: '299', currencyCode: 'INR' }, compareAtPrice: { amount: '349', currencyCode: 'INR' }, availableForSale: true, quantityAvailable: 50, sku: null } },
-      { node: { id: 'static-bls-30',  title: 'Month Supply (30 sticks)',   price: { amount: '799', currencyCode: 'INR' }, compareAtPrice: { amount: '999', currencyCode: 'INR' }, availableForSale: true, quantityAvailable: 30, sku: null } },
-      { node: { id: 'static-bls-sub', title: 'Monthly Ritual (30 sticks)', price: { amount: '719', currencyCode: 'INR' }, compareAtPrice: null, availableForSale: true, quantityAvailable: 99, sku: null } },
+      { node: { id: 'variant_banta_10',  title: 'Ritual Pack (10 sticks)',    price: { amount: '299', currencyCode: 'INR' }, compareAtPrice: { amount: '349', currencyCode: 'INR' }, availableForSale: true, quantityAvailable: 50, sku: null } },
+      { node: { id: 'variant_banta_30',  title: 'Month Supply (30 sticks)',   price: { amount: '799', currencyCode: 'INR' }, compareAtPrice: { amount: '999', currencyCode: 'INR' }, availableForSale: true, quantityAvailable: 30, sku: null } },
+      { node: { id: 'variant_banta_sub', title: 'Monthly Ritual (30 sticks)', price: { amount: '719', currencyCode: 'INR' }, compareAtPrice: null, availableForSale: true, quantityAvailable: 99, sku: null } },
     ] }, seo: { title: null, description: null },
   },
   {
@@ -141,9 +141,9 @@ const STATIC_PRODUCTS: ShopifyProductFull[] = [
     ],
     images: { edges: [{ node: { url: '/mockups/Mockupv2-1.png', altText: 'Peach Himalayan' } }] },
     variants: { edges: [
-      { node: { id: 'static-ph-10',  title: 'Ritual Pack (10 sticks)',    price: { amount: '299', currencyCode: 'INR' }, compareAtPrice: { amount: '349', currencyCode: 'INR' }, availableForSale: true, quantityAvailable: 50, sku: null } },
-      { node: { id: 'static-ph-30',  title: 'Month Supply (30 sticks)',   price: { amount: '799', currencyCode: 'INR' }, compareAtPrice: { amount: '999', currencyCode: 'INR' }, availableForSale: true, quantityAvailable: 30, sku: null } },
-      { node: { id: 'static-ph-sub', title: 'Monthly Ritual (30 sticks)', price: { amount: '719', currencyCode: 'INR' }, compareAtPrice: null, availableForSale: true, quantityAvailable: 99, sku: null } },
+      { node: { id: 'variant_peach_10',  title: 'Ritual Pack (10 sticks)',    price: { amount: '299', currencyCode: 'INR' }, compareAtPrice: { amount: '349', currencyCode: 'INR' }, availableForSale: true, quantityAvailable: 50, sku: null } },
+      { node: { id: 'variant_peach_30',  title: 'Month Supply (30 sticks)',   price: { amount: '799', currencyCode: 'INR' }, compareAtPrice: { amount: '999', currencyCode: 'INR' }, availableForSale: true, quantityAvailable: 30, sku: null } },
+      { node: { id: 'variant_peach_sub', title: 'Monthly Ritual (30 sticks)', price: { amount: '719', currencyCode: 'INR' }, compareAtPrice: null, availableForSale: true, quantityAvailable: 99, sku: null } },
     ] }, seo: { title: null, description: null },
   },
 ] as unknown as ShopifyProductFull[];
@@ -199,7 +199,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart }) => {
   if (!product || !selected) return (
     <div className="bg-[#FAFAF8] min-h-screen flex flex-col items-center justify-center pt-20 gap-4">
       <p className="text-sm font-black text-black/40 uppercase tracking-widest">Product not found</p>
-      <Link to="/shop" className="text-xs font-black uppercase tracking-[0.4em] text-[#2E5BFF]">← Back to Shop</Link>
+      <Link to="/shop" className="text-xs font-black uppercase tracking-[0.35em] text-[#2E5BFF]">← Back to Shop</Link>
     </div>
   );
 
@@ -232,7 +232,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart }) => {
 
       {/* Breadcrumb */}
       <div className="px-5 md:px-12 py-4 max-w-[1440px] mx-auto">
-        <div className="flex items-center gap-2 text-[9px] font-black uppercase tracking-[0.4em] text-black/30">
+        <div className="flex items-center gap-2 text-[9px] font-black uppercase tracking-[0.35em] text-black/30">
           <Link to="/" className="hover:text-[#2E5BFF] transition-colors">Home</Link>
           <span className="text-[#2E5BFF]">·</span>
           <Link to="/shop" className="hover:text-[#2E5BFF] transition-colors">Shop</Link>
@@ -314,31 +314,21 @@ const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart }) => {
                 )}
 
                 {subVariant && (
-                  <div className="rounded-2xl overflow-hidden" style={{ border:`1.5px solid ${accentColor}35` }}>
-                    <div className="px-5 py-3 flex items-center justify-between" style={{ background:`${accentColor}10` }}>
-                      <div className="flex items-center gap-2">
-                        <span className="text-[8px] font-black uppercase tracking-[0.4em]" style={{ color: accentColor }}>Monthly Ritual</span>
-                        <span className="text-[8px] font-black uppercase tracking-widest border px-2 py-0.5 rounded-lg" style={{ borderColor: accentColor, color: accentColor }}>Save 10%</span>
+                  <>
+                    {/* Monthly Ritual — one-time purchase option */}
+                    <button onClick={() => setSelected(subVariant)}
+                      className="w-full flex items-center justify-between px-5 py-4 rounded-2xl transition-all duration-200 text-left relative"
+                      style={{ background: selected.shopifyId === subVariant.shopifyId ? '#1A1A1A' : 'transparent', border: selected.shopifyId === subVariant.shopifyId ? 'none' : '1.5px solid rgba(0,0,0,0.09)', color: selected.shopifyId === subVariant.shopifyId ? 'white' : '#1A1A1A' }}>
+                      <div className="absolute -top-2 right-4">
+                        <span className="text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full text-white" style={{ background: accentColor }}>Best Value</span>
                       </div>
-                      <span className="text-[9px] text-black/40 font-medium">Cancel anytime</span>
-                    </div>
-                    <div className="px-5 py-4 flex items-center justify-between bg-white">
                       <div>
-                        <p className="text-xs font-black text-[#1A1A1A]">30 sticks / month</p>
-                        <p className="text-[9px] text-black/40 font-medium mt-0.5">Auto-ships monthly</p>
+                        <p className="text-xs font-black uppercase tracking-[0.2em]">Monthly Ritual — 30 sticks</p>
+                        <p className="text-[9px] font-medium mt-0.5" style={{ color: selected.shopifyId === subVariant.shopifyId ? 'rgba(255,255,255,0.45)' : 'rgba(0,0,0,0.35)' }}>One-time · Full month supply</p>
                       </div>
-                      <span className="text-xl font-black text-[#1A1A1A]">₹{subVariant.price.toFixed(0)}</span>
-                    </div>
-                    <div className="px-5 pb-4 bg-white">
-                      <button onClick={() => handleAdd(subVariant)}
-                        className="w-full py-3.5 text-xs font-black uppercase tracking-[0.08em] rounded-xl border transition-all duration-300 hover:text-white"
-                        style={{ borderColor: accentColor, color: accentColor, background:'transparent' }}
-                        onMouseEnter={e => { (e.target as HTMLButtonElement).style.background = accentColor; }}
-                        onMouseLeave={e => { (e.target as HTMLButtonElement).style.background = 'transparent'; }}>
-                        Start Monthly Ritual
-                      </button>
-                    </div>
-                  </div>
+                      <span className="text-lg font-black">₹{subVariant.price.toFixed(0)}</span>
+                    </button>
+                  </>
                 )}
               </div>
 
@@ -349,7 +339,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart }) => {
                   {compareAt && compareAt > selected.price && <span className="text-base text-black/30 line-through font-medium">₹{compareAt.toFixed(0)}</span>}
                 </div>
                 <button onClick={() => inStock && handleAdd(selected)} disabled={!inStock}
-                  className="w-full py-4 text-xs font-black uppercase tracking-[0.4em] rounded-2xl transition-all duration-300 active:scale-[0.98] disabled:opacity-40 mb-3"
+                  className="w-full py-4 text-xs font-black uppercase tracking-[0.35em] rounded-2xl transition-all duration-300 active:scale-[0.98] disabled:opacity-40 mb-3"
                   style={{ background: added ? '#1A1A1A' : accentColor, color:'white' }}>
                   {added ? '✓ Added to Bag' : inStock ? 'Add to Bag' : 'Out of Stock'}
                 </button>
