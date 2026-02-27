@@ -20,12 +20,12 @@ const API_URL = `https://${DOMAIN}/api/${API_VER}/graphql.json`;
 // Keys match product handles in constants.ts.
 // Values are GIDs from Shopify Admin → Products → [variant] → URL
 export const VARIANT_MAP: Record<string, string> = {
-  'variant_kalakhatta_10':   'gid://shopify/ProductVariant/REPLACE_ME',
-  'variant_kalakhatta_30':   'gid://shopify/ProductVariant/REPLACE_ME',
-  'variant_banta_10':        'gid://shopify/ProductVariant/REPLACE_ME',
-  'variant_banta_30':        'gid://shopify/ProductVariant/REPLACE_ME',
-  'variant_peach_10':        'gid://shopify/ProductVariant/REPLACE_ME',
-  'variant_peach_30':        'gid://shopify/ProductVariant/REPLACE_ME',
+  'variant_kalakhatta_10':   'gid://shopify/ProductVariant/48008265564408',
+  'variant_kalakhatta_30':   'gid://shopify/ProductVariant/48008265597176',
+  'variant_banta_10':        'gid://shopify/ProductVariant/48008269627640',
+  'variant_banta_30':        'gid://shopify/ProductVariant/48008269660408',
+  'variant_peach_10':        'gid://shopify/ProductVariant/48008270807288',
+  'variant_peach_30':        'gid://shopify/ProductVariant/48008270840056',
 };
 
 export const isShopifyReady = (): boolean =>
@@ -34,19 +34,40 @@ export const isShopifyReady = (): boolean =>
 
 // ── Core GraphQL helper ────────────────────────────────────────
 async function gql<T>(query: string, variables: Record<string, unknown> = {}): Promise<T> {
-  if (!DOMAIN || !TOKEN) throw new Error('Shopify env vars missing');
-  const res = await fetch(API_URL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Shopify-Storefront-Access-Token': TOKEN,
-    },
-    body: JSON.stringify({ query, variables }),
-  });
-  if (!res.ok) throw new Error(`Shopify HTTP ${res.status}: ${res.statusText}`);
-  const json = await res.json();
-  if (json.errors?.length) throw new Error(json.errors[0].message);
-  return json.data as T;
+  if (!DOMAIN || !TOKEN) throw new Error('Store configuration missing. Check environment setup.');
+
+  const controller = new AbortController();
+  const timer      = setTimeout(() => controller.abort(), 12000);
+
+  try {
+    const res = await fetch(API_URL, {
+      method:  'POST',
+      headers: {
+        'Content-Type':                      'application/json',
+        'X-Shopify-Storefront-Access-Token': TOKEN,
+      },
+      body:   JSON.stringify({ query, variables }),
+      signal: controller.signal,
+    });
+
+    if (!res.ok) {
+      // Never leak raw HTTP status strings — prevents server-detail enumeration
+      throw new Error(res.status === 401 ? 'Authentication error.' : 'Request failed. Please try again.');
+    }
+
+    const json = await res.json() as { data?: T; errors?: { message: string }[] };
+    if (json.errors?.length) {
+      const msg = json.errors[0]?.message ?? 'Unknown error';
+      throw new Error(msg.length > 300 ? 'An error occurred. Please try again.' : msg);
+    }
+    if (!json.data) throw new Error('Empty response from store.');
+    return json.data;
+  } catch (e: unknown) {
+    if (e instanceof Error && e.name === 'AbortError') throw new Error('Request timed out. Check your connection.');
+    throw e;
+  } finally {
+    clearTimeout(timer);
+  }
 }
 
 
@@ -179,7 +200,7 @@ export async function fetchHomepageContent(): Promise<HomepageContent> {
     for (const field of data.metaobject.fields) f[field.key] = field.value;
 
     const parseJSON = <T>(raw: string | undefined, fallback: T): T => {
-      if (!raw) return fallback;
+      if (!raw || raw.length > 50_000) return fallback;
       try { return JSON.parse(raw) as T; } catch { return fallback; }
     };
 
@@ -393,7 +414,7 @@ export async function fetchAllProducts(): Promise<ShopifyProductFull[]> {
       ((p[key] as { value: string } | null)?.value) ?? null;
 
     const parseJSON = <T>(raw: string | null, fallback: T): T => {
-      if (!raw) return fallback;
+      if (!raw || raw.length > 50_000) return fallback;
       try { return JSON.parse(raw) as T; } catch { return fallback; }
     };
 
@@ -590,7 +611,17 @@ export async function cartFetch(cartId: string): Promise<ShopifyCart | null> {
 }
 
 export function goToCheckout(checkoutUrl: string): void {
-  window.location.href = checkoutUrl;
+  try {
+    const url     = new URL(checkoutUrl);
+    const trusted = ['.myshopify.com', 'checkout.shopify.com', 'shop.app'];
+    if (!trusted.some(d => url.hostname.endsWith(d))) {
+      console.error('[SALTD] Blocked redirect to untrusted host:', url.hostname);
+      return;
+    }
+    window.location.href = checkoutUrl;
+  } catch {
+    console.error('[SALTD] Invalid checkout URL — redirect blocked.');
+  }
 }
 
 
@@ -619,8 +650,10 @@ export async function customerLogin(email: string, password: string): Promise<Cu
   `, { email, password });
 
   const r = data.customerAccessTokenCreate;
-  if (r.customerUserErrors.length) throw new Error(r.customerUserErrors[0].message);
-  if (!r.customerAccessToken) throw new Error('Login failed — please check your credentials.');
+  // Generic message regardless of error type — prevents account enumeration
+  if (r.customerUserErrors.length || !r.customerAccessToken) {
+    throw new Error('Incorrect email or password. Please try again.');
+  }
   return r.customerAccessToken;
 }
 
@@ -799,11 +832,14 @@ export async function guestOrderLookup(
   orderId: string,
   email: string
 ): Promise<{ found: boolean; order: ShopifyOrder | null; error?: string }> {
-  const normalized = orderId.trim().replace(/^#/, '');
+  const normalized = orderId.trim().replace(/^#/, '').replace(/[^a-zA-Z0-9-]/g, '').slice(0, 20);
+  const cleanEmail = email.trim().toLowerCase().slice(0, 254);
+  if (!normalized) return { found: false, order: null, error: 'Please enter a valid order ID.' };
+  if (!cleanEmail.includes('@') || cleanEmail.length < 5) return { found: false, order: null, error: 'Please enter a valid email address.' };
 
   // In production: call your serverless function
   try {
-    const res = await fetch(`/api/lookup-order?orderId=${encodeURIComponent(normalized)}&email=${encodeURIComponent(email.trim())}`);
+    const res = await fetch(`/api/lookup-order?orderId=${encodeURIComponent(normalized)}&email=${encodeURIComponent(cleanEmail)}`);
     if (res.ok) {
       const data = await res.json();
       return data;
