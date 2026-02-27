@@ -294,7 +294,7 @@ const Hero: React.FC<{ content: HomepageContent; firstProduct: ShopifyProductFul
           </h1>
 
           <div className="border-l-[3px] pl-4 mb-7" style={{ borderColor: ACCENT, opacity: loaded ? 1 : 0, transform: loaded ? 'none' : 'translateY(12px)', transition: 'all 1s ease 0.45s' }}>
-            <p className="text-base font-medium leading-relaxed" style={{ color: 'rgba(255,255,255,0.75)' }}>
+            <p className="text-base font-medium leading-relaxed" style={{ color: 'rgba(26,26,26,0.70)' }}>
               "Finally a hydration drink that actually tastes like something — not a lab experiment."
             </p>
             <p className="text-[10px] font-black uppercase tracking-[0.4em] mt-2" style={{ color: ACCENT }}>— Joshua Matthews, 27 · Verified Customer</p>
