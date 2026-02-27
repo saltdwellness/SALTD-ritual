@@ -158,6 +158,13 @@ const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart }) => {
   const [imgIdx, setImgIdx] = useState(0);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
+  // Force scroll to top whenever product handle changes — iOS Safari fix
+  useEffect(() => {
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  }, [handle]);
+
   useEffect(() => {
     fetchAllProducts().then(products => {
       // Use live Shopify products, or fall back to static previews

@@ -25,7 +25,13 @@ const TOKEN_EXPIRY_KEY  = 'saltd_cart_expiry';
 
 const ScrollToTop: React.FC = () => {
   const { pathname } = useLocation();
-  useEffect(() => { window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior }); }, [pathname]);
+  useEffect(() => {
+    // iOS Safari ignores 'instant' sometimes — belt and braces approach
+    try { window.scrollTo({ top: 0, behavior: 'instant' as ScrollBehavior }); } catch {}
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0; // iOS Safari fallback
+  }, [pathname]);
   return null;
 };
 
