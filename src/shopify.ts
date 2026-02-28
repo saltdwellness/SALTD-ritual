@@ -370,7 +370,10 @@ const PRODUCT_FAQS_FALLBACK: Record<string, { q: string; a: string }[]> = {
 };
 
 export async function fetchAllProducts(): Promise<ShopifyProductFull[]> {
-  const data = await gql<{ products: { edges: { node: Record<string, unknown> }[] } }>(`
+  console.log('[SALTD] fetchAllProducts called');
+  let data: { products: { edges: { node: Record<string, unknown> }[] } };
+  try {
+    data = await gql<{ products: { edges: { node: Record<string, unknown> }[] } }>(`
     query fetchAllProducts {
       products(first: 10, sortKey: TITLE) {
         edges {
@@ -416,6 +419,10 @@ export async function fetchAllProducts(): Promise<ShopifyProductFull[]> {
       }
     }
   `);
+  } catch (e) {
+    console.error('[SALTD] fetchAllProducts gql threw:', e);
+    throw e;
+  }
 
   // Debug: log raw API response to diagnose metafield issues
   if (typeof window !== 'undefined') {
