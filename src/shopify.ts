@@ -20,12 +20,12 @@ const API_URL = `https://${DOMAIN}/api/${API_VER}/graphql.json`;
 // Keys match product handles in constants.ts.
 // Values are GIDs from Shopify Admin → Products → [variant] → URL
 export const VARIANT_MAP: Record<string, string> = {
-  'variant_kalakhatta_10':   'gid://shopify/ProductVariant/REPLACE_ME',
-  'variant_kalakhatta_30':   'gid://shopify/ProductVariant/REPLACE_ME',
-  'variant_banta_10':        'gid://shopify/ProductVariant/REPLACE_ME',
-  'variant_banta_30':        'gid://shopify/ProductVariant/REPLACE_ME',
-  'variant_peach_10':        'gid://shopify/ProductVariant/REPLACE_ME',
-  'variant_peach_30':        'gid://shopify/ProductVariant/REPLACE_ME',
+  'variant_kalakhatta_10':   'gid://shopify/ProductVariant/48008265564408',
+  'variant_kalakhatta_30':   'gid://shopify/ProductVariant/48008265597176',
+  'variant_banta_10':        'gid://shopify/ProductVariant/48008269627640',
+  'variant_banta_30':        'gid://shopify/ProductVariant/48008269660408',
+  'variant_peach_10':        'gid://shopify/ProductVariant/48008270807288',
+  'variant_peach_30':        'gid://shopify/ProductVariant/48008270840056',
 };
 
 export const isShopifyReady = (): boolean =>

@@ -50,7 +50,7 @@ const STATIC_PRODUCTS: ShopifyProductFull[] = [
     description: 'Black plum & tamarind. Bold, tart, and loaded with the full electrolyte stack — 6 minerals, 8 vitamins, zero sugar.',
     descriptionHtml: '', productType: '', tags: [], vendor: 'SALTD.', featuredImage: null,
     availableForSale: true, flavorSubtitle: 'Kala Khatta',
-    flavorColor: { value: '#8A307F' }, flavorBg: null, flavorTagline: { value: 'Kala Khatta' },
+    flavorColor: '#8A307F' as unknown as { value: string }, flavorBg: null, flavorTagline: { value: 'Kala Khatta' },
     featuresField: { value: '["6 Electrolytes","Ashwagandha KSM-66","8 Vitamins","Zero Sugar"]' },
     scienceCopy: null, ingredientsField: null,
     faq1Q: null, faq1A: null, faq2Q: null, faq2A: null, faq3Q: null, faq3A: null, faq4Q: null, faq4A: null,
@@ -81,7 +81,7 @@ const STATIC_PRODUCTS: ShopifyProductFull[] = [
     description: 'The marble-stopper soda reimagined as a clean, electric hydration ritual.',
     descriptionHtml: '', productType: '', tags: [], vendor: 'SALTD.', featuredImage: null,
     availableForSale: true, flavorSubtitle: 'Banta Lime Spark',
-    flavorColor: { value: '#7AB800' }, flavorBg: null, flavorTagline: { value: 'Banta Lime Spark' },
+    flavorColor: '#7AB800' as unknown as { value: string }, flavorBg: null, flavorTagline: { value: 'Banta Lime Spark' },
     featuresField: { value: '["6 Electrolytes","Vitamin B12","8 Vitamins","Zero Sugar"]' },
     scienceCopy: null, ingredientsField: null,
     faq1Q: null, faq1A: null, faq2Q: null, faq2A: null, faq3Q: null, faq3A: null, faq4Q: null, faq4A: null,
@@ -112,7 +112,7 @@ const STATIC_PRODUCTS: ShopifyProductFull[] = [
     description: 'Soft, warm, grounded. The evening ritual. Elevated magnesium (150mg) for recovery and sleep.',
     descriptionHtml: '', productType: '', tags: [], vendor: 'SALTD.', featuredImage: null,
     availableForSale: true, flavorSubtitle: 'Peach Himalayan',
-    flavorColor: { value: '#E8845A' }, flavorBg: null, flavorTagline: { value: 'Peach Himalayan' },
+    flavorColor: '#E8845A' as unknown as { value: string }, flavorBg: null, flavorTagline: { value: 'Peach Himalayan' },
     featuresField: { value: '["6 Electrolytes","High Magnesium","8 Vitamins","Zero Sugar"]' },
     scienceCopy: null, ingredientsField: null,
     faq1Q: null, faq1A: null, faq2Q: null, faq2A: null, faq3Q: null, faq3A: null, faq4Q: null, faq4A: null,
@@ -142,62 +142,79 @@ const STATIC_PRODUCTS: ShopifyProductFull[] = [
 
 const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart }) => {
   const { handle } = useParams<{ handle: string }>();
-  const [product, setProduct] = useState<ShopifyProductFull | null>(null);
-  const [allProducts, setAllProducts] = useState<ShopifyProductFull[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [selected, setSelected] = useState<ProductVariant | null>(null);
-  const [added, setAdded] = useState(false);
-  const [imgIdx, setImgIdx] = useState(0);
-  const [openFaq, setOpenFaq] = useState<number | null>(null);
 
-  // Force scroll to top whenever product handle changes — iOS Safari fix
+  // ── Eager init: show static content immediately, upgrade silently when Shopify responds ──
+  const staticFallback = STATIC_PRODUCTS.find(p => p.handle === handle) ?? STATIC_PRODUCTS[0];
+  const staticCart     = toCartProduct(staticFallback);
+
+  const [product, setProduct]       = useState<ShopifyProductFull>(staticFallback);
+  const [allProducts, setAllProducts] = useState<ShopifyProductFull[]>(STATIC_PRODUCTS);
+  const [selected, setSelected]     = useState<ProductVariant>(staticCart.variants[0]);
+  const [liveReady, setLiveReady]   = useState(false); // true once Shopify data arrives
+  const [added, setAdded]           = useState(false);
+  const [imgIdx, setImgIdx]         = useState(0);
+  const [openFaq, setOpenFaq]       = useState<number | null>(null);
+
+  // Force scroll to top on handle change — iOS Safari fix
   useEffect(() => {
     window.scrollTo(0, 0);
     document.documentElement.scrollTop = 0;
     document.body.scrollTop = 0;
   }, [handle]);
 
+  // Reset to correct static product when handle changes
   useEffect(() => {
+    const sf = STATIC_PRODUCTS.find(p => p.handle === handle) ?? STATIC_PRODUCTS[0];
+    setProduct(sf);
+    setSelected(toCartProduct(sf).variants[0]);
+    setLiveReady(false);
+    setImgIdx(0);
+  }, [handle]);
+
+  // Background fetch — silently upgrades to live data, page already visible
+  useEffect(() => {
+    let cancelled = false;
     fetchAllProducts().then(products => {
-      // Use live Shopify products, or fall back to static previews
+      if (cancelled) return;
       const pool = products.length > 0 ? products : STATIC_PRODUCTS;
       setAllProducts(pool);
       const found = pool.find(p => p.handle === handle);
       if (found) {
         setProduct(found);
-        const p = toCartProduct(found);
-        setSelected(p.variants[0]);
+        // Only reset selected if user hasn't interacted yet
+        setSelected(prev => {
+          const live = toCartProduct(found);
+          const match = live.variants.find(v => v.label === prev.label);
+          return match ?? live.variants[0];
+        });
         setSEO({
           title: `${found.seo?.title ?? (found.flavorSubtitle ?? found.title)} — SALTD. Ritual Hydration`,
           description: found.seo?.description ?? found.description,
           ogImage: found.images.edges[0]?.node.url,
         });
+        setLiveReady(true);
       }
     }).catch(() => {
-      // Network error — still show static pages
-      const pool = STATIC_PRODUCTS;
-      setAllProducts(pool);
-      const found = pool.find(p => p.handle === handle);
-      if (found) { setProduct(found); setSelected(toCartProduct(found).variants[0]); }
-    }).finally(() => setLoading(false));
+      // Network error — static data already showing, nothing to do
+      if (!cancelled) setLiveReady(false);
+    });
+    return () => { cancelled = true; };
   }, [handle]);
 
-  if (loading) return (
-    <div className="bg-[#FAFAF8] min-h-screen flex items-center justify-center pt-20">
-      <div className="w-6 h-6 border-2 border-[#2E5BFF]/20 border-t-[#2E5BFF] rounded-full animate-spin" />
-    </div>
-  );
-
-  if (!product || !selected) return (
+  // Product truly not found in static data either
+  if (!product) return (
     <div className="bg-[#FAFAF8] min-h-screen flex flex-col items-center justify-center pt-20 gap-4">
       <p className="text-sm font-black text-black/40 uppercase tracking-widest">Product not found</p>
       <Link to="/shop" className="text-xs font-black uppercase tracking-[0.35em] text-[#2E5BFF]">← Back to Shop</Link>
     </div>
   );
 
+  // Suppress unused warning — liveReady used for subtle shimmer future enhancement
+  void liveReady;
+
   const p           = toCartProduct(product);
-  const accentColor = product.flavorColor ?? HANDLE_COLOR_FALLBACK[product.handle] ?? '#2E5BFF';
-  const bgGrad      = product.flavorBg?.value ?? BG_MAP[accentColor] ?? 'linear-gradient(135deg,#f5f5f5,#ebebeb)';
+  const accentColor = (typeof product.flavorColor === 'string' ? product.flavorColor : null) ?? HANDLE_COLOR_FALLBACK[product.handle] ?? '#2E5BFF';
+  const bgGrad      = (typeof product.flavorBg === 'string' ? product.flavorBg : null) ?? BG_MAP[accentColor] ?? 'linear-gradient(135deg,#f5f5f5,#ebebeb)';
   // All content now live from Shopify metafields — falls back to defaults in shopify.ts
   const details = {
     tagline:     product.flavorSubtitle ?? '',
@@ -305,23 +322,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart }) => {
                   </button>
                 )}
 
-                {subVariant && (
-                  <>
-                    {/* Monthly Ritual — one-time purchase option */}
-                    <button onClick={() => setSelected(subVariant)}
-                      className="w-full flex items-center justify-between px-5 py-4 rounded-2xl transition-all duration-200 text-left relative"
-                      style={{ background: selected.shopifyId === subVariant.shopifyId ? '#1A1A1A' : 'transparent', border: selected.shopifyId === subVariant.shopifyId ? 'none' : '1.5px solid rgba(0,0,0,0.09)', color: selected.shopifyId === subVariant.shopifyId ? 'white' : '#1A1A1A' }}>
-                      <div className="absolute -top-2 right-4">
-                        <span className="text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full text-white" style={{ background: accentColor }}>Best Value</span>
-                      </div>
-                      <div>
-                        <p className="text-xs font-black uppercase tracking-[0.2em]">Monthly Ritual — 30 sticks</p>
-                        <p className="text-[9px] font-medium mt-0.5" style={{ color: selected.shopifyId === subVariant.shopifyId ? 'rgba(255,255,255,0.45)' : 'rgba(0,0,0,0.35)' }}>30 sticks · Full month supply</p>
-                      </div>
-                      <span className="text-lg font-black">₹{subVariant.price.toFixed(0)}</span>
-                    </button>
-                  </>
-                )}
+
               </div>
 
               {/* Add to bag */}
@@ -450,8 +451,8 @@ const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart }) => {
             <h2 className="text-[1.8rem] font-black tracking-[-0.03em] text-[#1A1A1A] mb-8">You might also like.</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               {otherProducts.map(op => {
-                const op_accent = op.flavorColor ?? HANDLE_COLOR_FALLBACK[op.handle] ?? '#2E5BFF';
-                const op_bg = op.flavorBg?.value ?? BG_MAP[op_accent] ?? 'linear-gradient(135deg,#f5f5f5,#ebebeb)';
+                const op_accent = (typeof op.flavorColor === 'string' ? op.flavorColor : null) ?? HANDLE_COLOR_FALLBACK[op.handle] ?? '#2E5BFF';
+                const op_bg = (typeof op.flavorBg === 'string' ? op.flavorBg : null) ?? BG_MAP[op_accent] ?? 'linear-gradient(135deg,#f5f5f5,#ebebeb)';
                 const op_price = parseFloat(op.variants.edges[0]?.node.price.amount ?? '0');
                 return (
                   <Link key={op.id} to={`/product/${op.handle}`}
