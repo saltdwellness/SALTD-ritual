@@ -381,7 +381,7 @@ export async function fetchAllProducts(): Promise<ShopifyProductFull[]> {
             variants(first: 10) {
               edges {
                 node {
-                  id title availableForSale quantityAvailable sku
+                  id title availableForSale sku
                   price { amount currencyCode }
                   compareAtPrice { amount currencyCode }
                 }
