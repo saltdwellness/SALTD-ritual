@@ -290,21 +290,10 @@ export interface ShopifyProductFull {
     compareAtPrice: { amount: string; currencyCode: string } | null;
   }}[] };
   seo: { title: string | null; description: string | null };
-  // Metafields (set in Shopify Admin — no code changes needed)
-  flavorTagline:    { value: string } | null;
-  flavorColor:      string | null;  // normalised from metafield { value } in fetchAllProducts
-  flavorBg:         string | null;   // normalised from metafield { value } in fetchAllProducts
-  featuresField:    { value: string } | null; // JSON array ["feat1","feat2"...]
-  scienceCopy:      { value: string } | null; // Long-form science paragraph
-  ingredientsField: { value: string } | null; // JSON [{name,amount,role}]
-  faq1Q:            { value: string } | null;
-  faq1A:            { value: string } | null;
-  faq2Q:            { value: string } | null;
-  faq2A:            { value: string } | null;
-  faq3Q:            { value: string } | null;
-  faq3A:            { value: string } | null;
-  faq4Q:            { value: string } | null;
-  faq4A:            { value: string } | null;
+  // Raw metafields array from Shopify (parsed into typed fields below)
+  metafields: { namespace: string; key: string; value: string }[] | null;
+  flavorColor: string | null;  // extracted from metafields in fetchAllProducts
+  flavorBg:    string | null;  // extracted from metafields in fetchAllProducts
   // Computed after fetch
   flavorSubtitle: string | null;
   features: string[];
@@ -399,21 +388,23 @@ export async function fetchAllProducts(): Promise<ShopifyProductFull[]> {
 
             seo { title description }
 
-            # ── All metafields — edit in Shopify Admin, zero code changes needed ──
-            flavorTagline:    metafield(namespace: "saltd", key: "flavor_tagline")   { value }
-            flavorColor:      metafield(namespace: "saltd", key: "flavor_color")     { value }
-            flavorBg:         metafield(namespace: "saltd", key: "flavor_bg")        { value }
-            featuresField:    metafield(namespace: "saltd", key: "features")         { value }
-            scienceCopy:      metafield(namespace: "saltd", key: "science_copy")     { value }
-            ingredientsField: metafield(namespace: "saltd", key: "ingredients")      { value }
-            faq1Q:            metafield(namespace: "saltd", key: "faq_1_q")          { value }
-            faq1A:            metafield(namespace: "saltd", key: "faq_1_a")          { value }
-            faq2Q:            metafield(namespace: "saltd", key: "faq_2_q")          { value }
-            faq2A:            metafield(namespace: "saltd", key: "faq_2_a")          { value }
-            faq3Q:            metafield(namespace: "saltd", key: "faq_3_q")          { value }
-            faq3A:            metafield(namespace: "saltd", key: "faq_3_a")          { value }
-            faq4Q:            metafield(namespace: "saltd", key: "faq_4_q")          { value }
-            faq4A:            metafield(namespace: "saltd", key: "faq_4_a")          { value }
+            # ── All metafields via identifiers — works without Storefront API toggle ──
+            metafields(identifiers: [
+              {namespace: "saltd", key: "flavor_tagline"},
+              {namespace: "saltd", key: "flavor_color"},
+              {namespace: "saltd", key: "flavor_bg"},
+              {namespace: "saltd", key: "features"},
+              {namespace: "saltd", key: "science_copy"},
+              {namespace: "saltd", key: "ingredients"},
+              {namespace: "saltd", key: "faq_1_q"},
+              {namespace: "saltd", key: "faq_1_a"},
+              {namespace: "saltd", key: "faq_2_q"},
+              {namespace: "saltd", key: "faq_2_a"},
+              {namespace: "saltd", key: "faq_3_q"},
+              {namespace: "saltd", key: "faq_3_a"},
+              {namespace: "saltd", key: "faq_4_q"},
+              {namespace: "saltd", key: "faq_4_a"}
+            ]) { namespace key value }
           }
         }
       }
@@ -429,18 +420,16 @@ export async function fetchAllProducts(): Promise<ShopifyProductFull[]> {
     console.log('[SALTD] Raw product data from Shopify:', 
       data.products.edges.map(({ node: p }) => ({
         handle: p.handle,
-        flavorTagline: p.flavorTagline,
-        flavorColor: p.flavorColor,
-        featuresField: p.featuresField,
-        scienceCopy: p.scienceCopy,
-        faq1Q: p.faq1Q,
+        metafields: p.metafields,
       }))
     );
   }
 
   return data.products.edges.map(({ node: p }) => {
+    // Parse metafields array returned by identifiers query
+    const mfArray = (p['metafields'] as { namespace: string; key: string; value: string }[] | null) ?? [];
     const get = (key: string): string | null =>
-      ((p[key] as { value: string } | null)?.value) ?? null;
+      mfArray.find(m => m?.key === key)?.value ?? null;
 
     const parseJSON = <T>(raw: string | null, fallback: T): T => {
       if (!raw || raw.length > 50_000) return fallback;
@@ -450,38 +439,37 @@ export async function fetchAllProducts(): Promise<ShopifyProductFull[]> {
     const handle = p.handle as string;
 
     const features = parseJSON<string[]>(
-      get('featuresField'),
+      get('features'),
       ['6 Electrolytes', 'Infused Ashwagandha', 'All 8 Vitamins', 'Zero Sugar']
     );
 
     const ingredients = parseJSON<{ name: string; amount: string; role: string }[]>(
-      get('ingredientsField'),
+      get('ingredients'),
       PRODUCT_INGREDIENTS_FALLBACK[handle] ?? PRODUCT_INGREDIENTS_FALLBACK['kala-khatta']
     );
 
     // Build FAQs — from individual metafields, fall back to hardcoded
     const liveFaqs: { q: string; a: string }[] = [];
     for (let i = 1; i <= 4; i++) {
-      const q = get(`faq${i}Q`);
-      const a = get(`faq${i}A`);
+      const q = get(`faq_${i}_q`);
+      const a = get(`faq_${i}_a`);
       if (q && a) liveFaqs.push({ q, a });
     }
     const faqs = liveFaqs.length > 0
       ? liveFaqs
       : (PRODUCT_FAQS_FALLBACK[handle] ?? PRODUCT_FAQS_FALLBACK['kala-khatta']);
 
-    // Normalise flavorColor and flavorBg from { value: string } → string
-    // so all consumers receive a plain string, not a metafield object
-    const rawFlavorColor = (p.flavorColor as { value: string } | null)?.value ?? null;
-    const rawFlavorBg    = (p.flavorBg    as { value: string } | null)?.value ?? null;
+    // flavorColor and flavorBg now come via get() from the metafields array
+    const rawFlavorColor = get('flavor_color');
+    const rawFlavorBg    = get('flavor_bg');
 
     return {
       ...(p as Omit<ShopifyProductFull, 'flavorSubtitle' | 'features' | 'scienceText' | 'ingredients' | 'faqs' | 'flavorColor' | 'flavorBg'>),
       flavorColor:   rawFlavorColor,
       flavorBg:      rawFlavorBg,
-      flavorSubtitle: get('flavorTagline'),
+      flavorSubtitle: get('flavor_tagline'),
       features,
-      scienceText: get('scienceCopy') ?? (PRODUCT_SCIENCE_FALLBACK[handle] ?? PRODUCT_SCIENCE_FALLBACK['kala-khatta']),
+      scienceText: get('science_copy') ?? (PRODUCT_SCIENCE_FALLBACK[handle] ?? PRODUCT_SCIENCE_FALLBACK['kala-khatta']),
       ingredients,
       faqs,
     } as ShopifyProductFull;
