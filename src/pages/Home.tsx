@@ -13,7 +13,7 @@ import { FAQSection } from './FAQPage';
 import { Product, ProductVariant } from '../types';
 import {
   fetchAllProducts, fetchHomepageContent,
-  ShopifyProductFull, HomepageContent, StatItem,
+  ShopifyProductFull, HomepageContent, StatItem, ImpactPoint, RitualStep, TrustBadge, FallbackReview,
   setSEO, seoForPage, VARIANT_MAP,
 } from '../shopify';
 
@@ -609,7 +609,7 @@ const FlavorEditorialPanels: React.FC<{ products: ShopifyProductFull[] }> = ({ p
 };
 
 // ─── Impact Statement ─────────────────────────────────────────────
-const ImpactStatement: React.FC = () => (
+const ImpactStatement: React.FC<{ content: HomepageContent }> = ({ content }) => (
   <section className="bg-[#1A1A1A] py-12 md:py-24 px-5 md:px-12 overflow-hidden">
     <div className="max-w-[1440px] mx-auto">
       <Reveal>
@@ -619,17 +619,14 @@ const ImpactStatement: React.FC = () => (
         <Reveal>
           <h2 className="font-black tracking-[-0.04em] text-white leading-[0.93]"
             style={{ fontSize: 'clamp(2.2rem, 5vw, 4.8rem)' }}>
-            Most hydration<br />drinks are built<br />on <span style={{ color: ACCENT }}>sugar.</span><br />
-            <span style={{ color: 'rgba(255,255,255,0.15)' }}>Ours isn't.</span>
+            {content.impactHeadline.split(' ').slice(0,-2).join(' ')}<br />
+            <span style={{ color: ACCENT }}>{content.impactHeadline.split(' ').slice(-2,-1)[0]}</span>{' '}
+            <span style={{ color: 'rgba(255,255,255,0.15)' }}>{content.impactHeadline.split(' ').slice(-1)[0]}</span>
           </h2>
         </Reveal>
         <Reveal delay={0.12}>
           <div className="space-y-7 pt-1 md:pt-5">
-            {[
-              { n: '01', title: 'Zero Sugar, Full Spectrum', body: 'Every stick delivers a complete ionic profile — sodium, potassium, magnesium, calcium, chloride, and phosphate — without a gram of sugar.' },
-              { n: '02', title: 'Nostalgia as a Vector',     body: 'We took the flavours Indian childhoods are built on — Kala Khatta, Banta, Peach — and made them the delivery mechanism for serious hydration.' },
-              { n: '03', title: 'One Stick. Every Day.',     body: 'Consistency beats intensity. A daily ritual of one stick builds the kind of cellular hydration that compounds over weeks and months.' },
-            ].map(item => (
+            {content.impactPoints.map(item => (
               <div key={item.n} className="flex gap-4 pb-5 border-b last:border-0 last:pb-0" style={{ borderColor: 'rgba(255,255,255,0.07)' }}>
                 <span className="text-sm font-black uppercase tracking-[0.4em] mt-1 shrink-0 w-6" style={{ color: ACCENT }}>{item.n}</span>
                 <div>
@@ -817,18 +814,14 @@ const RITUAL_ICONS = [
   </svg>,
 ];
 
-const HowItWorks: React.FC = () => (
+const HowItWorks: React.FC<{ content: HomepageContent }> = ({ content }) => (
   <section className="py-10 md:py-16 px-5 md:px-12 bg-[#FAFAF8]">
     <div className="max-w-[1440px] mx-auto">
       <Reveal>
         <p className="text-xs font-black uppercase tracking-[0.5em] mb-6" style={{ color: ACCENT }}>02 — "THE RITUAL"</p>
       </Reveal>
       <div className="grid grid-cols-3 gap-3 md:gap-5">
-        {[
-          { n: '01', t: 'Tear & Pour',   d: 'One stick into 250–500ml of water. Tear, pour, done.' },
-          { n: '02', t: 'Stir',          d: '10 seconds. Dissolves clean — no clumping, no residue.' },
-          { n: '03', t: 'Drink & Track', d: 'Sip. Feel it work. Build your daily streak.' },
-        ].map((s, i) => (
+        {content.ritualSteps.map((s, i) => (
           <Reveal key={s.n} delay={i * 0.07}>
             <div className="flex flex-col gap-3 p-4 md:p-5 rounded-2xl border border-[#1A1A1A]/[0.07] bg-white">
               <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0" style={{ background: `${ACCENT}0D` }}>
@@ -836,8 +829,8 @@ const HowItWorks: React.FC = () => (
               </div>
               <div>
                 <p className="text-[9px] font-black uppercase tracking-[0.4em] mb-1" style={{ color: ACCENT }}>{s.n}</p>
-                <h3 className="text-sm md:text-base font-black text-[#1A1A1A] mb-1">{s.t}</h3>
-                <p className="text-xs font-medium leading-relaxed hidden md:block" style={{ color: 'rgba(26,26,26,0.55)' }}>{s.d}</p>
+                <h3 className="text-sm md:text-base font-black text-[#1A1A1A] mb-1">{s.title}</h3>
+                <p className="text-xs font-medium leading-relaxed hidden md:block" style={{ color: 'rgba(26,26,26,0.55)' }}>{s.desc}</p>
               </div>
             </div>
           </Reveal>
@@ -850,7 +843,7 @@ const HowItWorks: React.FC = () => (
 // ─── Reviews Section ──────────────────────────────────────────────
 interface Review { orderId: string; orderName: string; rating: number; text: string; flavor: string; date: string; }
 
-const ReviewsSection: React.FC<{ products: ShopifyProductFull[] }> = ({ products }) => {
+const ReviewsSection: React.FC<{ products: ShopifyProductFull[]; content: HomepageContent | null }> = ({ products, content }) => {
   const [reviews, setReviews] = useState<Review[]>([]);
   useEffect(() => {
     try {
@@ -859,12 +852,7 @@ const ReviewsSection: React.FC<{ products: ShopifyProductFull[] }> = ({ products
     } catch { setReviews([]); }
   }, []);
 
-  const fallback = [
-    { name: 'Joshua Matthews', age: 27, role: 'National Calisthenics Champion, Bangalore', rating: 5, text: 'Finally a hydration drink that doesn\'t taste like a science lab. The Kala Khatta hits exactly like I remember from childhood — tangy, bold, zero guilt.',    flavor: 'Kala Khatta',      accent: '#8A307F' },
-    { name: 'Jeremiah Saji',   age: 25, role: 'Project Manager, Bangalore',                rating: 5, text: 'Three weeks of morning runs. Recovery is noticeably faster, and I actually look forward to it — that\'s never happened with supplements before.',             flavor: 'Banta Lime Spark', accent: '#7AB800' },
-    { name: 'Amritanshu Jaiswal', age: 30, role: 'Founder, ScaleX, Bangalore',            rating: 5, text: 'Switched from a sugar-heavy sports drink. The difference in how I feel mid-afternoon is real. No crash, just consistent energy. Peach Himalayan is my go-to.', flavor: 'Peach Himalayan',  accent: '#E8845A' },
-    { name: 'Ritika Saxena',   age: 30, role: 'Co-founder, ScaleX, Bangalore',            rating: 5, text: 'The taste of Banta took me straight back to Marine Lines. Except now it\'s doing something useful. This is exactly what India-first hydration should look like.', flavor: 'Banta Lime Spark', accent: '#7AB800' },
-  ];
+  const fallback = content?.fallbackReviews ?? [];
 
   const display = reviews.length >= 2
     ? reviews.slice(0, 4).map(r => {
@@ -931,19 +919,14 @@ const ReviewsSection: React.FC<{ products: ShopifyProductFull[] }> = ({ products
 };
 
 // ─── Trust Badges ─────────────────────────────────────────────────
-const TrustBadges: React.FC = () => (
+const TrustBadges: React.FC<{ content: HomepageContent }> = ({ content }) => (
   <section className="py-10 md:py-20 px-5 md:px-12 bg-white border-y border-black/[0.06]">
     <div className="max-w-[1440px] mx-auto">
       <Reveal>
         <p className="text-sm font-black uppercase tracking-[0.6em] text-center mb-7" style={{ color: ACCENT }}>Made to standards that matter</p>
       </Reveal>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-        {[
-          { icon: '🏛️', label: 'FSSAI Approved', sub: 'Food Safety & Standards Authority of India' },
-          { icon: '🔬', label: 'GMP Certified',   sub: 'Good Manufacturing Practice — WHO standard' },
-          { icon: '🛡️', label: 'FDA Compliant',   sub: 'Manufactured in FDA-registered facility' },
-          { icon: '🧪', label: 'Lab Tested',       sub: 'Every batch third-party tested for purity' },
-        ].map((b, i) => (
+        {content.trustBadges.map((b, i) => (
           <Reveal key={b.label} delay={i * 0.06}>
             <div className="flex flex-col items-center text-center gap-2 p-4 md:p-6 rounded-2xl border border-black/[0.07]">
               <span className="text-3xl md:text-4xl">{b.icon}</span>
@@ -1030,11 +1013,11 @@ const Home: React.FC<HomeProps> = ({ onAddToCart }) => {
       <Hero content={content} firstProduct={products[0] ?? null} />
       <StatsBar stats={content.stats} />
       <FlavorEditorialPanels products={products} />
-      <ImpactStatement />
+      <ImpactStatement content={content} />
       <ProductShelf products={products} onAddToCart={onAddToCart} />
-      <HowItWorks />
-      <ReviewsSection products={products} />
-      <TrustBadges />
+      <HowItWorks content={content} />
+      <ReviewsSection products={products} content={content} />
+      <TrustBadges content={content} />
       <HomeFAQSection />
       <FinalCTA content={content} />
     </div>

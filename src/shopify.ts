@@ -32,12 +32,6 @@ export const isShopifyReady = (): boolean =>
   !!DOMAIN && !!TOKEN &&
   !Object.values(VARIANT_MAP).some(v => v.includes('REPLACE_ME'));
 
-// Startup diagnostic — always visible in console
-console.log('[SALTD] Shopify config:', {
-  domain:  DOMAIN  ? `${DOMAIN.slice(0,20)}...` : '❌ MISSING',
-  token:   TOKEN   ? `${TOKEN.slice(0,8)}...`   : '❌ MISSING',
-  ready:   isShopifyReady(),
-});
 
 // ── Core GraphQL helper ────────────────────────────────────────
 async function gql<T>(query: string, variables: Record<string, unknown> = {}): Promise<T> {
@@ -71,7 +65,7 @@ async function gql<T>(query: string, variables: Record<string, unknown> = {}): P
     return json.data;
   } catch (e: unknown) {
     if (e instanceof Error && e.name === 'AbortError') throw new Error('Request timed out. Check your connection.');
-    console.error('[SALTD] Shopify API error:', e);
+    if (import.meta.env.DEV) console.error('[SALTD] Shopify API error:', e);
     throw e;
   } finally {
     clearTimeout(timer);
@@ -120,6 +114,11 @@ export interface MarqueeItem {
   color: string;
 }
 
+export interface ImpactPoint  { n: string; title: string; body: string; }
+export interface RitualStep   { n: string; title: string; desc: string; }
+export interface TrustBadge   { icon: string; label: string; sub: string; }
+export interface FallbackReview { name: string; age: number; role: string; rating: number; text: string; flavor: string; accent: string; }
+
 export interface HomepageContent {
   heroHeadline: string;
   heroSubtext: string;
@@ -127,8 +126,8 @@ export interface HomepageContent {
   heroSubtext3: string;
   heroLocation: string;
   heroCoords: string;
-  heroLocationTag: string; // computed: "28.6139° N · NEW DELHI"
-  rotatingQuotes: string[]; // computed array of the three subtexts
+  heroLocationTag: string;
+  rotatingQuotes: string[];
   stats: StatItem[];
   marqueeItems: MarqueeItem[];
   ctaHeadline: string;
@@ -139,6 +138,15 @@ export interface HomepageContent {
   modalHeadline: string;
   modalBody: string;
   seo: { title: string; description: string };
+  // Impact section
+  impactHeadline: string;
+  impactPoints: ImpactPoint[];
+  // How it works
+  ritualSteps: RitualStep[];
+  // Trust badges
+  trustBadges: TrustBadge[];
+  // Fallback reviews
+  fallbackReviews: FallbackReview[];
 }
 
 export const DEFAULT_HOMEPAGE_CONTENT: HomepageContent = {
@@ -188,6 +196,29 @@ export const DEFAULT_HOMEPAGE_CONTENT: HomepageContent = {
     title:       'SALTD. | Ritual Hydration',
     description: 'High-performance electrolyte sticks in nostalgic Indian flavours. Zero sugar. One ritual.',
   },
+  impactHeadline: 'Most hydration drinks are built on sugar. Ours isn\'t.',
+  impactPoints: [
+    { n: '01', title: 'Zero Sugar, Full Spectrum', body: 'Every stick delivers a complete ionic profile — sodium, potassium, magnesium, calcium, chloride, and phosphate — without a gram of sugar.' },
+    { n: '02', title: 'Nostalgia as a Vector',     body: 'We took the flavours Indian childhoods are built on — Kala Khatta, Banta, Peach — and made them the delivery mechanism for serious hydration.' },
+    { n: '03', title: 'One Stick. Every Day.',     body: 'Consistency beats intensity. A daily ritual of one stick builds the kind of cellular hydration that compounds over weeks and months.' },
+  ],
+  ritualSteps: [
+    { n: '01', title: 'Tear & Pour',   desc: 'One stick into 250–500ml of water. Tear, pour, done.' },
+    { n: '02', title: 'Stir',          desc: '10 seconds. Dissolves clean — no clumping, no residue.' },
+    { n: '03', title: 'Drink & Track', desc: 'Sip. Feel it work. Build your daily streak.' },
+  ],
+  trustBadges: [
+    { icon: '🏛️', label: 'FSSAI Approved', sub: 'Food Safety & Standards Authority of India' },
+    { icon: '🔬', label: 'GMP Certified',   sub: 'Good Manufacturing Practice — WHO standard' },
+    { icon: '🛡️', label: 'FDA Compliant',   sub: 'Manufactured in FDA-registered facility' },
+    { icon: '🧪', label: 'Lab Tested',       sub: 'Every batch third-party tested for purity' },
+  ],
+  fallbackReviews: [
+    { name: 'Joshua Matthews',   age: 27, role: 'National Calisthenics Champion, Bangalore', rating: 5, text: "Finally a hydration drink that doesn\'t taste like a science lab. The Kala Khatta hits exactly like I remember from childhood — tangy, bold, zero guilt.",    flavor: 'Kala Khatta',      accent: '#8A307F' },
+    { name: 'Jeremiah Saji',     age: 25, role: 'Project Manager, Bangalore',                rating: 5, text: "Three weeks of morning runs. Recovery is noticeably faster, and I actually look forward to it — that\'s never happened with supplements before.",             flavor: 'Banta Lime Spark', accent: '#7AB800' },
+    { name: 'Amritanshu Jaiswal',age: 30, role: 'Founder, ScaleX, Bangalore',               rating: 5, text: "Switched from a sugar-heavy sports drink. The difference in how I feel mid-afternoon is real. No crash, just consistent energy. Peach Himalayan is my go-to.", flavor: 'Peach Himalayan',  accent: '#E8845A' },
+    { name: 'Ritika Saxena',     age: 30, role: 'Co-founder, ScaleX, Bangalore',             rating: 5, text: "The taste of Banta took me straight back to Marine Lines. Except now it\'s doing something useful. This is exactly what India-first hydration should look like.", flavor: 'Banta Lime Spark', accent: '#7AB800' },
+  ],
 };
 
 export async function fetchHomepageContent(): Promise<HomepageContent> {
@@ -218,8 +249,27 @@ export async function fetchHomepageContent(): Promise<HomepageContent> {
     const s2 = f['hero_subtext_2'] ?? DEFAULT_HOMEPAGE_CONTENT.heroSubtext2;
     const s3 = f['hero_subtext_3'] ?? DEFAULT_HOMEPAGE_CONTENT.heroSubtext3;
 
+    // Build impact points from individual fields
+    const D = DEFAULT_HOMEPAGE_CONTENT;
+    const impactPoints: ImpactPoint[] = [
+      { n: '01', title: f['impact_1_title'] ?? D.impactPoints[0].title, body: f['impact_1_body'] ?? D.impactPoints[0].body },
+      { n: '02', title: f['impact_2_title'] ?? D.impactPoints[1].title, body: f['impact_2_body'] ?? D.impactPoints[1].body },
+      { n: '03', title: f['impact_3_title'] ?? D.impactPoints[2].title, body: f['impact_3_body'] ?? D.impactPoints[2].body },
+    ];
+    const ritualSteps: RitualStep[] = [
+      { n: '01', title: f['ritual_1_title'] ?? D.ritualSteps[0].title, desc: f['ritual_1_desc'] ?? D.ritualSteps[0].desc },
+      { n: '02', title: f['ritual_2_title'] ?? D.ritualSteps[1].title, desc: f['ritual_2_desc'] ?? D.ritualSteps[1].desc },
+      { n: '03', title: f['ritual_3_title'] ?? D.ritualSteps[2].title, desc: f['ritual_3_desc'] ?? D.ritualSteps[2].desc },
+    ];
+    const trustBadges: TrustBadge[] = [
+      { icon: '🏛️', label: f['trust_1_label'] ?? D.trustBadges[0].label, sub: f['trust_1_sub'] ?? D.trustBadges[0].sub },
+      { icon: '🔬', label: f['trust_2_label'] ?? D.trustBadges[1].label, sub: f['trust_2_sub'] ?? D.trustBadges[1].sub },
+      { icon: '🛡️', label: f['trust_3_label'] ?? D.trustBadges[2].label, sub: f['trust_3_sub'] ?? D.trustBadges[2].sub },
+      { icon: '🧪', label: f['trust_4_label'] ?? D.trustBadges[3].label, sub: f['trust_4_sub'] ?? D.trustBadges[3].sub },
+    ];
+
     return {
-      heroHeadline:       f['hero_headline']         ?? DEFAULT_HOMEPAGE_CONTENT.heroHeadline,
+      heroHeadline:       f['hero_headline']         ?? D.heroHeadline,
       heroSubtext:        s1,
       heroSubtext2:       s2,
       heroSubtext3:       s3,
@@ -227,19 +277,24 @@ export async function fetchHomepageContent(): Promise<HomepageContent> {
       heroCoords,
       heroLocationTag:    `${heroCoords} · ${heroLocation}`,
       rotatingQuotes:     [s1, s2, s3].filter(Boolean),
-      stats:              parseJSON(f['stats'],         DEFAULT_HOMEPAGE_CONTENT.stats),
-      marqueeItems:       parseJSON(f['marquee_items'], DEFAULT_HOMEPAGE_CONTENT.marqueeItems),
-      ctaHeadline:        f['cta_headline']         ?? DEFAULT_HOMEPAGE_CONTENT.ctaHeadline,
-      ctaSubheadline:     f['cta_subheadline']      ?? DEFAULT_HOMEPAGE_CONTENT.ctaSubheadline,
-      ctaSubtext:         f['cta_subtext']          ?? DEFAULT_HOMEPAGE_CONTENT.ctaSubtext,
-      ctaButtonPrimary:   f['cta_button_primary']   ?? DEFAULT_HOMEPAGE_CONTENT.ctaButtonPrimary,
-      ctaButtonSecondary: f['cta_button_secondary'] ?? DEFAULT_HOMEPAGE_CONTENT.ctaButtonSecondary,
-      modalHeadline:      f['modal_headline']       ?? DEFAULT_HOMEPAGE_CONTENT.modalHeadline,
-      modalBody:          f['modal_body']           ?? DEFAULT_HOMEPAGE_CONTENT.modalBody,
+      stats:              parseJSON(f['stats'],         D.stats),
+      marqueeItems:       parseJSON(f['marquee_items'], D.marqueeItems),
+      ctaHeadline:        f['cta_headline']         ?? D.ctaHeadline,
+      ctaSubheadline:     f['cta_subheadline']      ?? D.ctaSubheadline,
+      ctaSubtext:         f['cta_subtext']          ?? D.ctaSubtext,
+      ctaButtonPrimary:   f['cta_button_primary']   ?? D.ctaButtonPrimary,
+      ctaButtonSecondary: f['cta_button_secondary'] ?? D.ctaButtonSecondary,
+      modalHeadline:      f['modal_headline']       ?? D.modalHeadline,
+      modalBody:          f['modal_body']           ?? D.modalBody,
       seo: {
-        title:       f['seo_title']       ?? DEFAULT_HOMEPAGE_CONTENT.seo.title,
-        description: f['seo_description'] ?? DEFAULT_HOMEPAGE_CONTENT.seo.description,
+        title:       f['seo_title']       ?? D.seo.title,
+        description: f['seo_description'] ?? D.seo.description,
       },
+      impactHeadline:  f['impact_headline'] ?? D.impactHeadline,
+      impactPoints,
+      ritualSteps,
+      trustBadges,
+      fallbackReviews: parseJSON(f['reviews'], D.fallbackReviews),
     };
   } catch (e) {
     console.warn('[SALTD] Homepage metaobject not set up yet, using defaults:', e);
@@ -359,10 +414,7 @@ const PRODUCT_FAQS_FALLBACK: Record<string, { q: string; a: string }[]> = {
 };
 
 export async function fetchAllProducts(): Promise<ShopifyProductFull[]> {
-  console.log('[SALTD] fetchAllProducts called');
-  let data: { products: { edges: { node: Record<string, unknown> }[] } };
-  try {
-    data = await gql<{ products: { edges: { node: Record<string, unknown> }[] } }>(`
+  const data = await gql<{ products: { edges: { node: Record<string, unknown> }[] } }>(`
     query fetchAllProducts {
       products(first: 10, sortKey: TITLE) {
         edges {
@@ -410,21 +462,6 @@ export async function fetchAllProducts(): Promise<ShopifyProductFull[]> {
       }
     }
   `);
-  } catch (e) {
-    console.error('[SALTD] fetchAllProducts gql threw:', e);
-    throw e;
-  }
-
-  // Debug: log raw API response to diagnose metafield issues
-  if (typeof window !== 'undefined') {
-    console.log('[SALTD] Raw product data from Shopify:', 
-      data.products.edges.map(({ node: p }) => ({
-        handle: p.handle,
-        metafields: p.metafields,
-      }))
-    );
-  }
-
   return data.products.edges.map(({ node: p }) => {
     // Parse metafields array returned by identifiers query
     const mfArray = (p['metafields'] as { namespace: string; key: string; value: string }[] | null) ?? [];
