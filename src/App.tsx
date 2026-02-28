@@ -40,7 +40,13 @@ function mapShopifyCart(shopifyCart: ShopifyCart): CartItem[] {
     const variantGid = node.merchandise.id;
     const localKey   = Object.entries(VARIANT_MAP).find(([, gid]) => gid === variantGid)?.[0] ?? '';
     const product    = PRODUCTS.find(p => p.variants.some(v => v.shopifyId === localKey)) ?? PRODUCTS[0];
-    const variant    = product.variants.find(v => v.shopifyId === localKey) ?? product.variants[0];
+    const baseVariant = product.variants.find(v => v.shopifyId === localKey) ?? product.variants[0];
+    // Always use Shopify's live price — never the hardcoded constant
+    const livePrice  = parseFloat(node.merchandise.priceV2.amount);
+    const variant: ProductVariant = {
+      ...baseVariant,
+      price: livePrice,
+    };
     return {
       ...product,
       selectedVariant: { ...variant, _lineId: node.id } as ProductVariant & { _lineId: string },
@@ -79,14 +85,18 @@ const App: React.FC = () => {
   const getOrCreateCart = useCallback(async (): Promise<ShopifyCart> => {
     const savedId     = localStorage.getItem(CART_ID_KEY);
     const savedExpiry = localStorage.getItem(TOKEN_EXPIRY_KEY);
-    if (savedId && savedExpiry && Date.now() < parseInt(savedExpiry)) {
+    const expiryMs    = savedExpiry ? parseInt(savedExpiry, 10) : 0;
+    const validId     = typeof savedId === 'string' && savedId.startsWith('gid://shopify/Cart/');
+    if (validId && !isNaN(expiryMs) && Date.now() < expiryMs) {
       const existing = await cartFetch(savedId);
       if (existing) return existing;
     }
     const fresh  = await cartCreate();
-    const expiry = Date.now() + 10 * 24 * 60 * 60 * 1000;
-    localStorage.setItem(CART_ID_KEY, fresh.id);
-    localStorage.setItem(TOKEN_EXPIRY_KEY, expiry.toString());
+    if (fresh.id.startsWith('gid://shopify/Cart/')) {
+      const expiry = Date.now() + 10 * 24 * 60 * 60 * 1000;
+      localStorage.setItem(CART_ID_KEY, fresh.id);
+      localStorage.setItem(TOKEN_EXPIRY_KEY, expiry.toString());
+    }
     return fresh;
   }, []);
 
