@@ -411,6 +411,20 @@ export async function fetchAllProducts(): Promise<ShopifyProductFull[]> {
     }
   `);
 
+  // Debug: log raw API response to diagnose metafield issues
+  if (typeof window !== 'undefined') {
+    console.log('[SALTD] Raw product data from Shopify:', 
+      data.products.edges.map(({ node: p }) => ({
+        handle: p.handle,
+        flavorTagline: p.flavorTagline,
+        flavorColor: p.flavorColor,
+        featuresField: p.featuresField,
+        scienceCopy: p.scienceCopy,
+        faq1Q: p.faq1Q,
+      }))
+    );
+  }
+
   return data.products.edges.map(({ node: p }) => {
     const get = (key: string): string | null =>
       ((p[key] as { value: string } | null)?.value) ?? null;
@@ -498,7 +512,8 @@ export interface ShopifyCartLine {
     id: string;
     title: string;
     priceV2: { amount: string; currencyCode: string };
-    product: { title: string; handle: string };
+    image: { url: string; altText: string | null } | null;
+    product: { title: string; handle: string; featuredImage: { url: string } | null };
   };
 }
 
@@ -528,7 +543,8 @@ const CART_FRAGMENT = `
             ... on ProductVariant {
               id title
               priceV2 { amount currencyCode }
-              product { title handle }
+              image { url altText }
+              product { title handle featuredImage { url } }
             }
           }
         }
