@@ -233,10 +233,15 @@ export async function fetchHomepageContent(): Promise<HomepageContent> {
       }
     `);
 
-    if (!data.metaobject) return DEFAULT_HOMEPAGE_CONTENT;
+    console.log('[SALTD] Homepage metaobject raw:', data.metaobject);
+    if (!data.metaobject) {
+      console.warn('[SALTD] metaobject is null — check handle and type match Shopify');
+      return DEFAULT_HOMEPAGE_CONTENT;
+    }
 
     const f: Record<string, string> = {};
     for (const field of data.metaobject.fields) f[field.key] = field.value;
+    console.log('[SALTD] Homepage fields parsed:', f);
 
     const parseJSON = <T>(raw: string | undefined, fallback: T): T => {
       if (!raw || raw.length > 50_000) return fallback;
@@ -297,7 +302,7 @@ export async function fetchHomepageContent(): Promise<HomepageContent> {
       fallbackReviews: parseJSON(f['reviews'], D.fallbackReviews),
     };
   } catch (e) {
-    console.warn('[SALTD] Homepage metaobject not set up yet, using defaults:', e);
+    console.error('[SALTD] fetchHomepageContent threw:', e);
     return DEFAULT_HOMEPAGE_CONTENT;
   }
 }
