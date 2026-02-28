@@ -47,7 +47,7 @@ function toCartProduct(sp: ShopifyProductFull): Product {
     : sp.featuredImage?.url ?? '/mockups/Mockupv2-1.png';
   return {
     id: sp.handle, name: 'SALTD.',
-    flavor: sp.flavorSubtitle ?? sp.title,
+    flavor: sp.title,  // always the Shopify product title
     color: c, bgColor: `bg-[${c}]`, textColor: `text-[${c}]`,
     description: sp.description,
     image: imgUrl,
@@ -571,7 +571,7 @@ const FlavorEditorialPanels: React.FC<{ products: ShopifyProductFull[] }> = ({ p
   const panels: EditorialPanel[] = products.length > 0
     ? products.map((sp, i) => ({
         handle:      sp.handle,
-        label:       sp.flavorSubtitle ?? sp.title,
+        label:       sp.title,
         tagline:     PANEL_FALLBACKS[i]?.tagline ?? sp.description,
         description: sp.description ?? PANEL_FALLBACKS[i]?.description ?? '',
         color:       sp.flavorColor ?? COLOR[sp.handle] ?? ACCENT,
@@ -868,7 +868,7 @@ const ReviewsSection: React.FC<{ products: ShopifyProductFull[] }> = ({ products
 
   const display = reviews.length >= 2
     ? reviews.slice(0, 4).map(r => {
-        const sp = products.find(p => (p.flavorSubtitle ?? p.title).toLowerCase().includes(r.flavor.toLowerCase()));
+        const sp = products.find(p => p.title.toLowerCase().includes(r.flavor.toLowerCase()));
         return { name: 'Verified Customer', role: r.flavor, rating: r.rating, text: r.text, flavor: r.flavor, accent: sp?.flavorColor ?? ACCENT };
       })
     : fallback;

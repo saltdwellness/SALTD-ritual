@@ -32,7 +32,7 @@ function toCartProduct(sp: ShopifyProductFull): Product {
   }));
   return {
     id: sp.handle, name: 'SALTD',
-    flavor: sp.flavorSubtitle ?? sp.title,
+    flavor: sp.title,  // always the Shopify product title
     color: accentColor, bgColor: `bg-[${accentColor}]`, textColor: `text-[${accentColor}]`,
     description: sp.description,
     image: sp.images.edges[0]?.node.url ?? '/mockups/Mockupv2-1.png',
@@ -49,7 +49,7 @@ const STATIC_PRODUCTS: ShopifyProductFull[] = [
     id: 'static-kala-khatta', handle: 'kala-khatta', title: 'Kala Khatta',
     description: 'Black plum & tamarind. Bold, tart, and loaded with the full electrolyte stack — 6 minerals, 8 vitamins, zero sugar.',
     descriptionHtml: '', productType: '', tags: [], vendor: 'SALTD.', featuredImage: null,
-    availableForSale: true, flavorSubtitle: 'Kala Khatta',
+    availableForSale: true, flavorSubtitle: 'The flavour of Indian summers. Now doing something serious.',
     flavorColor: '#8A307F' as unknown as { value: string }, flavorBg: null, flavorTagline: { value: 'Kala Khatta' },
     featuresField: { value: '["6 Electrolytes","Ashwagandha KSM-66","8 Vitamins","Zero Sugar"]' },
     scienceCopy: null, ingredientsField: null,
@@ -80,7 +80,7 @@ const STATIC_PRODUCTS: ShopifyProductFull[] = [
     id: 'static-banta-lime-spark', handle: 'banta-lime-spark', title: 'Banta Lime Spark',
     description: 'The marble-stopper soda reimagined as a clean, electric hydration ritual.',
     descriptionHtml: '', productType: '', tags: [], vendor: 'SALTD.', featuredImage: null,
-    availableForSale: true, flavorSubtitle: 'Banta Lime Spark',
+    availableForSale: true, flavorSubtitle: 'The marble-stopper soda. Reimagined as a hydration system.',
     flavorColor: '#7AB800' as unknown as { value: string }, flavorBg: null, flavorTagline: { value: 'Banta Lime Spark' },
     featuresField: { value: '["6 Electrolytes","Vitamin B12","8 Vitamins","Zero Sugar"]' },
     scienceCopy: null, ingredientsField: null,
@@ -111,7 +111,7 @@ const STATIC_PRODUCTS: ShopifyProductFull[] = [
     id: 'static-peach-himalayan', handle: 'peach-himalayan', title: 'Peach Himalayan',
     description: 'Soft, warm, grounded. The evening ritual. Elevated magnesium (150mg) for recovery and sleep.',
     descriptionHtml: '', productType: '', tags: [], vendor: 'SALTD.', featuredImage: null,
-    availableForSale: true, flavorSubtitle: 'Peach Himalayan',
+    availableForSale: true, flavorSubtitle: 'Soft. Warm. Your evening ritual.',
     flavorColor: '#E8845A' as unknown as { value: string }, flavorBg: null, flavorTagline: { value: 'Peach Himalayan' },
     featuresField: { value: '["6 Electrolytes","High Magnesium","8 Vitamins","Zero Sugar"]' },
     scienceCopy: null, ingredientsField: null,
@@ -188,7 +188,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart }) => {
           return match ?? live.variants[0];
         });
         setSEO({
-          title: `${found.seo?.title ?? (found.flavorSubtitle ?? found.title)} — SALTD. Ritual Hydration`,
+          title: `${found.seo?.title ?? found.title} — SALTD. Ritual Hydration`,
           description: found.seo?.description ?? found.description,
           ogImage: found.images.edges[0]?.node.url,
         });
@@ -478,7 +478,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart }) => {
                     </div>
                     <div className="flex flex-col justify-center px-6 py-5 gap-1">
                       <p className="text-[8px] font-black uppercase tracking-[0.5em]" style={{ color: op_accent }}>SALTD.</p>
-                      <h3 className="text-base font-black text-[#1A1A1A]">"{op.flavorSubtitle ?? op.title}"</h3>
+                      <h3 className="text-base font-black text-[#1A1A1A]">"{op.title}"</h3>
                       <p className="text-xs text-black/45 font-medium leading-relaxed mt-1 line-clamp-2">{op.description}</p>
                       <p className="text-sm font-black text-[#1A1A1A] mt-2">₹{op_price.toFixed(0)} <span className="text-[9px] text-black/30 font-medium">/ pack</span></p>
                     </div>

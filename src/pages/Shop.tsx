@@ -35,7 +35,7 @@ function toCartProduct(sp: ShopifyProductFull): Product {
   }));
   return {
     id: sp.handle, name: 'SALTD',
-    flavor: sp.flavorSubtitle ?? sp.title,
+    flavor: sp.title,  // always the Shopify product title
     color: accentColor, bgColor: `bg-[${accentColor}]`, textColor: `text-[${accentColor}]`,
     description: sp.description,
     image: sp.images.edges[0]?.node.url ?? '/mockups/Mockupv2-1.png',
@@ -54,7 +54,7 @@ const STATIC_PRODUCTS: ShopifyProductFull[] = [
     title: 'Kala Khatta',
     description: 'Black plum & tamarind. Bold, tart, and loaded with the full electrolyte stack — 6 minerals, 8 vitamins, zero sugar. The flavour of Indian summers, now doing something serious.',
     availableForSale: true,
-    flavorSubtitle: 'Kala Khatta',
+    flavorSubtitle: 'The flavour of Indian summers. Now doing something serious.',
     flavorColor: '#8A307F',
     flavorBg: null,
     features: ['6 Electrolytes', 'Ashwagandha KSM-66', '8 Vitamins', 'Zero Sugar'],
@@ -73,7 +73,7 @@ const STATIC_PRODUCTS: ShopifyProductFull[] = [
     title: 'Banta Lime Spark',
     description: 'The marble-stopper soda you grew up with — reimagined as a clean, electric hydration ritual. Citric acid enhances mineral absorption. B12 for a cognitive edge.',
     availableForSale: true,
-    flavorSubtitle: 'Banta Lime Spark',
+    flavorSubtitle: 'The marble-stopper soda. Reimagined as a hydration system.',
     flavorColor: '#7AB800',
     flavorBg: null,
     features: ['6 Electrolytes', 'Vitamin B12', '8 Vitamins', 'Zero Sugar'],
@@ -92,7 +92,7 @@ const STATIC_PRODUCTS: ShopifyProductFull[] = [
     title: 'Peach Himalayan',
     description: 'Soft, warm, grounded. The evening ritual. Elevated magnesium (150mg) for recovery and sleep quality. Himalayan pink salt for trace minerals beyond standard electrolytes.',
     availableForSale: true,
-    flavorSubtitle: 'Peach Himalayan',
+    flavorSubtitle: 'Soft. Warm. Your evening ritual.',
     flavorColor: '#E8845A',
     flavorBg: null,
     features: ['6 Electrolytes', 'High Magnesium', '8 Vitamins', 'Zero Sugar'],
@@ -131,8 +131,7 @@ const ProductSection: React.FC<{
   const prodImg   = allImages[imgIdx] ?? allImages[0] ?? '/mockups/Mockupv2-1.png';
   const variantNode = sp.variants.edges.find(e => e.node.title === selected.label)?.node;
   const inStock   = variantNode?.availableForSale ?? sp.availableForSale;
-  const qty       = variantNode?.quantityAvailable;
-  const isLowStock = qty != null && qty > 0 && qty <= 5;
+  // quantityAvailable removed — requires unauthenticated_read_product_inventory scope
   const compareAt  = variantNode?.compareAtPrice ? parseFloat(variantNode.compareAtPrice.amount) : null;
   // Always read prices from Shopify nodes — single source of truth
   const livePrice = (label: string, fallbackIdx?: number): number => {
@@ -235,7 +234,7 @@ const ProductSection: React.FC<{
             <div className="flex items-baseline gap-3 mb-4">
               <span className="text-[2.2rem] font-black tracking-[-0.04em] text-[#1A1A1A]">₹{(livePrice(selected.label, product.variants.indexOf(selected)) || selected.price).toFixed(0)}</span>
               {compareAt && compareAt > selected.price && <span className="text-base text-black/30 line-through font-medium">₹{compareAt.toFixed(0)}</span>}
-              {isLowStock && <span className="text-xs font-black text-red-500 uppercase tracking-widest">Only {qty} left</span>}
+
             </div>
             <div className="flex gap-3">
               <button onClick={() => inStock && handleAdd(selected)} disabled={!inStock}
