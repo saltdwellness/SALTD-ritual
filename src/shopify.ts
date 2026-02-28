@@ -390,20 +390,20 @@ export async function fetchAllProducts(): Promise<ShopifyProductFull[]> {
 
             # ── All metafields via identifiers — works without Storefront API toggle ──
             metafields(identifiers: [
-              {namespace: "saltd", key: "flavor_tagline"},
-              {namespace: "saltd", key: "flavor_color"},
-              {namespace: "saltd", key: "flavor_bg"},
-              {namespace: "saltd", key: "features"},
-              {namespace: "saltd", key: "science_copy"},
-              {namespace: "saltd", key: "ingredients"},
-              {namespace: "saltd", key: "faq_1_q"},
-              {namespace: "saltd", key: "faq_1_a"},
-              {namespace: "saltd", key: "faq_2_q"},
-              {namespace: "saltd", key: "faq_2_a"},
-              {namespace: "saltd", key: "faq_3_q"},
-              {namespace: "saltd", key: "faq_3_a"},
-              {namespace: "saltd", key: "faq_4_q"},
-              {namespace: "saltd", key: "faq_4_a"}
+              {namespace: "custom", key: "saltd_flavor_tagline"},
+              {namespace: "custom", key: "saltd_flavor_color"},
+              {namespace: "custom", key: "saltd_flavor_bg"},
+              {namespace: "custom", key: "saltd_features"},
+              {namespace: "custom", key: "saltd_science_copy"},
+              {namespace: "custom", key: "saltd_ingredients"},
+              {namespace: "custom", key: "saltd_faq_1_q"},
+              {namespace: "custom", key: "saltd_faq_1_a"},
+              {namespace: "custom", key: "saltd_faq_2_q"},
+              {namespace: "custom", key: "saltd_faq_2_a"},
+              {namespace: "custom", key: "saltd_faq_3_q"},
+              {namespace: "custom", key: "saltd_faq_3_a"},
+              {namespace: "custom", key: "saltd_faq_4_q"},
+              {namespace: "custom", key: "saltd_faq_4_a"}
             ]) { namespace key value }
           }
         }
@@ -439,20 +439,20 @@ export async function fetchAllProducts(): Promise<ShopifyProductFull[]> {
     const handle = p.handle as string;
 
     const features = parseJSON<string[]>(
-      get('features'),
+      get('saltd_features'),
       ['6 Electrolytes', 'Infused Ashwagandha', 'All 8 Vitamins', 'Zero Sugar']
     );
 
     const ingredients = parseJSON<{ name: string; amount: string; role: string }[]>(
-      get('ingredients'),
+      get('saltd_ingredients'),
       PRODUCT_INGREDIENTS_FALLBACK[handle] ?? PRODUCT_INGREDIENTS_FALLBACK['kala-khatta']
     );
 
     // Build FAQs — from individual metafields, fall back to hardcoded
     const liveFaqs: { q: string; a: string }[] = [];
     for (let i = 1; i <= 4; i++) {
-      const q = get(`faq_${i}_q`);
-      const a = get(`faq_${i}_a`);
+      const q = get(`saltd_faq_${i}_q`);
+      const a = get(`saltd_faq_${i}_a`);
       if (q && a) liveFaqs.push({ q, a });
     }
     const faqs = liveFaqs.length > 0
@@ -460,16 +460,16 @@ export async function fetchAllProducts(): Promise<ShopifyProductFull[]> {
       : (PRODUCT_FAQS_FALLBACK[handle] ?? PRODUCT_FAQS_FALLBACK['kala-khatta']);
 
     // flavorColor and flavorBg now come via get() from the metafields array
-    const rawFlavorColor = get('flavor_color');
-    const rawFlavorBg    = get('flavor_bg');
+    const rawFlavorColor = get('saltd_flavor_color');
+    const rawFlavorBg    = get('saltd_flavor_bg');
 
     return {
       ...(p as Omit<ShopifyProductFull, 'flavorSubtitle' | 'features' | 'scienceText' | 'ingredients' | 'faqs' | 'flavorColor' | 'flavorBg'>),
       flavorColor:   rawFlavorColor,
       flavorBg:      rawFlavorBg,
-      flavorSubtitle: get('flavor_tagline'),
+      flavorSubtitle: get('saltd_flavor_tagline'),
       features,
-      scienceText: get('science_copy') ?? (PRODUCT_SCIENCE_FALLBACK[handle] ?? PRODUCT_SCIENCE_FALLBACK['kala-khatta']),
+      scienceText: get('saltd_science_copy') ?? (PRODUCT_SCIENCE_FALLBACK[handle] ?? PRODUCT_SCIENCE_FALLBACK['kala-khatta']),
       ingredients,
       faqs,
     } as ShopifyProductFull;
