@@ -21,12 +21,7 @@ const BG_MAP: Record<string, string> = {
 };
 
 function toCartProduct(sp: ShopifyProductFull): Product {
-  const rawColor = sp.flavorColor as unknown;
-  const accentColor: string =
-    (rawColor && typeof rawColor === 'object' && 'value' in (rawColor as object))
-      ? (rawColor as { value: string }).value
-      : typeof rawColor === 'string' ? rawColor
-      : HANDLE_COLOR_FALLBACK[sp.handle] ?? '#2E5BFF';
+  const accentColor: string = (typeof sp.flavorColor === 'string' ? sp.flavorColor : null) ?? HANDLE_COLOR_FALLBACK[sp.handle] ?? '#2E5BFF';
   const variants: ProductVariant[] = sp.variants.edges.map(({ node: v }) => ({
     size:           parseInt(v.title.match(/\((\d+)\)/)?.[1] ?? '10', 10),
     label:          v.title,
@@ -79,7 +74,6 @@ const STATIC_PRODUCTS: ShopifyProductFull[] = [
     variants: { edges: [
       { node: { id: 'variant_kalakhatta_10',  title: 'Ritual Pack (10 sticks)',    price: { amount: '299', currencyCode: 'INR' }, compareAtPrice: { amount: '349', currencyCode: 'INR' }, availableForSale: true, quantityAvailable: 50, sku: null } },
       { node: { id: 'variant_kalakhatta_30',  title: 'Month Supply (30 sticks)',   price: { amount: '799', currencyCode: 'INR' }, compareAtPrice: { amount: '999', currencyCode: 'INR' }, availableForSale: true, quantityAvailable: 30, sku: null } },
-      { node: { id: 'variant_kalakhatta_sub', title: 'Monthly Ritual (30 sticks)', price: { amount: '719', currencyCode: 'INR' }, compareAtPrice: null, availableForSale: true, quantityAvailable: 99, sku: null } },
     ] }, seo: { title: null, description: null },
   },
   {
@@ -111,7 +105,6 @@ const STATIC_PRODUCTS: ShopifyProductFull[] = [
     variants: { edges: [
       { node: { id: 'variant_banta_10',  title: 'Ritual Pack (10 sticks)',    price: { amount: '299', currencyCode: 'INR' }, compareAtPrice: { amount: '349', currencyCode: 'INR' }, availableForSale: true, quantityAvailable: 50, sku: null } },
       { node: { id: 'variant_banta_30',  title: 'Month Supply (30 sticks)',   price: { amount: '799', currencyCode: 'INR' }, compareAtPrice: { amount: '999', currencyCode: 'INR' }, availableForSale: true, quantityAvailable: 30, sku: null } },
-      { node: { id: 'variant_banta_sub', title: 'Monthly Ritual (30 sticks)', price: { amount: '719', currencyCode: 'INR' }, compareAtPrice: null, availableForSale: true, quantityAvailable: 99, sku: null } },
     ] }, seo: { title: null, description: null },
   },
   {
@@ -143,7 +136,6 @@ const STATIC_PRODUCTS: ShopifyProductFull[] = [
     variants: { edges: [
       { node: { id: 'variant_peach_10',  title: 'Ritual Pack (10 sticks)',    price: { amount: '299', currencyCode: 'INR' }, compareAtPrice: { amount: '349', currencyCode: 'INR' }, availableForSale: true, quantityAvailable: 50, sku: null } },
       { node: { id: 'variant_peach_30',  title: 'Month Supply (30 sticks)',   price: { amount: '799', currencyCode: 'INR' }, compareAtPrice: { amount: '999', currencyCode: 'INR' }, availableForSale: true, quantityAvailable: 30, sku: null } },
-      { node: { id: 'variant_peach_sub', title: 'Monthly Ritual (30 sticks)', price: { amount: '719', currencyCode: 'INR' }, compareAtPrice: null, availableForSale: true, quantityAvailable: 99, sku: null } },
     ] }, seo: { title: null, description: null },
   },
 ] as unknown as ShopifyProductFull[];
@@ -306,8 +298,8 @@ const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart }) => {
                       <span className="text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full text-white" style={{ background: accentColor }}>Best Value</span>
                     </div>
                     <div>
-                      <p className="text-xs font-black uppercase tracking-[0.2em]">Month Supply — 30 sticks</p>
-                      <p className="text-[9px] font-medium mt-0.5" style={{ color: selected.shopifyId === oneTime30.shopifyId ? 'rgba(255,255,255,0.45)' : 'rgba(0,0,0,0.35)' }}>One-time · Full month</p>
+                      <p className="text-xs font-black uppercase tracking-[0.2em]">Monthly Ritual — 30 sticks</p>
+                      <p className="text-[9px] font-medium mt-0.5" style={{ color: selected.shopifyId === oneTime30.shopifyId ? 'rgba(255,255,255,0.45)' : 'rgba(0,0,0,0.35)' }}>30 sticks · Full month</p>
                     </div>
                     <span className="text-lg font-black">₹{oneTime30.price.toFixed(0)}</span>
                   </button>
@@ -324,7 +316,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart }) => {
                       </div>
                       <div>
                         <p className="text-xs font-black uppercase tracking-[0.2em]">Monthly Ritual — 30 sticks</p>
-                        <p className="text-[9px] font-medium mt-0.5" style={{ color: selected.shopifyId === subVariant.shopifyId ? 'rgba(255,255,255,0.45)' : 'rgba(0,0,0,0.35)' }}>One-time · Full month supply</p>
+                        <p className="text-[9px] font-medium mt-0.5" style={{ color: selected.shopifyId === subVariant.shopifyId ? 'rgba(255,255,255,0.45)' : 'rgba(0,0,0,0.35)' }}>30 sticks · Full month supply</p>
                       </div>
                       <span className="text-lg font-black">₹{subVariant.price.toFixed(0)}</span>
                     </button>
@@ -341,7 +333,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart }) => {
                 <button onClick={() => inStock && handleAdd(selected)} disabled={!inStock}
                   className="w-full py-4 text-xs font-black uppercase tracking-[0.35em] rounded-2xl transition-all duration-300 active:scale-[0.98] disabled:opacity-40 mb-3"
                   style={{ background: added ? '#1A1A1A' : accentColor, color:'white' }}>
-                  {added ? '✓ Added to Bag' : inStock ? 'Add to Bag' : 'Out of Stock'}
+                  {added ? '✓ Pre-order Placed' : inStock ? 'Pre-order Now' : 'Out of Stock'}
                 </button>
                 <div className="flex flex-wrap gap-4 justify-center">
                   {['Free Shipping','Secure Checkout','Easy Returns'].map(t => (

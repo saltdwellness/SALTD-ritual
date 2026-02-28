@@ -189,7 +189,7 @@ const RotatingQuote: React.FC<{ quotes: string[]; loaded: boolean }> = ({ quotes
         <p className="text-base text-[#1A1A1A]/70 font-medium leading-relaxed" style={{ display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
           "{q.text}"
         </p>
-        {q.author && <p className="text-xs font-black uppercase tracking-[0.4em] mt-1.5" style={{ color: ACCENT }}>— {q.author} customer</p>}
+
       </div>
     </div>
   );
@@ -297,7 +297,6 @@ const Hero: React.FC<{ content: HomepageContent; firstProduct: ShopifyProductFul
             <p className="text-base font-medium leading-relaxed" style={{ color: 'rgba(26,26,26,0.70)' }}>
               "Finally a hydration drink that actually tastes like something — not a lab experiment."
             </p>
-            <p className="text-[10px] font-black uppercase tracking-[0.4em] mt-2" style={{ color: ACCENT }}>— Joshua Matthews, 27 · Verified Customer</p>
           </div>
 
           {/* CTAs — stack on very small screens */}
@@ -383,11 +382,11 @@ const getStatIcon = (label: string): React.ReactNode => {
 };
 
 const StatsBar: React.FC<{ stats: StatItem[] }> = ({ stats }) => (
-  <section className="bg-[#1A1A1A] py-12 md:py-20 px-5 md:px-12">
+  <section className="bg-[#1A1A1A] py-8 md:py-16 px-5 md:px-12">
     <div className="max-w-[1440px] mx-auto grid grid-cols-2 md:grid-cols-4">
       {stats.map((x, i) => (
         <Reveal key={x.label} delay={i * 0.06}>
-          <div className={`flex flex-col px-5 py-6 ${i < 3 ? 'md:border-r border-white/[0.07]' : ''} ${i < 2 ? 'border-b md:border-b-0 border-white/[0.07]' : ''}`}>
+          <div className={`flex flex-col px-4 py-5 ${i < 3 ? 'md:border-r border-white/[0.07]' : ''} ${i < 2 ? 'border-b md:border-b-0 border-white/[0.07]' : ''}`}>
             <div className="mb-3 opacity-90">{getStatIcon(x.label)}</div>
             <span className="text-[2.4rem] md:text-[3.5rem] font-black text-white tracking-[-0.04em] leading-none">{x.number}</span>
             <span className="text-xs sm:text-sm font-black uppercase tracking-[0.28em] mt-3" style={{ color: ACCENT }}>{x.label}</span>
@@ -464,7 +463,7 @@ const SingleEditorialPanel: React.FC<{ panel: EditorialPanel; index: number }> =
           className="w-full h-full object-cover object-center"
           style={{
             // On mobile opacity is lower so text is always readable without needing huge overlay
-            opacity: visible ? 0.18 : 0.05,
+            opacity: visible ? 0.28 : 0.05,
             filter: `saturate(0.85) brightness(0.92)`,
             transition: 'opacity 1.1s cubic-bezier(0.16,1,0.3,1)',
           }}
@@ -474,15 +473,15 @@ const SingleEditorialPanel: React.FC<{ panel: EditorialPanel; index: number }> =
       {/* ── Gradient overlays for text readability ── */}
       <div className="absolute inset-0 pointer-events-none" aria-hidden style={{
         background: isEven
-          ? `linear-gradient(to right, rgba(255,255,255,0.97) 0%, rgba(255,255,255,0.88) 42%, rgba(255,255,255,0.4) 72%, transparent 100%)`
-          : `linear-gradient(to left,  rgba(255,255,255,0.97) 0%, rgba(255,255,255,0.88) 42%, rgba(255,255,255,0.4) 72%, transparent 100%)`,
+          ? `linear-gradient(to right, rgba(255,255,255,0.88) 0%, rgba(255,255,255,0.70) 40%, rgba(255,255,255,0.18) 68%, transparent 100%)`
+          : `linear-gradient(to left,  rgba(255,255,255,0.88) 0%, rgba(255,255,255,0.70) 40%, rgba(255,255,255,0.18) 68%, transparent 100%)`,
       }} />
       {/* Mobile: extra full overlay */}
       <div className="md:hidden absolute inset-0 pointer-events-none" aria-hidden
-        style={{ background: 'rgba(255,255,255,0.35)' }} />
+        style={{ background: 'rgba(255,255,255,0.15)' }} />
       {/* Bottom blend */}
       <div className="absolute bottom-0 inset-x-0 h-24 pointer-events-none" aria-hidden
-        style={{ background: 'linear-gradient(to bottom, transparent, rgba(255,255,255,0.75))' }} />
+        style={{ background: 'linear-gradient(to bottom, transparent, rgba(255,255,255,0.45))' }} />
 
       {/* Accent top line */}
       <div className="absolute top-0 inset-x-0 h-[2px]" style={{ background: `linear-gradient(to right, ${panel.color}, transparent)`, opacity: 0.6 }} />
@@ -490,7 +489,7 @@ const SingleEditorialPanel: React.FC<{ panel: EditorialPanel; index: number }> =
       {/* ── Content ──
            Mobile: centered, full-width, generous vertical padding
            Desktop: left or right aligned per isEven, max 560px wide  */}
-      <div className={`relative z-10 max-w-[1440px] mx-auto px-5 sm:px-8 md:px-16 py-20 md:py-28 flex ${isEven ? 'md:justify-start' : 'md:justify-end'} justify-start`}>
+      <div className={`relative z-10 max-w-[1440px] mx-auto px-5 sm:px-8 md:px-16 py-12 md:py-24 flex ${isEven ? 'md:justify-start' : 'md:justify-end'} justify-start`}>
         <div className="w-full md:max-w-[540px]"
           style={{
             opacity:    visible ? 1 : 0,
@@ -569,7 +568,7 @@ const FlavorEditorialPanels: React.FC<{ products: ShopifyProductFull[] }> = ({ p
   return (
     <section>
       {/* ── Flavours intro header ── */}
-      <div className="bg-[#FAFAF8] px-5 md:px-12 pt-20 pb-10 md:pt-28 md:pb-12">
+      <div className="bg-[#FAFAF8] px-5 md:px-12 pt-12 pb-6 md:pt-20 md:pb-10">
         <div className="max-w-[1440px] mx-auto">
           <Reveal>
             <p className="text-xs font-black uppercase tracking-[0.6em] mb-4" style={{ color: ACCENT }}>
@@ -596,7 +595,7 @@ const FlavorEditorialPanels: React.FC<{ products: ShopifyProductFull[] }> = ({ p
 
 // ─── Impact Statement ─────────────────────────────────────────────
 const ImpactStatement: React.FC = () => (
-  <section className="bg-[#1A1A1A] py-20 md:py-28 px-5 md:px-12 overflow-hidden">
+  <section className="bg-[#1A1A1A] py-12 md:py-24 px-5 md:px-12 overflow-hidden">
     <div className="max-w-[1440px] mx-auto">
       <Reveal>
         <p className="text-sm font-black uppercase tracking-[0.6em] mb-7" style={{ color: ACCENT }}>The Foundation</p>
@@ -616,7 +615,7 @@ const ImpactStatement: React.FC = () => (
               { n: '02', title: 'Nostalgia as a Vector',     body: 'We took the flavours Indian childhoods are built on — Kala Khatta, Banta, Peach — and made them the delivery mechanism for serious hydration.' },
               { n: '03', title: 'One Stick. Every Day.',     body: 'Consistency beats intensity. A daily ritual of one stick builds the kind of cellular hydration that compounds over weeks and months.' },
             ].map(item => (
-              <div key={item.n} className="flex gap-5 pb-7 border-b last:border-0 last:pb-0" style={{ borderColor: 'rgba(255,255,255,0.07)' }}>
+              <div key={item.n} className="flex gap-4 pb-5 border-b last:border-0 last:pb-0" style={{ borderColor: 'rgba(255,255,255,0.07)' }}>
                 <span className="text-sm font-black uppercase tracking-[0.4em] mt-1 shrink-0 w-6" style={{ color: ACCENT }}>{item.n}</span>
                 <div>
                   <h3 className="text-xl font-black text-white mb-2">{item.title}</h3>
@@ -648,11 +647,11 @@ const ProductShelf: React.FC<{ products: ShopifyProductFull[]; onAddToCart: (p: 
   }, [onAddToCart]);
 
   return (
-    <section className="py-14 md:py-24 bg-[#FAFAF8]">
-      <div className="px-5 md:px-12 mb-10 md:mb-14 max-w-[1440px] mx-auto">
+    <section className="py-10 md:py-20 bg-[#FAFAF8]">
+      <div className="px-5 md:px-12 mb-7 md:mb-12 max-w-[1440px] mx-auto">
         <Reveal>
           <p className="text-sm font-black uppercase tracking-[0.6em] mb-3" style={{ color: ACCENT }}>01 — "STANDARD SERIES"</p>
-          <h2 className="font-black tracking-[-0.04em] text-[#1A1A1A] leading-[0.95] mb-4"
+          <h2 className="font-black tracking-[-0.04em] text-[#1A1A1A] leading-[0.95] mb-3"
             style={{ fontSize: 'clamp(2rem, 5vw, 4.2rem)' }}>
             Our Flavours.
           </h2>
@@ -674,7 +673,7 @@ const ProductShelf: React.FC<{ products: ShopifyProductFull[]; onAddToCart: (p: 
           return (
             <Reveal key={sp.id} delay={i * 0.07}>
               <div className="rounded-3xl overflow-hidden flex flex-col" style={{ boxShadow: '0 2px 20px rgba(0,0,0,0.07)' }}>
-                <div className="relative overflow-hidden" style={{ background: bg, height: 280 }}>
+                <div className="relative overflow-hidden" style={{ background: bg, height: 240 }}>
                   <div className="absolute top-3.5 left-3.5 flex flex-wrap gap-2 z-10">
                     {p.features.slice(0, 2).map(f => (
                       <span key={f} className="text-xs font-black uppercase tracking-wide px-2.5 py-1 rounded-full"
@@ -684,7 +683,7 @@ const ProductShelf: React.FC<{ products: ShopifyProductFull[]; onAddToCart: (p: 
                   <img src={img} alt={sp.title} className="w-full h-full object-contain"
                     style={{ filter: `drop-shadow(0 20px 44px ${col}35)` }} />
                 </div>
-                <div className="bg-white px-5 py-6 flex flex-col gap-4 flex-1">
+                <div className="bg-white px-4 py-4 flex flex-col gap-3 flex-1">
                   <div>
                     <p className="text-xs font-black uppercase tracking-[0.5em] mb-1" style={{ color: 'rgba(26,26,26,0.35)' }}>SALTD.</p>
                     <h3 className="text-xl font-black text-[#1A1A1A] tracking-[-0.02em] mb-2">"{p.flavor}"</h3>
@@ -718,7 +717,7 @@ const ProductShelf: React.FC<{ products: ShopifyProductFull[]; onAddToCart: (p: 
                 <img src={f.img} alt={f.label} className="w-full h-full object-contain"
                   style={{ filter: `drop-shadow(0 20px 44px ${f.color}35)` }} />
               </div>
-              <div className="bg-white px-5 py-6 flex flex-col gap-4 flex-1">
+              <div className="bg-white px-4 py-4 flex flex-col gap-3 flex-1">
                 <div>
                   <p className="text-xs font-black uppercase tracking-[0.5em] mb-1" style={{ color: 'rgba(26,26,26,0.35)' }}>SALTD.</p>
                   <h3 className="text-xl font-black text-[#1A1A1A] tracking-[-0.02em] mb-2">"{f.label}"</h3>
@@ -744,9 +743,9 @@ const ProductShelf: React.FC<{ products: ShopifyProductFull[]; onAddToCart: (p: 
 
 // ─── How It Works ─────────────────────────────────────────────────
 const HomeFAQSection: React.FC = () => (
-  <section className="py-24 md:py-32 bg-white">
-    <div className="max-w-[900px] mx-auto px-6 md:px-12">
-      <div className="text-center mb-14">
+  <section className="py-12 md:py-24 bg-white">
+    <div className="max-w-[900px] mx-auto px-5 md:px-12">
+      <div className="text-center mb-7">
         <p className="text-xs font-black uppercase tracking-[0.5em] mb-4" style={{ color: ACCENT }}>"Answers"</p>
         <h2
           className="font-black text-[#0D0D10] leading-[1.0] tracking-[-0.04em] mb-4"
@@ -798,30 +797,26 @@ const RITUAL_ICONS = [
 ];
 
 const HowItWorks: React.FC = () => (
-  <section className="py-18 md:py-28 px-5 md:px-12 bg-[#FAFAF8]">
+  <section className="py-10 md:py-16 px-5 md:px-12 bg-[#FAFAF8]">
     <div className="max-w-[1440px] mx-auto">
       <Reveal>
-        <p className="text-sm font-black uppercase tracking-[0.6em] mb-4" style={{ color: ACCENT }}>02 — "THE RITUAL"</p>
-        <h2 className="font-black tracking-[-0.04em] text-[#1A1A1A] leading-[0.95] mb-12"
-          style={{ fontSize: 'clamp(2rem, 5vw, 3.8rem)' }}>
-          How it<br /><span style={{ color: 'rgba(26,26,26,0.16)' }}>works.</span>
-        </h2>
+        <p className="text-xs font-black uppercase tracking-[0.5em] mb-6" style={{ color: ACCENT }}>02 — "THE RITUAL"</p>
       </Reveal>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+      <div className="grid grid-cols-3 gap-3 md:gap-5">
         {[
-          { n: '01', t: '"Tear & Pour"',   d: 'One stick into 250–500ml of water. No measuring, no tools. Just tear, pour, done.' },
-          { n: '02', t: '"Stir"',          d: '10 seconds. Watch it dissolve clean and clear — no clumping, no residue.' },
-          { n: '03', t: '"Drink & Track"', d: 'Sip. Feel it work. Track your daily ritual and build your streak.' },
+          { n: '01', t: 'Tear & Pour',   d: 'One stick into 250–500ml of water. Tear, pour, done.' },
+          { n: '02', t: 'Stir',          d: '10 seconds. Dissolves clean — no clumping, no residue.' },
+          { n: '03', t: 'Drink & Track', d: 'Sip. Feel it work. Build your daily streak.' },
         ].map((s, i) => (
-          <Reveal key={s.n} delay={i * 0.09}>
-            <div className="flex flex-col gap-5 p-7 rounded-3xl border border-[#1A1A1A]/[0.07] bg-white">
-              <div className="w-14 h-14 rounded-2xl flex items-center justify-center" style={{ background: `${ACCENT}0D` }}>
+          <Reveal key={s.n} delay={i * 0.07}>
+            <div className="flex flex-col gap-3 p-4 md:p-5 rounded-2xl border border-[#1A1A1A]/[0.07] bg-white">
+              <div className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0" style={{ background: `${ACCENT}0D` }}>
                 {RITUAL_ICONS[i]}
               </div>
               <div>
-                <p className="text-[10px] font-black uppercase tracking-[0.5em] mb-2" style={{ color: ACCENT }}>{s.n}</p>
-                <h3 className="text-2xl font-black text-[#1A1A1A] mb-2">{s.t}</h3>
-                <p className="text-base font-medium leading-relaxed" style={{ color: 'rgba(26,26,26,0.60)' }}>{s.d}</p>
+                <p className="text-[9px] font-black uppercase tracking-[0.4em] mb-1" style={{ color: ACCENT }}>{s.n}</p>
+                <h3 className="text-sm md:text-base font-black text-[#1A1A1A] mb-1">{s.t}</h3>
+                <p className="text-xs font-medium leading-relaxed hidden md:block" style={{ color: 'rgba(26,26,26,0.55)' }}>{s.d}</p>
               </div>
             </div>
           </Reveal>
@@ -858,11 +853,11 @@ const ReviewsSection: React.FC<{ products: ShopifyProductFull[] }> = ({ products
     : fallback;
 
   return (
-    <section className="py-20 md:py-28 bg-[#F4F4F2]">
+    <section className="py-12 md:py-24 bg-[#F4F4F2]">
       <div className="max-w-[1440px] mx-auto px-5 md:px-12">
         <Reveal>
           <p className="text-sm font-black uppercase tracking-[0.6em] mb-4" style={{ color: ACCENT }}>03 — "REAL RESULTS"</p>
-          <div className="flex flex-wrap items-end justify-between gap-4 mb-12">
+          <div className="flex flex-wrap items-end justify-between gap-3 mb-8">
             <h2 className="font-black tracking-[-0.04em] text-[#1A1A1A] leading-[0.95]"
               style={{ fontSize: 'clamp(2rem, 5vw, 4rem)' }}>
               What people<br /><span style={{ color: 'rgba(26,26,26,0.16)' }}>are saying.</span>
@@ -877,7 +872,7 @@ const ReviewsSection: React.FC<{ products: ShopifyProductFull[] }> = ({ products
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
           {display.map((r, i) => (
             <Reveal key={i} delay={i * 0.07}>
-              <div className="rounded-3xl p-7 flex flex-col gap-5" style={{ background: '#FFFFFF', border: '1px solid rgba(0,0,0,0.07)' }}>
+              <div className="rounded-2xl p-5 flex flex-col gap-4" style={{ background: '#FFFFFF', border: '1px solid rgba(0,0,0,0.07)' }}>
                 <div className="flex items-start justify-between gap-3 flex-wrap">
                   <div className="flex gap-0.5">{[1,2,3,4,5].map(s => (
                     <span key={s} className="text-xl leading-none" style={{ color: s <= r.rating ? r.accent : 'rgba(255,255,255,0.1)' }}>★</span>
@@ -916,10 +911,10 @@ const ReviewsSection: React.FC<{ products: ShopifyProductFull[] }> = ({ products
 
 // ─── Trust Badges ─────────────────────────────────────────────────
 const TrustBadges: React.FC = () => (
-  <section className="py-14 md:py-24 px-5 md:px-12 bg-white border-y border-black/[0.06]">
+  <section className="py-10 md:py-20 px-5 md:px-12 bg-white border-y border-black/[0.06]">
     <div className="max-w-[1440px] mx-auto">
       <Reveal>
-        <p className="text-sm font-black uppercase tracking-[0.6em] text-center mb-10" style={{ color: ACCENT }}>Made to standards that matter</p>
+        <p className="text-sm font-black uppercase tracking-[0.6em] text-center mb-7" style={{ color: ACCENT }}>Made to standards that matter</p>
       </Reveal>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
         {[
@@ -929,7 +924,7 @@ const TrustBadges: React.FC = () => (
           { icon: '🧪', label: 'Lab Tested',       sub: 'Every batch third-party tested for purity' },
         ].map((b, i) => (
           <Reveal key={b.label} delay={i * 0.06}>
-            <div className="flex flex-col items-center text-center gap-3 p-5 md:p-7 rounded-3xl border border-black/[0.07]">
+            <div className="flex flex-col items-center text-center gap-2 p-4 md:p-6 rounded-2xl border border-black/[0.07]">
               <span className="text-3xl md:text-4xl">{b.icon}</span>
               <div>
                 <p className="text-sm md:text-base font-black text-[#1A1A1A]">{b.label}</p>
@@ -945,7 +940,7 @@ const TrustBadges: React.FC = () => (
 
 // ─── Final CTA ────────────────────────────────────────────────────
 const FinalCTA: React.FC<{ content: HomepageContent }> = ({ content }) => (
-  <section className="py-20 md:py-32 px-5 md:px-12 relative overflow-hidden" style={{ background: ACCENT }}>
+  <section className="py-14 md:py-28 px-5 md:px-12 relative overflow-hidden" style={{ background: ACCENT }}>
     <div className="absolute inset-0 pointer-events-none opacity-[0.05]" aria-hidden
       style={{ backgroundImage: 'linear-gradient(white 1px,transparent 1px),linear-gradient(90deg,white 1px,transparent 1px)', backgroundSize: '80px 80px' }} />
     <div className="relative max-w-[1440px] mx-auto">

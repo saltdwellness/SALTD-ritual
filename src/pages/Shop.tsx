@@ -24,7 +24,7 @@ const BG_MAP: Record<string, string> = {
 };
 
 function toCartProduct(sp: ShopifyProductFull): Product {
-  const accentColor = sp.flavorColor ?? HANDLE_COLOR_FALLBACK[sp.handle] ?? '#2E5BFF';
+  const accentColor: string = (typeof sp.flavorColor === 'string' ? sp.flavorColor : null) ?? HANDLE_COLOR_FALLBACK[sp.handle] ?? '#2E5BFF';
   const variants: ProductVariant[] = sp.variants.edges.map(({ node: v }) => ({
     size:           parseInt(v.title.match(/\((\d+)\)/)?.[1] ?? '10', 10),
     label:          v.title,
@@ -112,8 +112,8 @@ const ProductSection: React.FC<{
   onAddToCart: (p: Product, v: ProductVariant) => void;
 }> = ({ sp, index, onAddToCart }) => {
   const product     = toCartProduct(sp);
-  const accentColor = sp.flavorColor ?? HANDLE_COLOR_FALLBACK[sp.handle] ?? '#2E5BFF';
-  const bgGrad      = sp.flavorBg?.value ?? BG_MAP[accentColor] ?? 'linear-gradient(135deg,#f5f5f5,#ebebeb)';
+  const accentColor: string = (typeof sp.flavorColor === 'string' ? sp.flavorColor : null) ?? HANDLE_COLOR_FALLBACK[sp.handle] ?? '#2E5BFF';
+  const bgGrad: string = (typeof sp.flavorBg === 'string' ? sp.flavorBg : null) ?? BG_MAP[accentColor] ?? 'linear-gradient(135deg,#f5f5f5,#ebebeb)';
   const [selected, setSelected] = useState<ProductVariant>(product.variants[0]);
   const [added,    setAdded]    = useState(false);
   const [hovered,  setHovered]  = useState(false);
@@ -211,44 +211,14 @@ const ProductSection: React.FC<{
                   <span className="text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full text-white" style={{ background: accentColor }}>Best Value</span>
                 </div>
                 <div>
-                  <p className="text-xs font-black uppercase tracking-[0.2em]">Month Supply — 30 sticks</p>
-                  <p className="text-[9px] font-medium mt-0.5" style={{ color: selected.shopifyId === oneTime30.shopifyId ? 'rgba(255,255,255,0.45)' : 'rgba(0,0,0,0.35)' }}>One-time · Full month</p>
+                  <p className="text-xs font-black uppercase tracking-[0.2em]">Monthly Ritual — 30 sticks</p>
+                  <p className="text-[9px] font-medium mt-0.5" style={{ color: selected.shopifyId === oneTime30.shopifyId ? 'rgba(255,255,255,0.45)' : 'rgba(0,0,0,0.35)' }}>30 sticks · Full month</p>
                 </div>
                 <span className="text-lg font-black">₹{oneTime30.price.toFixed(0)}</span>
               </button>
             )}
 
-            {/* Subscription 30-pack */}
-            {subVariant && (
-              <div className="rounded-2xl overflow-hidden" style={{ border:`1.5px solid ${accentColor}30` }}>
-                <div className="px-5 py-3 flex items-center justify-between" style={{ background:`${accentColor}10` }}>
-                  <div className="flex items-center gap-2">
-                    <span className="text-[8px] font-black uppercase tracking-[0.4em]" style={{ color: accentColor }}>Monthly Ritual</span>
-                    <span className="text-[8px] font-black uppercase tracking-widest border px-2 py-0.5 rounded-lg" style={{ borderColor: accentColor, color: accentColor }}>Save 10%</span>
-                  </div>
-                  <span className="text-[9px] text-black/40 font-medium">Auto-ships · Cancel anytime</span>
-                </div>
-                <div className="px-5 py-4 flex items-center justify-between bg-white">
-                  <div>
-                    <p className="text-xs font-black text-[#1A1A1A]">30 sticks / month</p>
-                    <p className="text-[9px] text-black/40 font-medium mt-0.5">Never run out of your ritual</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-xl font-black text-[#1A1A1A]">₹{subVariant.price.toFixed(0)}</p>
-                    {compareAt && <p className="text-xs text-black/30 line-through">₹{compareAt.toFixed(0)}</p>}
-                  </div>
-                </div>
-                <div className="px-5 pb-4 bg-white">
-                  <button onClick={() => handleAdd(subVariant)}
-                    className="w-full py-3.5 text-xs font-black uppercase tracking-[0.4em] rounded-xl transition-all duration-300"
-                    style={{ border:`1.5px solid ${accentColor}`, color: accentColor, background:'transparent' }}
-                    onMouseEnter={e => { (e.target as HTMLButtonElement).style.background = accentColor; (e.target as HTMLButtonElement).style.color = 'white'; }}
-                    onMouseLeave={e => { (e.target as HTMLButtonElement).style.background = 'transparent'; (e.target as HTMLButtonElement).style.color = accentColor; }}>
-                    Start Monthly Ritual
-                  </button>
-                </div>
-              </div>
-            )}
+
           </div>
 
           {/* Price + Add to bag */}
@@ -262,7 +232,7 @@ const ProductSection: React.FC<{
               <button onClick={() => inStock && handleAdd(selected)} disabled={!inStock}
                 className="flex-1 py-4 text-xs font-black uppercase tracking-[0.4em] rounded-2xl transition-all duration-300 active:scale-[0.97] disabled:opacity-40"
                 style={{ background: added ? '#1A1A1A' : accentColor, color:'white' }}>
-                {added ? '✓ Added to Bag' : inStock ? 'Add to Bag' : 'Out of Stock'}
+                {added ? '✓ Pre-order Placed' : inStock ? 'Pre-order Now' : 'Out of Stock'}
               </button>
               <Link to={`/product/${sp.handle}`}
                 className="px-5 py-4 text-xs font-black uppercase tracking-[0.3em] rounded-2xl border border-black/08 text-black/40 hover:border-black/20 hover:text-black/70 transition-all flex items-center">

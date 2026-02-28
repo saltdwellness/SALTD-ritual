@@ -20,12 +20,12 @@ const API_URL = `https://${DOMAIN}/api/${API_VER}/graphql.json`;
 // Keys match product handles in constants.ts.
 // Values are GIDs from Shopify Admin → Products → [variant] → URL
 export const VARIANT_MAP: Record<string, string> = {
-  'variant_kalakhatta_10':   'gid://shopify/ProductVariant/48008265564408',
-  'variant_kalakhatta_30':   'gid://shopify/ProductVariant/48008265597176',
-  'variant_banta_10':        'gid://shopify/ProductVariant/48008269627640',
-  'variant_banta_30':        'gid://shopify/ProductVariant/48008269660408',
-  'variant_peach_10':        'gid://shopify/ProductVariant/48008270807288',
-  'variant_peach_30':        'gid://shopify/ProductVariant/48008270840056',
+  'variant_kalakhatta_10':   'gid://shopify/ProductVariant/REPLACE_ME',
+  'variant_kalakhatta_30':   'gid://shopify/ProductVariant/REPLACE_ME',
+  'variant_banta_10':        'gid://shopify/ProductVariant/REPLACE_ME',
+  'variant_banta_30':        'gid://shopify/ProductVariant/REPLACE_ME',
+  'variant_peach_10':        'gid://shopify/ProductVariant/REPLACE_ME',
+  'variant_peach_30':        'gid://shopify/ProductVariant/REPLACE_ME',
 };
 
 export const isShopifyReady = (): boolean =>
@@ -284,8 +284,8 @@ export interface ShopifyProductFull {
   seo: { title: string | null; description: string | null };
   // Metafields (set in Shopify Admin — no code changes needed)
   flavorTagline:    { value: string } | null;
-  flavorColor:      { value: string } | null;
-  flavorBg:         { value: string } | null;
+  flavorColor:      string | null;  // normalised from metafield { value } in fetchAllProducts
+  flavorBg:         string | null;   // normalised from metafield { value } in fetchAllProducts
   featuresField:    { value: string } | null; // JSON array ["feat1","feat2"...]
   scienceCopy:      { value: string } | null; // Long-form science paragraph
   ingredientsField: { value: string } | null; // JSON [{name,amount,role}]
@@ -441,8 +441,15 @@ export async function fetchAllProducts(): Promise<ShopifyProductFull[]> {
       ? liveFaqs
       : (PRODUCT_FAQS_FALLBACK[handle] ?? PRODUCT_FAQS_FALLBACK['kala-khatta']);
 
+    // Normalise flavorColor and flavorBg from { value: string } → string
+    // so all consumers receive a plain string, not a metafield object
+    const rawFlavorColor = (p.flavorColor as { value: string } | null)?.value ?? null;
+    const rawFlavorBg    = (p.flavorBg    as { value: string } | null)?.value ?? null;
+
     return {
-      ...(p as Omit<ShopifyProductFull, 'flavorSubtitle' | 'features' | 'scienceText' | 'ingredients' | 'faqs'>),
+      ...(p as Omit<ShopifyProductFull, 'flavorSubtitle' | 'features' | 'scienceText' | 'ingredients' | 'faqs' | 'flavorColor' | 'flavorBg'>),
+      flavorColor:   rawFlavorColor,
+      flavorBg:      rawFlavorBg,
       flavorSubtitle: get('flavorTagline'),
       features,
       scienceText: get('scienceCopy') ?? (PRODUCT_SCIENCE_FALLBACK[handle] ?? PRODUCT_SCIENCE_FALLBACK['kala-khatta']),
