@@ -35,20 +35,29 @@ const ACCENT = '#2E5BFF';
 
 // ─── Helpers ─────────────────────────────────────────────────────
 function toCartProduct(sp: ShopifyProductFull): Product {
-  const c = sp.flavorColor ?? COLOR[sp.handle] ?? ACCENT;
+  // flavorColor may come as plain string (normalised) or { value: string } (raw API) — handle both
+  const rawColor = sp.flavorColor as unknown;
+  const c: string = (rawColor && typeof rawColor === 'object' && 'value' in (rawColor as object))
+    ? (rawColor as { value: string }).value
+    : typeof rawColor === 'string' ? rawColor
+    : COLOR[sp.handle] ?? ACCENT;
+  // Image: prefer images array, fall back to featuredImage, then local mockup
+  const imgUrl = sp.images.edges.length > 0
+    ? sp.images.edges[0].node.url
+    : sp.featuredImage?.url ?? '/mockups/Mockupv2-1.png';
   return {
     id: sp.handle, name: 'SALTD.',
     flavor: sp.flavorSubtitle ?? sp.title,
     color: c, bgColor: `bg-[${c}]`, textColor: `text-[${c}]`,
     description: sp.description,
-    image: sp.images.edges[0]?.node.url ?? '/mockups/Mockupv2-1.png',
+    image: imgUrl,
     features: sp.features.length ? sp.features : ['6 Electrolytes','Ashwagandha','8 Vitamins','Zero Sugar'],
     variants: sp.variants.edges.map(({ node: v }) => ({
       size:           parseInt(v.title.match(/\((\d+)\)/)?.[1] ?? '10', 10),
       label:          v.title,
       price:          parseFloat(v.price.amount),
       compareAtPrice: v.compareAtPrice ? parseFloat(v.compareAtPrice.amount) : undefined,
-      isSubscription: v.title.toLowerCase().includes('month'),
+      isSubscription: v.title.toLowerCase().includes('subscription') || v.title.toLowerCase().includes('auto-ship'),
       shopifyId:      Object.entries(VARIANT_MAP).find(([, gid]) => gid === v.id)?.[0] ?? v.id,
     })),
   };
@@ -227,7 +236,11 @@ const Hero: React.FC<{ content: HomepageContent; firstProduct: ShopifyProductFul
     return () => clearTimeout(t);
   }, []);
 
-  const heroImg = firstProduct?.images.edges[0]?.node.url ?? '/mockups/Mockupv2-1.png';
+  const heroImg = firstProduct
+    ? (firstProduct.images.edges.length > 0
+        ? firstProduct.images.edges[0].node.url
+        : firstProduct.featuredImage?.url ?? '/mockups/Mockupv2-1.png')
+    : '/mockups/Mockupv2-1.png';
   const accent  = firstProduct?.flavorColor ?? '#8A307F';
   const lines   = content.heroHeadline.split('\n').filter(Boolean);
   const [coords, city] = (content.heroLocationTag || '28.6139 N · New Delhi').split('·').map(s => s.trim());
@@ -562,7 +575,9 @@ const FlavorEditorialPanels: React.FC<{ products: ShopifyProductFull[] }> = ({ p
         tagline:     PANEL_FALLBACKS[i]?.tagline ?? sp.description,
         description: sp.description ?? PANEL_FALLBACKS[i]?.description ?? '',
         color:       sp.flavorColor ?? COLOR[sp.handle] ?? ACCENT,
-        img:         sp.images.edges[0]?.node.url ?? PANEL_FALLBACKS[i]?.img ?? '/mockups/Mockupv2-1.png',
+        img:         sp.images.edges.length > 0
+          ? sp.images.edges[0].node.url
+          : sp.featuredImage?.url ?? PANEL_FALLBACKS[i]?.img ?? '/mockups/Mockupv2-1.png',
       }))
     : PANEL_FALLBACKS;
   return (
@@ -664,9 +679,15 @@ const ProductShelf: React.FC<{ products: ShopifyProductFull[]; onAddToCart: (p: 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5 px-5 md:px-12 max-w-[1440px] mx-auto">
         {(products.length > 0 ? products : null)?.map((sp, i) => {
           const p    = toCartProduct(sp);
-          const col  = sp.flavorColor ?? COLOR[sp.handle] ?? ACCENT;
+          const rawCol = sp.flavorColor as unknown;
+          const col: string = (rawCol && typeof rawCol === 'object' && 'value' in (rawCol as object))
+            ? (rawCol as { value: string }).value
+            : typeof rawCol === 'string' ? rawCol
+            : COLOR[sp.handle] ?? ACCENT;
           const bg   = SHELF_BG[col]  ?? 'linear-gradient(135deg,#f5f5f5,#ebebeb)';
-          const img  = sp.images.edges[0]?.node.url ?? FALLBACK_FLAVORS[i]?.img ?? '/mockups/Mockupv2-1.png';
+          const img  = sp.images.edges.length > 0
+            ? sp.images.edges[0].node.url
+            : sp.featuredImage?.url ?? FALLBACK_FLAVORS[i]?.img ?? '/mockups/Mockupv2-1.png';
           const v    = sp.variants.edges[0]?.node;
           const px   = v ? parseFloat(v.price.amount) : 0;
           const cmp  = v?.compareAtPrice ? parseFloat(v.compareAtPrice.amount) : null;
@@ -982,10 +1003,16 @@ const Home: React.FC<HomeProps> = ({ onAddToCart }) => {
 
   useEffect(() => {
     setSEO(seoForPage('Home', 'High-performance electrolyte sticks in nostalgic Indian flavours. Zero sugar. One ritual.'));
-    Promise.all([fetchHomepageContent(), fetchAllProducts()])
-      .then(([cms, prods]) => { setContent(cms); setProducts(prods); })
-      .catch(() => fetchHomepageContent().then(setContent))
+    // Fetch content and products independently — page shows as soon as content loads
+    // Products update silently; if they fail, ProductShelf stays hidden (no broken state)
+    fetchHomepageContent()
+      .then(setContent)
+      .catch(() => {})
       .finally(() => setLoading(false));
+
+    fetchAllProducts()
+      .then(prods => { if (prods.length > 0) setProducts(prods); })
+      .catch((err) => console.error('[SALTD] fetchAllProducts failed:', err));
   }, []);
 
   if (loading || !content) return (
