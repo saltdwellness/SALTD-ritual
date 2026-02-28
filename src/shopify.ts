@@ -13,7 +13,7 @@
 
 const DOMAIN  = import.meta.env.VITE_SHOPIFY_STORE_DOMAIN as string;
 const TOKEN   = import.meta.env.VITE_SHOPIFY_STOREFRONT_TOKEN as string;
-const API_VER = '2024-01';
+const API_VER = '2024-10';
 const API_URL = `https://${DOMAIN}/api/${API_VER}/graphql.json`;
 
 // ── Variant map — THE ONLY CODE YOU EVER NEED TO UPDATE ───────
@@ -64,6 +64,8 @@ async function gql<T>(query: string, variables: Record<string, unknown> = {}): P
     return json.data;
   } catch (e: unknown) {
     if (e instanceof Error && e.name === 'AbortError') throw new Error('Request timed out. Check your connection.');
+    // Log for debugging — helps diagnose API failures in production
+    if (process.env.NODE_ENV !== 'production') console.error('[SALTD] Shopify API error:', e);
     throw e;
   } finally {
     clearTimeout(timer);
@@ -827,7 +829,7 @@ export { fetchAllProducts as fetchProducts };
 // 
 // For production: create a Netlify/Vercel serverless function at
 // /api/lookup-order that calls:
-//   GET https://{store}.myshopify.com/admin/api/2024-01/orders.json
+//   GET https://{store}.myshopify.com/admin/api/2024-10/orders.json
 //       ?name={orderId}&email={email}&status=any
 // with your Admin API key (never expose this in frontend code).
 //

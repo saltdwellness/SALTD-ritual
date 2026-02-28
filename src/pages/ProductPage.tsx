@@ -194,9 +194,11 @@ const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart }) => {
         });
         setLiveReady(true);
       }
-    }).catch(() => {
-      // Network error — static data already showing, nothing to do
-      if (!cancelled) setLiveReady(false);
+    }).catch((err) => {
+      if (cancelled) return;
+      // Log so we can diagnose — static data still shows so UX is unaffected
+      console.error('[SALTD] fetchAllProducts failed:', err);
+      setLiveReady(false);
     });
     return () => { cancelled = true; };
   }, [handle]);
@@ -222,18 +224,24 @@ const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart }) => {
     ingredients: product.ingredients,
     faqs:        product.faqs,
   };
-  const allImages   = product.images.edges.map(e => e.node.url);
+  // Use images array, fall back to featuredImage, then mockup
+  const allImages = product.images.edges.length > 0
+    ? product.images.edges.map(e => e.node.url)
+    : product.featuredImage ? [product.featuredImage.url] : [];
   const prodImg     = allImages[imgIdx] ?? allImages[0] ?? '/mockups/Mockupv2-1.png';
 
-  const oneTime10  = p.variants.find(v => !v.isSubscription && v.size === 10);
-  const oneTime30  = p.variants.find(v => !v.isSubscription && v.size === 30);
-  const subVariant = p.variants.find(v => v.isSubscription);
+  // Classify purely by size — immune to variant title naming in Shopify
+  const oneTime10  = p.variants.find(v => v.size === 10) ?? p.variants[0];
+  const oneTime30  = p.variants.find(v => v.size === 30) ?? p.variants[1];
+  const subVariant = p.variants.find(v => v.isSubscription); // kept for future use
   const variantNode = product.variants.edges.find(e => e.node.title === selected.label)?.node;
   const inStock = variantNode?.availableForSale ?? product.availableForSale;
   const compareAt = variantNode?.compareAtPrice ? parseFloat(variantNode.compareAtPrice.amount) : null;
   // Always read prices from Shopify nodes — single source of truth
-  const livePrice = (label: string): number => {
-    const node = product.variants.edges.find(e => e.node.title === label)?.node;
+  // Falls back to variant index if title doesn't match exactly (Shopify title flexibility)
+  const livePrice = (label: string, fallbackIdx?: number): number => {
+    const node = product.variants.edges.find(e => e.node.title === label)?.node
+      ?? (fallbackIdx !== undefined ? product.variants.edges[fallbackIdx]?.node : undefined);
     return node ? parseFloat(node.price.amount) : 0;
   };
 
@@ -308,7 +316,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart }) => {
                       <p className="text-xs font-black uppercase tracking-[0.2em]">Ritual Pack — 10 sticks</p>
                       <p className="text-[9px] font-medium mt-0.5" style={{ color: selected.shopifyId === oneTime10.shopifyId ? 'rgba(255,255,255,0.45)' : 'rgba(0,0,0,0.35)' }}>One-time · Try it out</p>
                     </div>
-                    <span className="text-lg font-black">₹{livePrice(oneTime10.label).toFixed(0)}</span>
+                    <span className="text-lg font-black">₹{livePrice(oneTime10.label, 0).toFixed(0)}</span>
                   </button>
                 )}
 
@@ -323,7 +331,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart }) => {
                       <p className="text-xs font-black uppercase tracking-[0.2em]">Monthly Ritual — 30 sticks</p>
                       <p className="text-[9px] font-medium mt-0.5" style={{ color: selected.shopifyId === oneTime30.shopifyId ? 'rgba(255,255,255,0.45)' : 'rgba(0,0,0,0.35)' }}>30 sticks · Full month</p>
                     </div>
-                    <span className="text-lg font-black">₹{livePrice(oneTime30.label).toFixed(0)}</span>
+                    <span className="text-lg font-black">₹{livePrice(oneTime30.label, 1).toFixed(0)}</span>
                   </button>
                 )}
 
@@ -333,7 +341,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart }) => {
               {/* Add to bag */}
               <div>
                 <div className="flex items-baseline gap-3 mb-4">
-                  <span className="text-[2.5rem] font-black tracking-[-0.04em] text-[#1A1A1A]">₹{(livePrice(selected.label) || selected.price).toFixed(0)}</span>
+                  <span className="text-[2.5rem] font-black tracking-[-0.04em] text-[#1A1A1A]">₹{(livePrice(selected.label, p.variants.indexOf(selected)) || selected.price).toFixed(0)}</span>
                   {compareAt && compareAt > selected.price && <span className="text-base text-black/30 line-through font-medium">₹{compareAt.toFixed(0)}</span>}
                 </div>
                 <button onClick={() => inStock && handleAdd(selected)} disabled={!inStock}

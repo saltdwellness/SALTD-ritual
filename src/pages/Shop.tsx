@@ -120,11 +120,14 @@ const ProductSection: React.FC<{
   const [imgIdx,   setImgIdx]   = useState(0);
 
   // Separate one-time variants by size AND subscription variants
-  const oneTime10 = product.variants.find(v => !v.isSubscription && v.size === 10);
-  const oneTime30 = product.variants.find(v => !v.isSubscription && v.size === 30);
+  // Classify purely by size — immune to variant title naming in Shopify
+  const oneTime10 = product.variants.find(v => v.size === 10) ?? product.variants[0];
+  const oneTime30 = product.variants.find(v => v.size === 30) ?? product.variants[1];
   const subVariant = product.variants.find(v => v.isSubscription);
 
-  const allImages = sp.images.edges.map(e => e.node.url);
+  const allImages = sp.images.edges.length > 0
+    ? sp.images.edges.map(e => e.node.url)
+    : sp.featuredImage ? [sp.featuredImage.url] : [];
   const prodImg   = allImages[imgIdx] ?? allImages[0] ?? '/mockups/Mockupv2-1.png';
   const variantNode = sp.variants.edges.find(e => e.node.title === selected.label)?.node;
   const inStock   = variantNode?.availableForSale ?? sp.availableForSale;
@@ -132,8 +135,9 @@ const ProductSection: React.FC<{
   const isLowStock = qty != null && qty > 0 && qty <= 5;
   const compareAt  = variantNode?.compareAtPrice ? parseFloat(variantNode.compareAtPrice.amount) : null;
   // Always read prices from Shopify nodes — single source of truth
-  const livePrice = (label: string): number => {
-    const node = sp.variants.edges.find(e => e.node.title === label)?.node;
+  const livePrice = (label: string, fallbackIdx?: number): number => {
+    const node = sp.variants.edges.find(e => e.node.title === label)?.node
+      ?? (fallbackIdx !== undefined ? sp.variants.edges[fallbackIdx]?.node : undefined);
     return node ? parseFloat(node.price.amount) : 0;
   };
 
@@ -199,7 +203,7 @@ const ProductSection: React.FC<{
                   <p className="text-xs font-black uppercase tracking-[0.2em]">Ritual Pack — 10 sticks</p>
                   <p className="text-[9px] font-medium mt-0.5" style={{ color: selected.shopifyId === oneTime10.shopifyId ? 'rgba(255,255,255,0.45)' : 'rgba(0,0,0,0.35)' }}>One-time · Try it out</p>
                 </div>
-                <span className="text-lg font-black">₹{livePrice(oneTime10.label).toFixed(0)}</span>
+                <span className="text-lg font-black">₹{livePrice(oneTime10.label, 0).toFixed(0)}</span>
               </button>
             )}
 
@@ -219,7 +223,7 @@ const ProductSection: React.FC<{
                   <p className="text-xs font-black uppercase tracking-[0.2em]">Monthly Ritual — 30 sticks</p>
                   <p className="text-[9px] font-medium mt-0.5" style={{ color: selected.shopifyId === oneTime30.shopifyId ? 'rgba(255,255,255,0.45)' : 'rgba(0,0,0,0.35)' }}>30 sticks · Full month</p>
                 </div>
-                <span className="text-lg font-black">₹{livePrice(oneTime30.label).toFixed(0)}</span>
+                <span className="text-lg font-black">₹{livePrice(oneTime30.label, 1).toFixed(0)}</span>
               </button>
             )}
 
@@ -229,7 +233,7 @@ const ProductSection: React.FC<{
           {/* Price + Add to bag */}
           <div>
             <div className="flex items-baseline gap-3 mb-4">
-              <span className="text-[2.2rem] font-black tracking-[-0.04em] text-[#1A1A1A]">₹{(livePrice(selected.label) || selected.price).toFixed(0)}</span>
+              <span className="text-[2.2rem] font-black tracking-[-0.04em] text-[#1A1A1A]">₹{(livePrice(selected.label, product.variants.indexOf(selected)) || selected.price).toFixed(0)}</span>
               {compareAt && compareAt > selected.price && <span className="text-base text-black/30 line-through font-medium">₹{compareAt.toFixed(0)}</span>}
               {isLowStock && <span className="text-xs font-black text-red-500 uppercase tracking-widest">Only {qty} left</span>}
             </div>
