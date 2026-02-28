@@ -27,7 +27,7 @@ function toCartProduct(sp: ShopifyProductFull): Product {
     label:          v.title,
     price:          parseFloat(v.price.amount),
     compareAtPrice: v.compareAtPrice ? parseFloat(v.compareAtPrice.amount) : undefined,
-    isSubscription: v.title.toLowerCase().includes('month'),
+    isSubscription: v.title.toLowerCase().includes('subscription') || v.title.toLowerCase().includes('auto-ship'),
     shopifyId:      Object.entries(VARIANT_MAP).find(([, gid]) => gid === v.id)?.[0] ?? v.id,
   }));
   return {
@@ -231,6 +231,11 @@ const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart }) => {
   const variantNode = product.variants.edges.find(e => e.node.title === selected.label)?.node;
   const inStock = variantNode?.availableForSale ?? product.availableForSale;
   const compareAt = variantNode?.compareAtPrice ? parseFloat(variantNode.compareAtPrice.amount) : null;
+  // Always read prices from Shopify nodes — single source of truth
+  const livePrice = (label: string): number => {
+    const node = product.variants.edges.find(e => e.node.title === label)?.node;
+    return node ? parseFloat(node.price.amount) : 0;
+  };
 
   const handleAdd = (v: ProductVariant) => { onAddToCart(p, v); setAdded(true); setTimeout(() => setAdded(false), 1800); };
 
@@ -303,7 +308,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart }) => {
                       <p className="text-xs font-black uppercase tracking-[0.2em]">Ritual Pack — 10 sticks</p>
                       <p className="text-[9px] font-medium mt-0.5" style={{ color: selected.shopifyId === oneTime10.shopifyId ? 'rgba(255,255,255,0.45)' : 'rgba(0,0,0,0.35)' }}>One-time · Try it out</p>
                     </div>
-                    <span className="text-lg font-black">₹{oneTime10.price.toFixed(0)}</span>
+                    <span className="text-lg font-black">₹{livePrice(oneTime10.label).toFixed(0)}</span>
                   </button>
                 )}
 
@@ -318,7 +323,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart }) => {
                       <p className="text-xs font-black uppercase tracking-[0.2em]">Monthly Ritual — 30 sticks</p>
                       <p className="text-[9px] font-medium mt-0.5" style={{ color: selected.shopifyId === oneTime30.shopifyId ? 'rgba(255,255,255,0.45)' : 'rgba(0,0,0,0.35)' }}>30 sticks · Full month</p>
                     </div>
-                    <span className="text-lg font-black">₹{oneTime30.price.toFixed(0)}</span>
+                    <span className="text-lg font-black">₹{livePrice(oneTime30.label).toFixed(0)}</span>
                   </button>
                 )}
 
@@ -328,7 +333,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ onAddToCart }) => {
               {/* Add to bag */}
               <div>
                 <div className="flex items-baseline gap-3 mb-4">
-                  <span className="text-[2.5rem] font-black tracking-[-0.04em] text-[#1A1A1A]">₹{selected.price.toFixed(0)}</span>
+                  <span className="text-[2.5rem] font-black tracking-[-0.04em] text-[#1A1A1A]">₹{(livePrice(selected.label) || selected.price).toFixed(0)}</span>
                   {compareAt && compareAt > selected.price && <span className="text-base text-black/30 line-through font-medium">₹{compareAt.toFixed(0)}</span>}
                 </div>
                 <button onClick={() => inStock && handleAdd(selected)} disabled={!inStock}

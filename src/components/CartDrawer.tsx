@@ -244,7 +244,7 @@ const CartDrawer: React.FC<CartDrawerProps> = ({
             </button>
 
             <p className="text-center text-[8px] font-black uppercase tracking-widest text-black/12">
-              SSL Encrypted · Powered by Shopify
+              SSL Encrypted · Powered by true hydration
             </p>
           </div>
         )}

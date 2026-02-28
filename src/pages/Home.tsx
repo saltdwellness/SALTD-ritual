@@ -463,7 +463,7 @@ const SingleEditorialPanel: React.FC<{ panel: EditorialPanel; index: number }> =
           className="w-full h-full object-cover object-center"
           style={{
             // On mobile opacity is lower so text is always readable without needing huge overlay
-            opacity: visible ? 0.28 : 0.05,
+            opacity: visible ? 0.38 : 0.05,
             filter: `saturate(0.85) brightness(0.92)`,
             transition: 'opacity 1.1s cubic-bezier(0.16,1,0.3,1)',
           }}
@@ -473,15 +473,15 @@ const SingleEditorialPanel: React.FC<{ panel: EditorialPanel; index: number }> =
       {/* ── Gradient overlays for text readability ── */}
       <div className="absolute inset-0 pointer-events-none" aria-hidden style={{
         background: isEven
-          ? `linear-gradient(to right, rgba(255,255,255,0.88) 0%, rgba(255,255,255,0.70) 40%, rgba(255,255,255,0.18) 68%, transparent 100%)`
-          : `linear-gradient(to left,  rgba(255,255,255,0.88) 0%, rgba(255,255,255,0.70) 40%, rgba(255,255,255,0.18) 68%, transparent 100%)`,
+          ? `linear-gradient(to right, rgba(255,255,255,0.82) 0%, rgba(255,255,255,0.55) 38%, rgba(255,255,255,0.08) 62%, transparent 100%)`
+          : `linear-gradient(to left,  rgba(255,255,255,0.82) 0%, rgba(255,255,255,0.55) 38%, rgba(255,255,255,0.08) 62%, transparent 100%)`,
       }} />
       {/* Mobile: extra full overlay */}
       <div className="md:hidden absolute inset-0 pointer-events-none" aria-hidden
-        style={{ background: 'rgba(255,255,255,0.15)' }} />
+        style={{ background: 'rgba(255,255,255,0.08)' }} />
       {/* Bottom blend */}
       <div className="absolute bottom-0 inset-x-0 h-24 pointer-events-none" aria-hidden
-        style={{ background: 'linear-gradient(to bottom, transparent, rgba(255,255,255,0.45))' }} />
+        style={{ background: 'linear-gradient(to bottom, transparent, rgba(255,255,255,0.30))' }} />
 
       {/* Accent top line */}
       <div className="absolute top-0 inset-x-0 h-[2px]" style={{ background: `linear-gradient(to right, ${panel.color}, transparent)`, opacity: 0.6 }} />
