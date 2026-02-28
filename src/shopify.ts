@@ -32,6 +32,13 @@ export const isShopifyReady = (): boolean =>
   !!DOMAIN && !!TOKEN &&
   !Object.values(VARIANT_MAP).some(v => v.includes('REPLACE_ME'));
 
+// Startup diagnostic — always visible in console
+console.log('[SALTD] Shopify config:', {
+  domain:  DOMAIN  ? `${DOMAIN.slice(0,20)}...` : '❌ MISSING',
+  token:   TOKEN   ? `${TOKEN.slice(0,8)}...`   : '❌ MISSING',
+  ready:   isShopifyReady(),
+});
+
 // ── Core GraphQL helper ────────────────────────────────────────
 async function gql<T>(query: string, variables: Record<string, unknown> = {}): Promise<T> {
   if (!DOMAIN || !TOKEN) throw new Error('Store configuration missing. Check environment setup.');
@@ -64,8 +71,7 @@ async function gql<T>(query: string, variables: Record<string, unknown> = {}): P
     return json.data;
   } catch (e: unknown) {
     if (e instanceof Error && e.name === 'AbortError') throw new Error('Request timed out. Check your connection.');
-    // Log for debugging — helps diagnose API failures in production
-    if (process.env.NODE_ENV !== 'production') console.error('[SALTD] Shopify API error:', e);
+    console.error('[SALTD] Shopify API error:', e);
     throw e;
   } finally {
     clearTimeout(timer);
