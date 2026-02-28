@@ -13,7 +13,7 @@ const ACCENT    = '#2E5BFF';
 // ── Hydration tracking helpers ────────────────────────────────
 const getTodayKey  = () => new Date().toISOString().split('T')[0];
 const getStreak    = (): number => {
-  const data = JSON.parse(localStorage.getItem('saltd_hydration') || '{}');
+  const data: Record<string,boolean> = (() => { try { return JSON.parse(localStorage.getItem('saltd_hydration') || '{}'); } catch { return {}; } })();
   let streak = 0; const d = new Date();
   while (true) {
     if (!data[d.toISOString().split('T')[0]]) break;
@@ -24,16 +24,18 @@ const getStreak    = (): number => {
 
 // ── Reviews ───────────────────────────────────────────────────
 interface Review { orderId: string; rating: number; text: string; createdAt: string }
-const getReviews  = (): Review[] => JSON.parse(localStorage.getItem('saltd_reviews') || '[]');
+const getReviews  = (): Review[] => { try { return JSON.parse(localStorage.getItem('saltd_reviews') || '[]'); } catch { return []; } };
+const sanitiseStr = (s: string, max = 1000): string => s.replace(/[<>"'`]/g, '').trim().slice(0, max);
 const saveReview  = (r: Review) => {
+  const safe: Review = { ...r, text: sanitiseStr(r.text) };
   const all = getReviews().filter(x => x.orderId !== r.orderId);
-  localStorage.setItem('saltd_reviews', JSON.stringify([...all, r]));
+  localStorage.setItem('saltd_reviews', JSON.stringify([...all, safe]));
 };
 
 // ── Return request ────────────────────────────────────────────
 type ReturnReason = 'damaged' | 'incorrect' | 'defect' | 'tampered';
 interface ReturnRequest { orderId: string; reason: ReturnReason; description: string; submittedAt: string }
-const getReturns  = (): ReturnRequest[] => JSON.parse(localStorage.getItem('saltd_returns') || '[]');
+const getReturns  = (): ReturnRequest[] => { try { return JSON.parse(localStorage.getItem('saltd_returns') || '[]'); } catch { return []; } };
 const saveReturn  = (r: ReturnRequest) => {
   const all = getReturns().filter(x => x.orderId !== r.orderId);
   localStorage.setItem('saltd_returns', JSON.stringify([...all, r]));
@@ -51,34 +53,7 @@ const STAGE_LABELS = ['Placed', 'Confirmed', 'Shipped', 'Out for Delivery', 'Del
 const STAGE_KEYS   = ['placed', 'confirmed', 'shipped', 'out_for_delivery', 'delivered'];
 
 // ── Demo data ─────────────────────────────────────────────────
-const DEMO_EMAIL    = 'sid@saltd.in';
-const DEMO_PASSWORD = 'ritual2026';
-const DEMO_TOKEN    = 'demo_token_saltd_sid';
-const DEMO_ORDERS: ShopifyOrder[] = [
-  {
-    id: 'gid://shopify/Order/1001', name: '#1001',
-    processedAt: '2026-02-10T10:30:00Z',
-    fulfillmentStatus: 'UNFULFILLED', financialStatus: 'PAID',
-    currentTotalPrice: { amount: '598', currencyCode: 'INR' },
-    lineItems: { edges: [
-      { node: { title: 'Kala Khatta',    quantity: 1, variant: { title: 'Ritual Pack (10)', priceV2: { amount: '299', currencyCode: 'INR' }, image: null } } },
-      { node: { title: 'Banta Lime Spark', quantity: 1, variant: { title: 'Ritual Pack (10)', priceV2: { amount: '299', currencyCode: 'INR' }, image: null } } },
-    ]},
-    shippingAddress: { firstName: 'Siddharth', address1: '12 Hydration Lane', city: 'Bengaluru', country: 'India', zip: '560001' },
-    fulfillments: [],
-  },
-  {
-    id: 'gid://shopify/Order/1002', name: '#1002',
-    processedAt: '2026-01-22T08:00:00Z',
-    fulfillmentStatus: 'FULFILLED', financialStatus: 'PAID',
-    currentTotalPrice: { amount: '799', currencyCode: 'INR' },
-    lineItems: { edges: [
-      { node: { title: 'Peach Himalayan', quantity: 1, variant: { title: 'Month Supply (30)', priceV2: { amount: '799', currencyCode: 'INR' }, image: null } } },
-    ]},
-    shippingAddress: { firstName: 'Siddharth', address1: '12 Hydration Lane', city: 'Bengaluru', country: 'India', zip: '560001' },
-    fulfillments: [{ trackingInfo: [{ number: 'BD123456789IN', url: 'https://www.bluedart.com' }], updatedAt: '2026-01-25T10:00:00Z', status: 'DELIVERED' }],
-  },
-];
+const DEMO_ORDERS: ShopifyOrder[] = []; // No demo data — orders come from Shopify API
 
 // ─────────────────────────────────────────────────────────────
 // Return Request Form
@@ -89,7 +64,7 @@ const ReturnForm: React.FC<{ order: ShopifyOrder; onClose: () => void }> = ({ or
   const [desc,       setDesc]       = useState('');
   const [submitted,  setSubmitted]  = useState(!!existing);
 
-  const deliveredAt  = order.fulfillments?.[0]?.updatedAt;
+  const deliveredAt  = null; // successfulFulfillments does not include updatedAt
   const hoursSince   = deliveredAt
     ? (Date.now() - new Date(deliveredAt).getTime()) / 1000 / 3600
     : 0;
@@ -107,7 +82,7 @@ const ReturnForm: React.FC<{ order: ShopifyOrder; onClose: () => void }> = ({ or
     const emailBody = encodeURIComponent(
       `Order: ${order.name}\nReason: ${RETURN_REASONS.find(r => r.value === reason)?.label}\nDescription: ${desc}`
     );
-    window.open(`mailto:timepassventures@gmail.com?subject=Return Request — ${order.name}&body=${emailBody}`);
+    window.open(`mailto:support@saltd.in?subject=Return Request — ${order.name}&body=${emailBody}`);
   };
 
   if (submitted || existing) return (
@@ -122,7 +97,7 @@ const ReturnForm: React.FC<{ order: ShopifyOrder; onClose: () => void }> = ({ or
         We've received your request for order {order.name}. Our team will review and respond within <strong className="text-[#1A1A1A]">2–3 business days</strong>. Check your email for updates.
       </p>
       <p className="text-[9px] font-black uppercase tracking-widest text-black/25">
-        Questions? Email timepassventures@gmail.com
+        Questions? Email support@saltd.in
       </p>
       <button onClick={onClose} className="text-[9px] font-black uppercase tracking-widest text-black/30 hover:text-[#1A1A1A] transition-colors">
         Close ↑
@@ -137,7 +112,7 @@ const ReturnForm: React.FC<{ order: ShopifyOrder; onClose: () => void }> = ({ or
         Our policy requires return requests within <strong className="text-[#1A1A1A]">48 hours of delivery</strong>. This order was delivered more than 48 hours ago and is no longer eligible.
       </p>
       <p className="text-[9px] font-black uppercase tracking-widest text-black/25">
-        For exceptions, email timepassventures@gmail.com
+        For exceptions, email support@saltd.in
       </p>
       <button onClick={onClose} className="text-[9px] font-black uppercase tracking-widest text-black/30 hover:text-[#1A1A1A] transition-colors">
         Close ↑
@@ -250,7 +225,7 @@ const OrderCard: React.FC<{ order: ShopifyOrder }> = ({ order }) => {
   const [showReturn,  setShowReturn]  = useState(false);
   const stage    = getOrderStage(order);
   const stageIdx = STAGE_KEYS.indexOf(stage);
-  const tracking = order.fulfillments?.[0]?.trackingInfo?.[0];
+  const tracking = order.successfulFulfillments?.[0]?.trackingInfo?.[0];
   const review   = getReviews().find(r => r.orderId === order.id);
   const returned = getReturns().find(r => r.orderId === order.id);
 
@@ -367,6 +342,16 @@ const OrderCard: React.FC<{ order: ShopifyOrder }> = ({ order }) => {
           )}
 
           {showReturn && <ReturnForm order={order} onClose={() => setShowReturn(false)} />}
+
+          {/* View full order page */}
+          <div className="pt-3 border-t border-black/[0.05]">
+            <Link
+              to={`/order/${encodeURIComponent(order.name)}`}
+              className="inline-flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-black/25 hover:text-[#2E5BFF] transition-colors"
+            >
+              View Order Page →
+            </Link>
+          </div>
         </div>
       )}
     </div>
@@ -381,7 +366,7 @@ const HydrationStats: React.FC = () => {
   const [today, setToday] = useState(false);
 
   useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem('saltd_hydration') || '{}');
+    const saved: Record<string,boolean> = (() => { try { return JSON.parse(localStorage.getItem('saltd_hydration') || '{}'); } catch { return {}; } })();
     setData(saved); setToday(!!saved[getTodayKey()]);
   }, []);
 
@@ -445,25 +430,24 @@ const GuestOrderLookup: React.FC = () => {
   const [error,     setError]     = useState('');
   const [order,     setOrder]     = useState<ShopifyOrder | null>(null);
 
-  // Demo guest lookup — matches demo order IDs
   const lookup = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(''); setLoading(true);
-
-    await new Promise(r => setTimeout(r, 800));
-
-    // Demo match
-    const normalized = orderId.trim().replace(/^#/, '');
-    const match = DEMO_ORDERS.find(o => o.name === `#${normalized}` || o.name === orderId.trim());
-
-    if (match && email.toLowerCase().includes('@')) {
-      setOrder(match);
-    } else if (!match) {
-      setError('Order not found. Check your order ID and try again. Order IDs look like #1001.');
-    } else {
-      setError('Email doesn\'t match. Use the email address you placed the order with.');
+    try {
+      const { guestOrderLookup } = await import('../shopify');
+      const result = await guestOrderLookup(orderId, email);
+      if (result.found && result.order) {
+        setOrder(result.order);
+      } else if (result.error === 'DEMO_MODE') {
+        setError('Order tracking will be live once the store launches. Check your confirmation email.');
+      } else {
+        setError(result.error ?? 'Order not found. Check your order ID and email, then try again.');
+      }
+    } catch {
+      setError('Could not reach the order system. Please try again in a moment.');
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   if (order) return (
@@ -535,11 +519,12 @@ const Account: React.FC = () => {
   const [mode, setMode] = useState<'guest' | 'signin'>('guest');
 
   const getStoredToken = (): string | null => {
-    const stored = localStorage.getItem(TOKEN_KEY);
-    const expiry = localStorage.getItem(TOKEN_KEY + '_expiry');
-    if (!stored) return null;
-    if (stored === DEMO_TOKEN) return stored;
-    if (expiry && Date.now() > parseInt(expiry)) {
+    const stored  = localStorage.getItem(TOKEN_KEY);
+    const expiry  = localStorage.getItem(TOKEN_KEY + '_expiry');
+    if (!stored || stored.length > 200) return null;
+    const expNum  = expiry ? parseInt(expiry, 10) : 0;
+    const validTs = !isNaN(expNum) && expNum > Date.now() && expNum < Date.now() + 400 * 86_400_000;
+    if (!validTs) {
       localStorage.removeItem(TOKEN_KEY);
       localStorage.removeItem(TOKEN_KEY + '_expiry');
       return null;
@@ -563,7 +548,6 @@ const Account: React.FC = () => {
 
   useEffect(() => {
     if (!token) return;
-    if (token === DEMO_TOKEN) { setOrders(DEMO_ORDERS); return; }
     if (isShopifyConfigured) {
       setLoading(true);
       getCustomerOrders(token)
@@ -582,11 +566,7 @@ const Account: React.FC = () => {
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault(); setError(''); setLoading(true);
-    // Demo bypass
-    if (email === DEMO_EMAIL && password === DEMO_PASSWORD) {
-      localStorage.setItem(TOKEN_KEY, DEMO_TOKEN);
-      setToken(DEMO_TOKEN); setLoading(false); return;
-    }
+    // All logins go through Shopify customer API
     try {
       const result = isLogin
         ? await customerLogin(email, password)
@@ -603,12 +583,12 @@ const Account: React.FC = () => {
   };
 
   const handleLogout = async () => {
-    if (token && token !== DEMO_TOKEN) {
+    if (token) {
       try { await customerLogout(token); } catch {}
     }
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(TOKEN_KEY + '_expiry');
-    setToken(null); setOrders([]);
+    setToken(null); setOrders([]); setError('');
   };
 
   const TABS = [
@@ -741,8 +721,7 @@ const Account: React.FC = () => {
                   <div className="p-7 space-y-4">
                     <div className="bg-[#F4F7FF] border border-[#2E5BFF]/20 px-4 py-3 rounded-xl">
                       <p className="text-[9px] font-black text-[#2E5BFF] uppercase tracking-wider mb-1">Demo Access</p>
-                      <p className="text-[10px] text-black/40 font-medium">Email: <span className="font-black text-[#1A1A1A]">sid@saltd.in</span></p>
-                      <p className="text-[10px] text-black/40 font-medium">Password: <span className="font-black text-[#1A1A1A]">ritual2026</span></p>
+                      <p className="text-[10px] text-black/40 font-medium">Sign in with your SALTD. account credentials.</p>
                     </div>
 
                     <form onSubmit={handleAuth} className="space-y-4">

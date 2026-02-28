@@ -734,10 +734,8 @@ export interface ShopifyOrder {
     country: string;
     zip: string;
   } | null;
-  fulfillments: {
+  successfulFulfillments: {
     trackingInfo: { number: string; url: string | null }[];
-    updatedAt: string;
-    status: string;
   }[];
 }
 
@@ -765,9 +763,8 @@ export async function getCustomerOrders(customerAccessToken: string): Promise<Sh
                 }
               }
               shippingAddress { firstName address1 city country zip }
-              fulfillments {
+              successfulFulfillments(first: 5) {
                 trackingInfo { number url }
-                updatedAt status
               }
             }
           }
