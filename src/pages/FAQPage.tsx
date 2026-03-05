@@ -244,7 +244,7 @@ const FAQPage: React.FC = () => {
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <a
-                href="mailto:timepassventures@gmail.com"
+                href="mailto:support@saltd.in"
                 className="inline-block px-8 py-4 text-sm font-black uppercase tracking-[0.3em] text-white rounded-full"
                 style={{ background: ACCENT }}
               >

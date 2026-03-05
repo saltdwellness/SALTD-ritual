@@ -56,7 +56,7 @@ const Footer: React.FC = () => {
                 <div className="space-y-4">
                   <Link to="/account" className="block text-base font-semibold text-white/55 hover:text-white transition-colors">Sign In</Link>
                   <Link to="/account" className="block text-base font-semibold text-white/55 hover:text-white transition-colors">Order Tracking</Link>
-                  <a href="mailto:timepassventures@gmail.com" className="block text-base font-semibold text-white/55 hover:text-white transition-colors">Support</a>
+                  <a href="mailto:support@saltd.in" className="block text-base font-semibold text-white/55 hover:text-white transition-colors">Support</a>
                 </div>
               </div>
             </div>

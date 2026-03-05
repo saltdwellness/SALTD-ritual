@@ -147,6 +147,15 @@ export interface HomepageContent {
   trustBadges: TrustBadge[];
   // Fallback reviews
   fallbackReviews: FallbackReview[];
+  // Extra dynamic text fields
+  heroQuote: string;
+  heroStatPills: string[];
+  shopSectionHeadline: string;
+  shopSectionSubtext: string;
+  reviewsHeadline: string;
+  impactSectionLabel: string;
+  ritualSectionLabel: string;
+  trustSectionLabel: string;
 }
 
 export const DEFAULT_HOMEPAGE_CONTENT: HomepageContent = {
@@ -196,6 +205,14 @@ export const DEFAULT_HOMEPAGE_CONTENT: HomepageContent = {
     title:       'SALTD. | Ritual Hydration',
     description: 'High-performance electrolyte sticks in nostalgic Indian flavours. Zero sugar. One ritual.',
   },
+  heroQuote:            'Finally a hydration drink that actually tastes like something — not a lab experiment.',
+  heroStatPills:        ['6 Electrolytes', '8 Vitamins', 'Zero Sugar', 'Ashwagandha'],
+  shopSectionHeadline:  'Our Flavours.',
+  shopSectionSubtext:   'Three distinctly Indian flavours. Each one carries a complete electrolyte stack, zero sugar, and a taste that feels familiar — only better.',
+  reviewsHeadline:      'What people\nare saying.',
+  impactSectionLabel:   'The Foundation',
+  ritualSectionLabel:   '02 — "THE RITUAL"',
+  trustSectionLabel:    'Made to standards that matter',
   impactHeadline: 'Most hydration drinks are built on sugar. Ours isn\'t.',
   impactPoints: [
     { n: '01', title: 'Zero Sugar, Full Spectrum', body: 'Every stick delivers a complete ionic profile — sodium, potassium, magnesium, calcium, chloride, and phosphate — without a gram of sugar.' },
@@ -295,7 +312,15 @@ export async function fetchHomepageContent(): Promise<HomepageContent> {
         title:       f['seo_title']       ?? D.seo.title,
         description: f['seo_description'] ?? D.seo.description,
       },
-      impactHeadline:  f['impact_headline'] ?? D.impactHeadline,
+      heroQuote:           f['hero_quote']            ?? D.heroQuote,
+      heroStatPills:       parseJSON(f['hero_stat_pills'], D.heroStatPills),
+      shopSectionHeadline: f['shop_section_headline'] ?? D.shopSectionHeadline,
+      shopSectionSubtext:  f['shop_section_subtext']  ?? D.shopSectionSubtext,
+      reviewsHeadline:     f['reviews_headline']      ?? D.reviewsHeadline,
+      impactSectionLabel:  f['impact_section_label']  ?? D.impactSectionLabel,
+      ritualSectionLabel:  f['ritual_section_label']  ?? D.ritualSectionLabel,
+      trustSectionLabel:   f['trust_section_label']   ?? D.trustSectionLabel,
+      impactHeadline:      f['impact_headline']       ?? D.impactHeadline,
       impactPoints,
       ritualSteps,
       trustBadges,

@@ -47,8 +47,8 @@ const LegalShell: React.FC<LegalShellProps> = ({ badge, title, subtitle, childre
         <div className="mt-16 pt-8 border-t border-[#0D0D10]/[0.07] flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
           <p className="text-sm text-[#1A1A1A]/45 font-semibold">
             Questions? Email us at{' '}
-            <a href="mailto:timepassventures@gmail.com" className="underline" style={{ color: ACCENT }}>
-              timepassventures@gmail.com
+            <a href="mailto:support@saltd.in" className="underline" style={{ color: ACCENT }}>
+              support@saltd.in
             </a>
           </p>
           <div className="flex gap-4 flex-wrap">
@@ -167,7 +167,7 @@ export const PrivacyPage: React.FC = () => (
       <p><strong className="text-[#0D0D10]/80">Company Name:</strong> Aurevia Ventures<br />
       <strong className="text-[#0D0D10]/80">Brand:</strong> SALTD.<br />
       <strong className="text-[#0D0D10]/80">Registered Address:</strong> South City 2, Gurgaon, Haryana<br />
-      <strong className="text-[#0D0D10]/80">Email:</strong> timepassventures@gmail.com</p>
+      <strong className="text-[#0D0D10]/80">Email:</strong> support@saltd.in</p>
       <p>We aim to respond to grievances within 30 days or as required by applicable law.</p>
     </Section>
 
@@ -251,7 +251,7 @@ export const TermsPage: React.FC = () => (
       <p><strong className="text-[#0D0D10]/80">Company Name:</strong> Aurevia Ventures<br />
       <strong className="text-[#0D0D10]/80">Brand:</strong> SALTD.<br />
       <strong className="text-[#0D0D10]/80">Registered Address:</strong> South City 2, Gurgaon, Haryana<br />
-      <strong className="text-[#0D0D10]/80">Email:</strong> timepassventures@gmail.com</p>
+      <strong className="text-[#0D0D10]/80">Email:</strong> support@saltd.in</p>
       <p>We aim to respond to grievances within 30 days or as required by law.</p>
     </Section>
 
@@ -266,7 +266,7 @@ export const RefundsPage: React.FC = () => (
 
     <Section title="1. Order Cancellation Policy">
       <p>You may request cancellation <strong className="text-[#0D0D10]/80">only if your order has not yet been shipped.</strong></p>
-      <p>To request cancellation, email us at timepassventures@gmail.com with your Order ID and registered contact details. If the order has not been dispatched, we will cancel it and initiate a refund. Once an order has been shipped, it cannot be cancelled.</p>
+      <p>To request cancellation, email us at support@saltd.in with your Order ID and registered contact details. If the order has not been dispatched, we will cancel it and initiate a refund. Once an order has been shipped, it cannot be cancelled.</p>
     </Section>
 
     <Section title="2. Return Policy">
@@ -312,7 +312,7 @@ export const RefundsPage: React.FC = () => (
     </Section>
 
     <Section title="8. Refund Delays">
-      <p>If you have not received your refund within the stated timeline, first check your bank statement, then contact your payment provider, and then contact us at timepassventures@gmail.com.</p>
+      <p>If you have not received your refund within the stated timeline, first check your bank statement, then contact your payment provider, and then contact us at support@saltd.in.</p>
     </Section>
 
     <Section title="9. Fraud Prevention">
@@ -322,7 +322,7 @@ export const RefundsPage: React.FC = () => (
     <Section title="10. Contact Details">
       <p><strong className="text-[#0D0D10]/80">Company Name:</strong> Aurevia Ventures<br />
       <strong className="text-[#0D0D10]/80">Brand:</strong> SALTD.<br />
-      <strong className="text-[#0D0D10]/80">Email:</strong> timepassventures@gmail.com</p>
+      <strong className="text-[#0D0D10]/80">Email:</strong> support@saltd.in</p>
     </Section>
 
   </LegalShell>
@@ -383,7 +383,7 @@ export const ShippingPage: React.FC = () => (
     <Section title="11. Contact for Shipping Queries">
       <p><strong className="text-[#0D0D10]/80">Company Name:</strong> Aurevia Ventures<br />
       <strong className="text-[#0D0D10]/80">Brand:</strong> SALTD.<br />
-      <strong className="text-[#0D0D10]/80">Email:</strong> timepassventures@gmail.com</p>
+      <strong className="text-[#0D0D10]/80">Email:</strong> support@saltd.in</p>
       <p>Our support team will respond within standard business hours.</p>
     </Section>
 
