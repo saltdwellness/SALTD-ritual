@@ -649,7 +649,7 @@ const FALLBACK_FLAVORS = [
   { handle: 'peach-himalayan', label: 'Peach Himalayan', color: '#E8845A', img: '/mockups/Mockupv2-1.png', desc: 'Soft, warm, grounded. Elevated magnesium for recovery and sleep.' },
 ];
 
-const ProductShelf: React.FC<{ products: ShopifyProductFull[]; onAddToCart: (p: Product, v: ProductVariant) => void }> = ({ products, onAddToCart }) => {
+const ProductShelf: React.FC<{ products: ShopifyProductFull[]; onAddToCart: (p: Product, v: ProductVariant) => void; content: HomepageContent }> = ({ products, onAddToCart, content }) => {
   const [added, setAdded] = useState<number | null>(null);
 
   const handleAdd = useCallback((idx: number, sp: ShopifyProductFull) => {
@@ -1081,7 +1081,7 @@ const Home: React.FC<HomeProps> = ({ onAddToCart }) => {
       <StatsBar stats={content.stats} />
       <FlavorEditorialPanels products={products} />
       <ImpactStatement content={content} />
-      <ProductShelf products={products} onAddToCart={onAddToCart} />
+      <ProductShelf products={products} onAddToCart={onAddToCart} content={content} />
       <HowItWorks content={content} />
       <ReviewsSection products={products} content={content} />
       <TrustBadges content={content} />
