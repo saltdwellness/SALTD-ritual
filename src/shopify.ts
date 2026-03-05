@@ -867,6 +867,7 @@ export async function getCustomerOrders(customerAccessToken: string): Promise<Sh
 // ═══════════════════════════════════════════════════════════════
 
 export type OrderStage = 'placed' | 'confirmed' | 'shipped' | 'out_for_delivery' | 'delivered';
+export const STAGE_KEYS: OrderStage[] = ['placed', 'confirmed', 'shipped', 'out_for_delivery', 'delivered'];
 
 export function getOrderStage(order: ShopifyOrder): OrderStage {
   const ff  = (order.fulfillmentStatus ?? '').toUpperCase();
