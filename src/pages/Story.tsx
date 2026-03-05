@@ -24,8 +24,8 @@ interface StoryContent {
 const DEFAULT: StoryContent = {
   heroLabel:       'Our Mission',
   heroHeadline:    'Hydration Without Compromise',
-  heroBody1:       'Every ingredient in SALTD. has a purpose. We don't add anything that doesn't contribute to the core goal: clean, effective hydration for daily performance.',
-  heroBody2:       'No sugar, no artificial sweeteners, no preservatives, no fillers. Just what your body actually needs.',
+  heroBody1:       "Every ingredient in SALTD. has a purpose. We don't add anything that doesn't contribute to the core goal: clean, effective hydration for daily performance.",
+  heroBody2:       "No sugar, no artificial sweeteners, no preservatives, no fillers. Just what your body actually needs.",
   heroCTA:         'Shop SALTD. →',
   missionLabel:    'Our Story',
   missionHeadline: 'Born in Indian Heat. Built to Perform.',
