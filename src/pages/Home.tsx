@@ -308,7 +308,7 @@ const Hero: React.FC<{ content: HomepageContent; firstProduct: ShopifyProductFul
 
           <div className="border-l-[3px] pl-4 mb-7" style={{ borderColor: ACCENT, opacity: loaded ? 1 : 0, transform: loaded ? 'none' : 'translateY(12px)', transition: 'all 1s ease 0.45s' }}>
             <p className="text-base font-medium leading-relaxed" style={{ color: 'rgba(26,26,26,0.70)' }}>
-              "Finally a hydration drink that actually tastes like something — not a lab experiment."
+              "{content.heroQuote || 'Finally a hydration drink that actually tastes like something — not a lab experiment.'}"
             </p>
           </div>
 
@@ -337,7 +337,7 @@ const Hero: React.FC<{ content: HomepageContent; firstProduct: ShopifyProductFul
 
         {/* Stat pills — desktop only, absolute bottom right */}
         <div className="hidden md:flex items-center gap-7 absolute bottom-10 right-14">
-          {['6 Electrolytes', '8 Vitamins', 'Zero Sugar', 'Ashwagandha'].map(s => (
+          {(content.heroStatPills || ['6 Electrolytes', '8 Vitamins', 'Zero Sugar', 'Ashwagandha']).map(s => (
             <div key={s} className="flex items-center gap-2">
               <div className="w-1.5 h-1.5 rounded-full" style={{ background: ACCENT }} />
               <span className="text-xs font-black uppercase tracking-[0.3em] text-[#1A1A1A]/40">{s}</span>
@@ -613,7 +613,7 @@ const ImpactStatement: React.FC<{ content: HomepageContent }> = ({ content }) =>
   <section className="bg-[#1A1A1A] py-12 md:py-24 px-5 md:px-12 overflow-hidden">
     <div className="max-w-[1440px] mx-auto">
       <Reveal>
-        <p className="text-sm font-black uppercase tracking-[0.6em] mb-7" style={{ color: ACCENT }}>The Foundation</p>
+        <p className="text-sm font-black uppercase tracking-[0.6em] mb-7" style={{ color: ACCENT }}>{content.impactSectionLabel || 'The Foundation'}</p>
       </Reveal>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-14 md:gap-24 items-start">
         <Reveal>
@@ -665,10 +665,10 @@ const ProductShelf: React.FC<{ products: ShopifyProductFull[]; onAddToCart: (p: 
           <p className="text-sm font-black uppercase tracking-[0.6em] mb-3" style={{ color: ACCENT }}>01 — "STANDARD SERIES"</p>
           <h2 className="font-black tracking-[-0.04em] text-[#1A1A1A] leading-[0.95] mb-3"
             style={{ fontSize: 'clamp(2rem, 5vw, 4.2rem)' }}>
-            Our Flavours.
+            {content.shopSectionHeadline || 'Our Flavours.'}
           </h2>
           <p className="text-base md:text-lg font-semibold leading-relaxed max-w-xl" style={{ color: 'rgba(26,26,26,0.55)' }}>
-            Three distinctly Indian flavours. Each one carries a complete electrolyte stack, zero sugar, and a taste that feels familiar — only better.
+            {content.shopSectionSubtext || 'Three distinctly Indian flavours. Each one carries a complete electrolyte stack, zero sugar, and a taste that feels familiar — only better.'}
           </p>
         </Reveal>
       </div>
@@ -818,7 +818,7 @@ const HowItWorks: React.FC<{ content: HomepageContent }> = ({ content }) => (
   <section className="py-10 md:py-16 px-5 md:px-12 bg-[#FAFAF8]">
     <div className="max-w-[1440px] mx-auto">
       <Reveal>
-        <p className="text-xs font-black uppercase tracking-[0.5em] mb-6" style={{ color: ACCENT }}>02 — "THE RITUAL"</p>
+        <p className="text-xs font-black uppercase tracking-[0.5em] mb-6" style={{ color: ACCENT }}>{content.ritualSectionLabel || '02 — "THE RITUAL"'}</p>
       </Reveal>
       <div className="grid grid-cols-3 gap-3 md:gap-5">
         {content.ritualSteps.map((s, i) => (
@@ -845,6 +845,9 @@ interface Review { orderId: string; orderName: string; rating: number; text: str
 
 const ReviewsSection: React.FC<{ products: ShopifyProductFull[]; content: HomepageContent | null }> = ({ products, content }) => {
   const [reviews, setReviews] = useState<Review[]>([]);
+  const [idx, setIdx] = useState(0);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
   useEffect(() => {
     try {
       const s: Review[] = JSON.parse(localStorage.getItem('saltd_reviews') || '[]');
@@ -853,62 +856,126 @@ const ReviewsSection: React.FC<{ products: ShopifyProductFull[]; content: Homepa
   }, []);
 
   const fallback = content?.fallbackReviews ?? [];
-
   const display = reviews.length >= 2
-    ? reviews.slice(0, 4).map(r => {
+    ? reviews.slice(0, 6).map(r => {
         const sp = products.find(p => p.title.toLowerCase().includes(r.flavor.toLowerCase()));
-        return { name: 'Verified Customer', role: r.flavor, rating: r.rating, text: r.text, flavor: r.flavor, accent: sp?.flavorColor ?? ACCENT };
+        return { name: 'Verified Customer', age: undefined as number | undefined, role: r.flavor, rating: r.rating, text: r.text, flavor: r.flavor, accent: (sp?.flavorColor as string) ?? ACCENT };
       })
-    : fallback;
+    : fallback.map(r => ({ ...r, age: r.age as number | undefined }));
+
+  const total = display.length;
+  // On desktop show 2, on mobile 1
+  const visibleDesktop = 2;
+
+  const startTimer = () => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    timerRef.current = setInterval(() => {
+      setIdx(prev => (prev + 1) % total);
+    }, 3200);
+  };
+
+  useEffect(() => {
+    if (total > 0) startTimer();
+    return () => { if (timerRef.current) clearInterval(timerRef.current); };
+  }, [total]);
+
+  const goTo = (i: number) => { setIdx(i); startTimer(); };
+  const prev = () => { goTo((idx - 1 + total) % total); };
+  const next = () => { goTo((idx + 1) % total); };
+
+  const getCard = (i: number) => display[((i % total) + total) % total];
+
+  if (total === 0) return null;
 
   return (
-    <section className="py-12 md:py-24 bg-[#F4F4F2]">
+    <section className="py-12 md:py-24 bg-[#F4F4F2] overflow-hidden">
       <div className="max-w-[1440px] mx-auto px-5 md:px-12">
         <Reveal>
           <p className="text-sm font-black uppercase tracking-[0.6em] mb-4" style={{ color: ACCENT }}>03 — "REAL RESULTS"</p>
           <div className="flex flex-wrap items-end justify-between gap-3 mb-8">
             <h2 className="font-black tracking-[-0.04em] text-[#1A1A1A] leading-[0.95]"
               style={{ fontSize: 'clamp(2rem, 5vw, 4rem)' }}>
-              What people<br /><span style={{ color: 'rgba(26,26,26,0.16)' }}>are saying.</span>
+              {(content?.reviewsHeadline || 'What people').split('\n')[0]}<br /><span style={{ color: 'rgba(26,26,26,0.16)' }}>{(content?.reviewsHeadline || 'What people\nare saying.').split('\n')[1] || 'are saying.'}</span>
             </h2>
-            <div className="flex items-center gap-2">
-              <div className="flex gap-0.5">{[1,2,3,4,5].map(s => <span key={s} className="text-xl leading-none" style={{ color: ACCENT }}>★</span>)}</div>
-              <span className="text-sm font-black text-[#1A1A1A]/45 ml-2">5.0 avg</span>
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
+                <div className="flex gap-0.5">{[1,2,3,4,5].map(s => <span key={s} className="text-xl leading-none" style={{ color: ACCENT }}>★</span>)}</div>
+                <span className="text-sm font-black text-[#1A1A1A]/45 ml-2">5.0 avg</span>
+              </div>
+              {/* Nav arrows */}
+              <div className="flex gap-2">
+                <button onClick={prev} className="w-9 h-9 rounded-full border-2 flex items-center justify-center transition-all hover:scale-105 active:scale-95"
+                  style={{ borderColor: ACCENT, color: ACCENT }}>‹</button>
+                <button onClick={next} className="w-9 h-9 rounded-full border-2 flex items-center justify-center transition-all hover:scale-105 active:scale-95"
+                  style={{ borderColor: ACCENT, color: ACCENT }}>›</button>
+              </div>
             </div>
           </div>
         </Reveal>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          {display.map((r, i) => (
-            <Reveal key={i} delay={i * 0.07}>
-              <div className="rounded-2xl p-5 flex flex-col gap-4" style={{ background: '#FFFFFF', border: '1px solid rgba(0,0,0,0.07)' }}>
-                <div className="flex items-start justify-between gap-3 flex-wrap">
-                  <div className="flex gap-0.5">{[1,2,3,4,5].map(s => (
-                    <span key={s} className="text-xl leading-none" style={{ color: s <= r.rating ? r.accent : 'rgba(255,255,255,0.1)' }}>★</span>
-                  ))}</div>
-                  <span className="text-xs font-black uppercase tracking-widest px-3 py-1.5 rounded-full"
-                    style={{ background: `${r.accent}28`, color: r.accent }}>{r.flavor}</span>
-                </div>
-                {/* Full white, no opacity trick — white is white */}
-                <p className="text-base text-[#1A1A1A]/80 font-medium leading-relaxed flex-1">"{r.text}"</p>
-                <div className="flex items-center gap-3 pt-4" style={{ borderTop: '1px solid rgba(0,0,0,0.07)' }}>
-                  <div className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-black text-white shrink-0"
-                    style={{ background: r.accent }}>{r.name.charAt(0)}</div>
-                  <div>
-                    <p className="text-sm font-black text-[#1A1A1A]">{r.name}{(r as typeof fallback[0]).age ? `, ${(r as typeof fallback[0]).age}` : ''}</p>
-                    <p className="text-xs font-medium mt-0.5" style={{ color: 'rgba(26,26,26,0.55)' }}>{r.role}</p>
+        {/* Carousel track */}
+        <div className="relative">
+          {/* Mobile: single card */}
+          <div className="md:hidden">
+            <div className="rounded-2xl p-5 flex flex-col gap-4 transition-all duration-500" style={{ background: '#FFFFFF', border: '1px solid rgba(0,0,0,0.07)' }}>
+              {(() => { const r = getCard(idx); return (
+                <>
+                  <div className="flex items-start justify-between gap-3 flex-wrap">
+                    <div className="flex gap-0.5">{[1,2,3,4,5].map(s => <span key={s} className="text-xl leading-none" style={{ color: s <= r.rating ? r.accent : 'rgba(0,0,0,0.08)' }}>★</span>)}</div>
+                    <span className="text-xs font-black uppercase tracking-widest px-3 py-1.5 rounded-full" style={{ background: `${r.accent}28`, color: r.accent }}>{r.flavor}</span>
                   </div>
-                  <div className="ml-auto w-4 h-[2px] rounded-full" style={{ background: r.accent }} />
+                  <p className="text-base text-[#1A1A1A]/80 font-medium leading-relaxed flex-1">"{r.text}"</p>
+                  <div className="flex items-center gap-3 pt-4" style={{ borderTop: '1px solid rgba(0,0,0,0.07)' }}>
+                    <div className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-black text-white shrink-0" style={{ background: r.accent }}>{r.name.charAt(0)}</div>
+                    <div>
+                      <p className="text-sm font-black text-[#1A1A1A]">{r.name}{r.age ? `, ${r.age}` : ''}</p>
+                      <p className="text-xs font-medium mt-0.5" style={{ color: 'rgba(26,26,26,0.55)' }}>{r.role}</p>
+                    </div>
+                    <div className="ml-auto w-4 h-[2px] rounded-full" style={{ background: r.accent }} />
+                  </div>
+                </>
+              ); })()}
+            </div>
+          </div>
+
+          {/* Desktop: 2 cards side by side */}
+          <div className="hidden md:grid grid-cols-2 gap-5">
+            {[0, 1].map(offset => {
+              const r = getCard(idx + offset);
+              return (
+                <div key={offset} className="rounded-2xl p-5 flex flex-col gap-4 transition-all duration-500" style={{ background: '#FFFFFF', border: '1px solid rgba(0,0,0,0.07)' }}>
+                  <div className="flex items-start justify-between gap-3 flex-wrap">
+                    <div className="flex gap-0.5">{[1,2,3,4,5].map(s => <span key={s} className="text-xl leading-none" style={{ color: s <= r.rating ? r.accent : 'rgba(0,0,0,0.08)' }}>★</span>)}</div>
+                    <span className="text-xs font-black uppercase tracking-widest px-3 py-1.5 rounded-full" style={{ background: `${r.accent}28`, color: r.accent }}>{r.flavor}</span>
+                  </div>
+                  <p className="text-base text-[#1A1A1A]/80 font-medium leading-relaxed flex-1">"{r.text}"</p>
+                  <div className="flex items-center gap-3 pt-4" style={{ borderTop: '1px solid rgba(0,0,0,0.07)' }}>
+                    <div className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-black text-white shrink-0" style={{ background: r.accent }}>{r.name.charAt(0)}</div>
+                    <div>
+                      <p className="text-sm font-black text-[#1A1A1A]">{r.name}{r.age ? `, ${r.age}` : ''}</p>
+                      <p className="text-xs font-medium mt-0.5" style={{ color: 'rgba(26,26,26,0.55)' }}>{r.role}</p>
+                    </div>
+                    <div className="ml-auto w-4 h-[2px] rounded-full" style={{ background: r.accent }} />
+                  </div>
                 </div>
-              </div>
-            </Reveal>
-          ))}
+              );
+            })}
+          </div>
+
+          {/* Dot indicators */}
+          <div className="flex justify-center gap-2 mt-6">
+            {display.map((_, i) => (
+              <button key={i} onClick={() => goTo(i)}
+                className="rounded-full transition-all duration-300"
+                style={{ width: i === idx ? 20 : 8, height: 8, background: i === idx ? ACCENT : 'rgba(26,26,26,0.15)' }} />
+            ))}
+          </div>
         </div>
 
         <Reveal delay={0.15}>
-          <div className="mt-10 text-center">
+          <div className="mt-8 text-center">
             <Link to="/account" className="inline-flex items-center gap-2 text-sm font-black uppercase tracking-[0.4em]"
-              style={{ color: 'rgba(255,255,255,0.40)' }}>
+              style={{ color: 'rgba(26,26,26,0.35)' }}>
               Leave a review <span style={{ color: ACCENT }}>→</span>
             </Link>
           </div>
@@ -923,7 +990,7 @@ const TrustBadges: React.FC<{ content: HomepageContent }> = ({ content }) => (
   <section className="py-10 md:py-20 px-5 md:px-12 bg-white border-y border-black/[0.06]">
     <div className="max-w-[1440px] mx-auto">
       <Reveal>
-        <p className="text-sm font-black uppercase tracking-[0.6em] text-center mb-7" style={{ color: ACCENT }}>Made to standards that matter</p>
+        <p className="text-sm font-black uppercase tracking-[0.6em] text-center mb-7" style={{ color: ACCENT }}>{content.trustSectionLabel || 'Made to standards that matter'}</p>
       </Reveal>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
         {content.trustBadges.map((b, i) => (
