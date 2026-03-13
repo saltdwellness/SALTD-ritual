@@ -1,4 +1,5 @@
-// Footer.tsx — clean 3-column layout: Brand | Navigation | Newsletter
+// Footer.tsx — 3-column layout: Brand | Navigation | Newsletter
+// Explore section removed. Added: Ingredients, FAQ, Shipping, and legal links.
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -26,9 +27,9 @@ const Footer: React.FC = () => {
 
             {/* ── Col 1: Brand ── */}
             <div className="flex flex-col gap-6">
-              <span className="text-2xl font-black tracking-[-0.04em] text-white">
+              <Link to="/" className="text-2xl font-black tracking-[-0.04em] text-white">
                 SALTD<span style={{ color: ACCENT }}>.</span>
-              </span>
+              </Link>
               <p className="text-base text-white/55 leading-relaxed font-medium max-w-[220px]">
                 "High-performance hydration rituals for the modern palate."
               </p>
@@ -38,22 +39,24 @@ const Footer: React.FC = () => {
               </div>
             </div>
 
-            {/* ── Col 2: Navigation ── */}
+            {/* ── Col 2: Navigation — two columns ── */}
             <div className="grid grid-cols-2 gap-10">
+              {/* Shop column */}
               <div>
                 <p className="text-xs font-black uppercase tracking-[0.5em] mb-5" style={{ color: ACCENT }}>"Shop"</p>
                 <div className="space-y-4">
-                  {[{ label: 'All Products', path: '/shop' }, { label: 'Subscriptions', path: '/shop' }, { label: 'Our Story', path: '/story' }].map(l => (
-                    <Link key={l.label} to={l.path} className="block text-base font-semibold text-white/55 hover:text-white transition-colors">{l.label}</Link>
-                  ))}
+                  <Link to="/shop" className="block text-base font-semibold text-white/55 hover:text-white transition-colors">All Products</Link>
+                  <Link to="/ingredients" className="block text-base font-semibold text-white/55 hover:text-white transition-colors">Why SALTD.</Link>
+                  <Link to="/faq" className="block text-base font-semibold text-white/55 hover:text-white transition-colors">FAQ</Link>
                 </div>
               </div>
+              {/* Account column */}
               <div>
                 <p className="text-xs font-black uppercase tracking-[0.5em] mb-5" style={{ color: ACCENT }}>"Account"</p>
                 <div className="space-y-4">
-                  {[{ label: 'Sign In', path: '/account' }, { label: 'Order Tracking', path: '/account' }, { label: 'Support', path: '/account' }].map(l => (
-                    <Link key={l.label} to={l.path} className="block text-base font-semibold text-white/55 hover:text-white transition-colors">{l.label}</Link>
-                  ))}
+                  <Link to="/account" className="block text-base font-semibold text-white/55 hover:text-white transition-colors">Sign In</Link>
+                  <Link to="/account" className="block text-base font-semibold text-white/55 hover:text-white transition-colors">Order Tracking</Link>
+                  <a href="mailto:support@saltd.in" className="block text-base font-semibold text-white/55 hover:text-white transition-colors">Support</a>
                 </div>
               </div>
             </div>
@@ -63,10 +66,18 @@ const Footer: React.FC = () => {
               <p className="text-xs font-black uppercase tracking-[0.5em]" style={{ color: ACCENT }}>"Newsletter"</p>
               <p className="text-sm text-white/50 leading-relaxed">Early access, ritual tips, new flavors. No spam.</p>
               <form onSubmit={handleSubmit} className="flex rounded-xl overflow-hidden border border-white/[0.12] focus-within:border-[#2E5BFF]/50 transition-colors">
-                <input type="email" placeholder="your@email.com" value={email} onChange={e => setEmail(e.target.value)}
-                  className="flex-1 min-w-0 px-4 py-3.5 text-sm bg-transparent outline-none placeholder:text-white/20 font-medium text-white" />
-                <button type="submit" className="px-5 text-white text-base font-black transition-colors min-w-[48px] flex items-center justify-center"
-                  style={{ background: ACCENT }}>
+                <input
+                  type="email"
+                  placeholder="your@email.com"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  className="flex-1 min-w-0 px-4 py-3.5 text-sm bg-transparent outline-none placeholder:text-white/20 font-medium text-white"
+                />
+                <button
+                  type="submit"
+                  className="px-5 text-white text-base font-black transition-colors min-w-[48px] flex items-center justify-center"
+                  style={{ background: ACCENT }}
+                >
                   {sent ? '✓' : '→'}
                 </button>
               </form>
@@ -74,15 +85,79 @@ const Footer: React.FC = () => {
             </div>
           </div>
 
-          {/* Bottom bar */}
-          <div className="py-6 border-t border-white/[0.07] flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-white/35">© 2026 SALTD — Hydration.Club</p>
-            <div className="flex gap-7">
-              {['Privacy', 'Terms', 'Refunds'].map(t => (
-                <a key={t} href="#" className="text-sm font-bold uppercase tracking-[0.3em] text-white/35 hover:text-white transition-colors">{t}</a>
-              ))}
+          {/* Payment + Trust row */}
+          <div className="py-6 border-t border-white/[0.07]">
+
+            {/* Payment methods */}
+            <div className="flex flex-wrap items-center gap-3 mb-5">
+              <span className="text-[10px] font-black uppercase tracking-[0.4em] text-white/25 mr-1">Secured by</span>
+              {/* Razorpay */}
+              <div className="px-2.5 py-1.5 rounded-md flex items-center gap-1.5" style={{ background: 'rgba(255,255,255,0.07)' }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" stroke="#528FF0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                <span className="text-[10px] font-black text-white/50 tracking-wide">Razorpay</span>
+              </div>
+              {/* UPI */}
+              <div className="px-2.5 py-1.5 rounded-md" style={{ background: 'rgba(255,255,255,0.07)' }}>
+                <span className="text-[10px] font-black tracking-widest" style={{ color: '#5F259F' }}>UPI</span>
+              </div>
+              {/* RuPay */}
+              <div className="px-2.5 py-1.5 rounded-md" style={{ background: 'rgba(255,255,255,0.07)' }}>
+                <span className="text-[10px] font-black tracking-widest text-white/55">RuPay</span>
+              </div>
+              {/* Visa */}
+              <div className="px-2.5 py-1.5 rounded-md flex items-center" style={{ background: 'rgba(255,255,255,0.07)' }}>
+                <span className="text-[11px] font-black italic tracking-tight" style={{ color: '#1A1F71' }}>VISA</span>
+              </div>
+              {/* Mastercard */}
+              <div className="px-2.5 py-1.5 rounded-md flex items-center gap-0.5" style={{ background: 'rgba(255,255,255,0.07)' }}>
+                <div className="w-3.5 h-3.5 rounded-full" style={{ background: '#EB001B', opacity: 0.9 }} />
+                <div className="w-3.5 h-3.5 rounded-full -ml-1.5" style={{ background: '#F79E1B', opacity: 0.9 }} />
+              </div>
+              {/* Amex */}
+              <div className="px-2.5 py-1.5 rounded-md" style={{ background: 'rgba(255,255,255,0.07)' }}>
+                <span className="text-[10px] font-black tracking-widest" style={{ color: '#2E77BC' }}>AMEX</span>
+              </div>
+              {/* Net Banking */}
+              <div className="px-2.5 py-1.5 rounded-md" style={{ background: 'rgba(255,255,255,0.07)' }}>
+                <span className="text-[10px] font-black tracking-wider text-white/45">Net Banking</span>
+              </div>
+              {/* EMI */}
+              <div className="px-2.5 py-1.5 rounded-md" style={{ background: 'rgba(255,255,255,0.07)' }}>
+                <span className="text-[10px] font-black tracking-wider text-white/45">EMI</span>
+              </div>
+              {/* Make in India */}
+              <div className="ml-auto flex items-center gap-2 px-3 py-1.5 rounded-md border border-white/[0.08]">
+                <svg width="18" height="18" viewBox="0 0 32 32" fill="none">
+                  <circle cx="16" cy="16" r="14" fill="#FF9933" opacity="0.15"/>
+                  <circle cx="16" cy="16" r="10" fill="none" stroke="#FF9933" strokeWidth="1.5"/>
+                  <circle cx="16" cy="16" r="3" fill="#000080"/>
+                  {[0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23].map((i) => (
+                    <line key={i}
+                      x1={16 + 4.5 * Math.cos(i * Math.PI / 12)}
+                      y1={16 + 4.5 * Math.sin(i * Math.PI / 12)}
+                      x2={16 + 3 * Math.cos(i * Math.PI / 12)}
+                      y2={16 + 3 * Math.sin(i * Math.PI / 12)}
+                      stroke="#000080" strokeWidth="0.8"/>
+                  ))}
+                </svg>
+                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-white/50">Make in India</span>
+              </div>
+            </div>
+
+            {/* Legal row */}
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-3">
+              <p className="text-sm font-semibold uppercase tracking-[0.3em] text-white/35">
+                © 2026 SALTD — Aurevia Ventures
+              </p>
+              <div className="flex flex-wrap gap-5">
+                <Link to="/privacy"  className="text-xs font-bold uppercase tracking-[0.3em] text-white/35 hover:text-white transition-colors">Privacy</Link>
+                <Link to="/terms"    className="text-xs font-bold uppercase tracking-[0.3em] text-white/35 hover:text-white transition-colors">Terms</Link>
+                <Link to="/refunds"  className="text-xs font-bold uppercase tracking-[0.3em] text-white/35 hover:text-white transition-colors">Refunds</Link>
+                <Link to="/shipping" className="text-xs font-bold uppercase tracking-[0.3em] text-white/35 hover:text-white transition-colors">Shipping</Link>
+              </div>
             </div>
           </div>
+
         </div>
       </div>
     </footer>

@@ -335,15 +335,7 @@ const Hero: React.FC<{ content: HomepageContent; firstProduct: ShopifyProductFul
           </div>
         </div>
 
-        {/* Stat pills — desktop only, absolute bottom right */}
-        <div className="hidden md:flex items-center gap-7 absolute bottom-10 right-14">
-          {(content.heroStatPills || ['6 Electrolytes', '8 Vitamins', 'Zero Sugar', 'Ashwagandha']).map(s => (
-            <div key={s} className="flex items-center gap-2">
-              <div className="w-1.5 h-1.5 rounded-full" style={{ background: ACCENT }} />
-              <span className="text-xs font-black uppercase tracking-[0.3em] text-[#1A1A1A]/40">{s}</span>
-            </div>
-          ))}
-        </div>
+
       </div>
 
       {/* Scroll indicator — mobile only, bottom center */}
@@ -363,28 +355,36 @@ const Hero: React.FC<{ content: HomepageContent; firstProduct: ShopifyProductFul
 const STAT_ICONS: Record<string, React.ReactNode> = {
   'Electrolytes': (
     <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
-      <circle cx="16" cy="16" r="14" stroke="#2E5BFF" strokeWidth="1.5" opacity="0.3"/>
-      <path d="M16 6 L19 13 L26 13 L20.5 17.5 L22.5 25 L16 20.5 L9.5 25 L11.5 17.5 L6 13 L13 13 Z" fill="#2E5BFF" opacity="0.85"/>
+      <circle cx="16" cy="16" r="14" stroke="white" strokeWidth="1.5" opacity="0.3"/>
+      <path d="M16 6 L19 13 L26 13 L20.5 17.5 L22.5 25 L16 20.5 L9.5 25 L11.5 17.5 L6 13 L13 13 Z" fill="white" opacity="0.85"/>
     </svg>
   ),
   'Vitamins': (
     <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
-      <rect x="9" y="4" width="6" height="24" rx="3" fill="#2E5BFF" opacity="0.25"/>
-      <rect x="4" y="13" width="24" height="6" rx="3" fill="#2E5BFF" opacity="0.85"/>
-      <rect x="9" y="4" width="6" height="11" rx="3" fill="#2E5BFF" opacity="0.85"/>
+      <rect x="9" y="4" width="6" height="24" rx="3" fill="white" opacity="0.25"/>
+      <rect x="4" y="13" width="24" height="6" rx="3" fill="white" opacity="0.85"/>
+      <rect x="9" y="4" width="6" height="11" rx="3" fill="white" opacity="0.85"/>
     </svg>
   ),
   'Sugar': (
     <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
-      <circle cx="16" cy="16" r="11" stroke="#2E5BFF" strokeWidth="1.8" opacity="0.85"/>
-      <line x1="8" y1="24" x2="24" y2="8" stroke="#2E5BFF" strokeWidth="2" strokeLinecap="round" opacity="0.85"/>
+      <circle cx="16" cy="16" r="11" stroke="white" strokeWidth="1.8" opacity="0.85"/>
+      <line x1="8" y1="24" x2="24" y2="8" stroke="white" strokeWidth="2" strokeLinecap="round" opacity="0.85"/>
     </svg>
   ),
   'Flavors': (
     <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
-      <path d="M16 4 C10 4 5 9 5 15 C5 21 9 26 16 28 C23 26 27 21 27 15 C27 9 22 4 16 4Z" fill="#2E5BFF" opacity="0.2"/>
-      <path d="M16 8 C12 8 8 12 8 16 C8 20 11 23 16 25 C21 23 24 20 24 16 C24 12 20 8 16 8Z" fill="#2E5BFF" opacity="0.5"/>
-      <circle cx="16" cy="16" r="4" fill="#2E5BFF" opacity="0.9"/>
+      <path d="M16 4 C10 4 5 9 5 15 C5 21 9 26 16 28 C23 26 27 21 27 15 C27 9 22 4 16 4Z" fill="white" opacity="0.2"/>
+      <path d="M16 8 C12 8 8 12 8 16 C8 20 11 23 16 25 C21 23 24 20 24 16 C24 12 20 8 16 8Z" fill="white" opacity="0.5"/>
+      <circle cx="16" cy="16" r="4" fill="white" opacity="0.9"/>
+    </svg>
+  ),
+  'Ashwagandha': (
+    <svg width="28" height="28" viewBox="0 0 32 32" fill="none">
+      <path d="M16 28 C16 28 8 22 8 15 C8 10 11 6 16 6 C21 6 24 10 24 15 C24 22 16 28 16 28Z" fill="white" opacity="0.18"/>
+      <path d="M16 28 C16 28 8 22 8 15 C8 10 11 6 16 6 C21 6 24 10 24 15 C24 22 16 28 16 28Z" stroke="white" strokeWidth="1.6"/>
+      <path d="M16 6 L16 28" stroke="white" strokeWidth="1.4" strokeDasharray="2 2" opacity="0.5"/>
+      <path d="M10 13 C12 11 14 13 16 12 C18 11 20 13 22 12" stroke="white" strokeWidth="1.4" strokeLinecap="round" opacity="0.7"/>
     </svg>
   ),
 };
@@ -401,9 +401,9 @@ const StatsBar: React.FC<{ stats: StatItem[] }> = ({ stats }) => (
         <Reveal key={x.label} delay={i * 0.06}>
           <div className={`flex flex-col px-4 py-5 ${i < 3 ? 'md:border-r border-white/[0.07]' : ''} ${i < 2 ? 'border-b md:border-b-0 border-white/[0.07]' : ''}`}>
             <div className="mb-3 opacity-90">{getStatIcon(x.label)}</div>
-            <span className="text-[2.4rem] md:text-[3.5rem] font-black text-white tracking-[-0.04em] leading-none">{x.number}</span>
-            <span className="text-xs sm:text-sm font-black uppercase tracking-[0.28em] mt-3" style={{ color: ACCENT }}>{x.label}</span>
-            <span className="text-sm text-white/55 font-medium mt-1">{x.subtitle}</span>
+            <span className="text-[2.8rem] md:text-[4rem] font-black text-white tracking-[-0.04em] leading-none">{x.number}</span>
+            <span className="text-sm md:text-base font-black uppercase tracking-[0.28em] mt-3 text-white">{x.label}</span>
+            <span className="text-sm md:text-base text-white font-medium mt-1">{x.subtitle}</span>
           </div>
         </Reveal>
       ))}
@@ -792,24 +792,24 @@ const HomeFAQSection: React.FC = () => (
 const RITUAL_ICONS = [
   // Tear & Pour — stick with water droplets
   <svg width="44" height="44" viewBox="0 0 48 48" fill="none">
-    <rect x="20" y="2" width="8" height="28" rx="4" fill="#2E5BFF" opacity="0.15"/>
-    <rect x="20" y="2" width="8" height="28" rx="4" stroke="#2E5BFF" strokeWidth="1.8"/>
-    <path d="M24 34 C24 34 18 41 18 44 C18 47 20.7 48 24 48 C27.3 48 30 47 30 44 C30 41 24 34 24 34Z" fill="#2E5BFF" opacity="0.7"/>
-    <circle cx="12" cy="38" r="3" fill="#2E5BFF" opacity="0.35"/>
-    <circle cx="36" cy="42" r="2" fill="#2E5BFF" opacity="0.25"/>
+    <rect x="20" y="2" width="8" height="28" rx="4" fill="white" opacity="0.15"/>
+    <rect x="20" y="2" width="8" height="28" rx="4" stroke="white" strokeWidth="1.8"/>
+    <path d="M24 34 C24 34 18 41 18 44 C18 47 20.7 48 24 48 C27.3 48 30 47 30 44 C30 41 24 34 24 34Z" fill="white" opacity="0.7"/>
+    <circle cx="12" cy="38" r="3" fill="white" opacity="0.35"/>
+    <circle cx="36" cy="42" r="2" fill="white" opacity="0.25"/>
   </svg>,
   // Stir — glass with swirl
   <svg width="44" height="44" viewBox="0 0 48 48" fill="none">
-    <rect x="10" y="12" width="28" height="32" rx="4" stroke="#2E5BFF" strokeWidth="1.8" fill="#2E5BFF" opacity="0.08"/>
-    <path d="M18 28 C20 24 28 24 30 28 C32 32 20 32 22 28" stroke="#2E5BFF" strokeWidth="2" strokeLinecap="round" fill="none" opacity="0.8"/>
-    <rect x="22" y="2" width="4" height="14" rx="2" fill="#2E5BFF" opacity="0.6"/>
-    <path d="M10 18 L38 18" stroke="#2E5BFF" strokeWidth="1" opacity="0.3"/>
+    <rect x="10" y="12" width="28" height="32" rx="4" stroke="white" strokeWidth="1.8" fill="white" opacity="0.08"/>
+    <path d="M18 28 C20 24 28 24 30 28 C32 32 20 32 22 28" stroke="white" strokeWidth="2" strokeLinecap="round" fill="none" opacity="0.8"/>
+    <rect x="22" y="2" width="4" height="14" rx="2" fill="white" opacity="0.6"/>
+    <path d="M10 18 L38 18" stroke="white" strokeWidth="1" opacity="0.3"/>
   </svg>,
   // Drink & Track — checkmark streak
   <svg width="44" height="44" viewBox="0 0 48 48" fill="none">
-    <circle cx="24" cy="24" r="20" stroke="#2E5BFF" strokeWidth="1.8" opacity="0.2"/>
-    <path d="M14 24 L21 31 L34 18" stroke="#2E5BFF" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
-    <circle cx="38" cy="10" r="5" fill="#2E5BFF" opacity="0.85"/>
+    <circle cx="24" cy="24" r="20" stroke="white" strokeWidth="1.8" opacity="0.2"/>
+    <path d="M14 24 L21 31 L34 18" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+    <circle cx="38" cy="10" r="5" fill="white" opacity="0.85"/>
     <path d="M35.5 10 L37.5 12 L41 8" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
   </svg>,
 ];
@@ -1076,7 +1076,6 @@ const Home: React.FC<HomeProps> = ({ onAddToCart }) => {
 
   return (
     <div className="bg-[#FAFAF8] overflow-x-hidden">
-      <WelcomeModal content={content} />
       <Hero content={content} firstProduct={products[0] ?? null} />
       <StatsBar stats={content.stats} />
       <FlavorEditorialPanels products={products} />

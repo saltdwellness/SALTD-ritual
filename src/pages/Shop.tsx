@@ -10,6 +10,7 @@ import {
 
 interface ShopProps {
   onAddToCart: (product: Product, variant: ProductVariant) => void;
+  onAddAllToCart?: (items: { product: Product; variant: ProductVariant }[]) => void;
 }
 
 const HANDLE_COLOR_FALLBACK: Record<string, string> = {
@@ -264,7 +265,7 @@ const ProductSection: React.FC<{
   );
 };
 
-const Shop: React.FC<ShopProps> = ({ onAddToCart }) => {
+const Shop: React.FC<ShopProps> = ({ onAddToCart, onAddAllToCart }) => {
   const [products, setProducts] = useState<ShopifyProductFull[]>([]);
   const [loading,  setLoading]  = useState(true);
 
@@ -318,7 +319,18 @@ const Shop: React.FC<ShopProps> = ({ onAddToCart }) => {
               </h2>
               <p className="text-sm text-white/45 mt-4 max-w-xs leading-relaxed">One of each — the perfect way to discover your ritual.</p>
             </div>
-            <button onClick={() => displayProducts.forEach(sp => { const p = toCartProduct(sp); onAddToCart(p, p.variants[0]); })}
+            <button onClick={() => {
+              const items = displayProducts.map(sp => {
+                const p = toCartProduct(sp);
+                const pack10 = p.variants.find(v => v.size === 10 && !v.isSubscription) ?? p.variants.find(v => v.size === 10) ?? p.variants[0];
+                return { product: p, variant: pack10 };
+              });
+              if (onAddAllToCart) {
+                onAddAllToCart(items);
+              } else {
+                items.forEach(({ product, variant }) => onAddToCart(product, variant));
+              }
+            }}
               className="bg-white text-[#2E5BFF] px-10 py-4 text-xs font-black uppercase tracking-[0.4em] hover:bg-[#FAFAF8] transition-colors active:scale-[0.97] shrink-0 rounded-2xl">
               Add All Three
             </button>

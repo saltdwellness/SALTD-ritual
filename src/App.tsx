@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { HashRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import FloatingCTA from './components/FloatingCTA';
 import CartDrawer from './components/CartDrawer';
 import Home from './pages/Home';
 import Shop from './pages/Shop';
@@ -42,13 +43,18 @@ function mapShopifyCart(shopifyCart: ShopifyCart): CartItem[] {
     const product    = PRODUCTS.find(p => p.variants.some(v => v.shopifyId === localKey)) ?? PRODUCTS[0];
     const baseVariant = product.variants.find(v => v.shopifyId === localKey) ?? product.variants[0];
     // Always use Shopify's live price — never the hardcoded constant
-    const livePrice  = parseFloat(node.merchandise.priceV2.amount);
+    const livePrice = parseFloat(node.merchandise.priceV2.amount);
+    // Image: prefer variant image from Shopify, fall back to product featuredImage, then constant
+    const liveImage = node.merchandise.image?.url
+      ?? node.merchandise.product.featuredImage?.url
+      ?? product.image;
     const variant: ProductVariant = {
       ...baseVariant,
       price: livePrice,
     };
     return {
       ...product,
+      image: liveImage,
       selectedVariant: { ...variant, _lineId: node.id } as ProductVariant & { _lineId: string },
       quantity: node.quantity,
     };
@@ -135,6 +141,40 @@ const App: React.FC = () => {
     } finally { setIsLoading(false); }
   }, [getOrCreateCart]);
 
+  // Batch-add multiple variants in a single Shopify API call
+  const handleAddAllToCart = useCallback(async (items: { product: Product; variant: ProductVariant }[]) => {
+    setIsLoading(true); setCartError(null);
+    try {
+      if (configured.current) {
+        const gids = items.map(({ variant }) => {
+          const gid = VARIANT_MAP[variant.shopifyId];
+          if (!gid || gid.includes('REPLACE_ME')) throw new Error(`Variant not mapped: ${variant.shopifyId}`);
+          return { merchandiseId: gid, quantity: 1 };
+        });
+        const sc      = await getOrCreateCart();
+        const updated = await cartAddLines(sc.id, gids);
+        setShopifyCart(updated); setCart(mapShopifyCart(updated));
+      } else {
+        setCart(prev => {
+          let next = [...prev];
+          items.forEach(({ product, variant }) => {
+            const exists = next.find(i => i.selectedVariant.shopifyId === variant.shopifyId);
+            if (exists) {
+              next = next.map(i => i.selectedVariant.shopifyId === variant.shopifyId ? { ...i, quantity: i.quantity + 1 } : i);
+            } else {
+              next = [...next, { ...product, selectedVariant: variant, quantity: 1 }];
+            }
+          });
+          return next;
+        });
+      }
+      setIsCartOpen(true);
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : 'Could not add to cart';
+      console.error('[SALTD] Add all to cart failed:', msg); setCartError(msg);
+    } finally { setIsLoading(false); }
+  }, [getOrCreateCart]);
+
   const handleRemove = useCallback(async (_id: string, shopifyId: string) => {
     setIsLoading(true);
     try {
@@ -181,7 +221,7 @@ const App: React.FC = () => {
         <main className="flex-grow">
           <Routes>
             <Route path="/"                element={<Home    onAddToCart={handleAddToCart} />} />
-            <Route path="/shop"            element={<Shop    onAddToCart={handleAddToCart} />} />
+            <Route path="/shop"            element={<Shop    onAddToCart={handleAddToCart} onAddAllToCart={handleAddAllToCart} />} />
             <Route path="/product/:handle" element={<ProductPage onAddToCart={handleAddToCart} />} />
             <Route path="/story"           element={<Story />} />
             <Route path="/account"         element={<Account />} />
@@ -195,6 +235,7 @@ const App: React.FC = () => {
           </Routes>
         </main>
         <Footer />
+        <FloatingCTA />
         <CartDrawer
           isOpen={isCartOpen}
           onClose={() => setIsCartOpen(false)}
