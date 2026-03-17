@@ -205,98 +205,84 @@ const RotatingQuote: React.FC<{ quotes: string[]; loaded: boolean }> = ({ quotes
 };
 
 // ─── Hero ─────────────────────────────────────────────────────────
-// Mobile: no parallax, image is a fixed-opacity background element, text is always on top.
-// Desktop: smooth rAF-based parallax that writes directly to style, no setState.
+// Video background hero — autoplay looping video (muted, no controls).
+// Mobile: video scales to cover, text overlaid with strong gradient.
+// Desktop: video covers full section, parallax-free (video handles motion).
+// Falls back gracefully if video fails to load (static bg color shows through).
 const Hero: React.FC<{ content: HomepageContent; firstProduct: ShopifyProductFull | null }> = ({ content, firstProduct }) => {
   const [loaded, setLoaded] = useState(false);
-  const imgWrapRef = useRef<HTMLDivElement>(null);
-  const isTouch = useRef(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
-    isTouch.current = isTouchDevice();
     const t = setTimeout(() => setLoaded(true), 80);
 
-    // Desktop-only parallax via rAF — never calls setState
-    if (!isTouch.current && !prefersReducedMotion()) {
-      let ticking = false;
-      const onScroll = () => {
-        if (!ticking) {
-          requestAnimationFrame(() => {
-            if (imgWrapRef.current) {
-              imgWrapRef.current.style.transform = `translateY(${window.scrollY * 0.22}px)`;
-            }
-            ticking = false;
-          });
-          ticking = true;
-        }
-      };
-      window.addEventListener('scroll', onScroll, { passive: true });
-      return () => { clearTimeout(t); window.removeEventListener('scroll', onScroll); };
+    // Attempt autoplay — browsers require muted for autoplay to work
+    const vid = videoRef.current;
+    if (vid) {
+      vid.muted = true;
+      vid.play().catch(() => {
+        // Autoplay blocked (rare on mobile with muted) — video stays paused, static bg shows
+      });
     }
     return () => clearTimeout(t);
   }, []);
 
-  const heroImg = firstProduct
-    ? (firstProduct.images.edges.length > 0
-        ? firstProduct.images.edges[0].node.url
-        : firstProduct.featuredImage?.url ?? '/mockups/Mockupv2-1.png')
-    : '/mockups/Mockupv2-1.png';
-  const accent  = firstProduct?.flavorColor ?? '#8A307F';
-  const lines   = content.heroHeadline.split('\n').filter(Boolean);
+  const accent = firstProduct?.flavorColor ?? '#8A307F';
+  const lines  = content.heroHeadline.split('\n').filter(Boolean);
   const [coords, city] = (content.heroLocationTag || '28.6139 N · New Delhi').split('·').map(s => s.trim());
 
   return (
     <section className="relative overflow-hidden"
-      // Use 100svh (safe viewport height) so address bar on iOS doesn't cause overflow
-      style={{ height: '100svh', minHeight: 560, background: `radial-gradient(ellipse at 72% 48%, ${accent}12 0%, transparent 65%), #FAFAF8` }}>
+      style={{ height: '100svh', minHeight: 560, background: '#0D0D0D' }}>
 
-      {/* Subtle grid */}
-      <div className="absolute inset-0 pointer-events-none" aria-hidden
-        style={{ backgroundImage: 'linear-gradient(rgba(0,0,0,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,0.03) 1px,transparent 1px)', backgroundSize: '80px 80px' }} />
+      {/* ── Video background ── */}
+      {/* object-cover + absolute inset fills the section at any aspect ratio */}
+      <video
+        ref={videoRef}
+        className="absolute inset-0 w-full h-full object-cover"
+        style={{
+          opacity: loaded ? 1 : 0,
+          transition: 'opacity 1.2s ease 0.15s',
+          willChange: 'opacity',
+        }}
+        autoPlay
+        loop
+        muted
+        playsInline          // required for iOS inline playback
+        preload="auto"
+        aria-hidden
+      >
+        {/* webm first — better compression for modern browsers */}
+        <source src="/videos/hero.webm" type="video/webm" />
+        <source src="/videos/hero.mp4"  type="video/mp4" />
+      </video>
 
-      {/* Product image wrapper — parallax on desktop, static on mobile */}
-      <div ref={imgWrapRef}
-        className="absolute inset-0 pointer-events-none select-none"
-        style={{ willChange: 'transform' }}>
-        <div className="absolute right-0 top-0 bottom-0 w-full md:w-[58%] flex items-center justify-center">
-          <img
-            src={heroImg} alt="" aria-hidden
-            style={{
-              // Mobile: smaller so it never bleeds behind text
-              width: 'clamp(180px, 55vw, 480px)',
-              height: 'auto',
-              objectFit: 'contain',
-              opacity: loaded ? 0.92 : 0,
-              filter: `drop-shadow(0 40px 100px ${accent}55)`,
-              // Shift right on mobile so it sits behind text without covering it
-              transform: 'translateX(12%)',
-              transition: 'opacity 1.1s ease 0.25s',
-            }}
-          />
-        </div>
-      </div>
-
-      {/* Reading gradients — desktop & mobile */}
-      <div className="absolute inset-y-0 left-0 w-full pointer-events-none" aria-hidden
-        style={{ background: 'linear-gradient(to right, rgba(250,250,248,0.97) 0%, rgba(250,250,248,0.88) 42%, rgba(250,250,248,0.45) 70%, transparent 100%)' }} />
-      {/* Extra full overlay on mobile for guaranteed readability */}
+      {/* ── Overlay gradient — ensures text is readable over any video frame ── */}
+      {/* Desktop: dark left panel fading to semi-transparent right */}
+      <div className="absolute inset-0 pointer-events-none hidden md:block" aria-hidden
+        style={{ background: 'linear-gradient(to right, rgba(13,13,13,0.88) 0%, rgba(13,13,13,0.70) 38%, rgba(13,13,13,0.30) 65%, rgba(13,13,13,0.10) 100%)' }} />
+      {/* Mobile: stronger full overlay so text is always legible */}
       <div className="md:hidden absolute inset-0 pointer-events-none" aria-hidden
-        style={{ background: 'rgba(250,250,248,0.72)' }} />
+        style={{ background: 'rgba(13,13,13,0.72)' }} />
 
-      {/* Content — use padding-top for navbar, flex for vertical centering */}
+      {/* Subtle grid over video */}
+      <div className="absolute inset-0 pointer-events-none" aria-hidden
+        style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.025) 1px,transparent 1px)', backgroundSize: '80px 80px' }} />
+
+      {/* ── Content ── */}
       <div className="relative z-10 h-full flex flex-col justify-center px-5 sm:px-8 md:px-14 max-w-[1440px] mx-auto"
         style={{ paddingTop: 72 }}>
-        <div className="w-full md:w-[52%]">
+        <div className="w-full md:w-[54%]">
 
           {/* Label */}
           <div className="flex items-center gap-3 mb-5"
             style={{ opacity: loaded ? 1 : 0, transform: loaded ? 'none' : 'translateX(-14px)', transition: 'all 0.9s ease 0.1s' }}>
             <div className="w-5 h-[2px] rounded-full" style={{ background: ACCENT }} />
-            <span className="text-xs font-black uppercase tracking-[0.45em]" style={{ color: ACCENT }}>c/o Hydration</span>
+            <span className="text-xs font-black uppercase tracking-[0.45em] text-white/60">c/o Hydration</span>
           </div>
 
-          {/* Headline — clamp so it never overflows on 320px screens */}
-          <h1 className="font-black tracking-[-0.04em] leading-[0.92] text-[#1A1A1A] mb-6"
+          {/* Headline */}
+          <h1 className="font-black tracking-[-0.04em] leading-[0.92] text-white mb-6"
             style={{ fontSize: 'clamp(2.5rem, 7.5vw, 6.8rem)', opacity: loaded ? 1 : 0, transform: loaded ? 'none' : 'translateY(22px)', transition: 'all 1s cubic-bezier(0.16,1,0.3,1) 0.2s' }}>
             {lines.map((line, i) => (
               <span key={i}>
@@ -306,13 +292,15 @@ const Hero: React.FC<{ content: HomepageContent; firstProduct: ShopifyProductFul
             ))}
           </h1>
 
-          <div className="border-l-[3px] pl-4 mb-7" style={{ borderColor: ACCENT, opacity: loaded ? 1 : 0, transform: loaded ? 'none' : 'translateY(12px)', transition: 'all 1s ease 0.45s' }}>
-            <p className="text-base font-medium leading-relaxed" style={{ color: 'rgba(26,26,26,0.70)' }}>
+          {/* Quote */}
+          <div className="border-l-[3px] pl-4 mb-7"
+            style={{ borderColor: ACCENT, opacity: loaded ? 1 : 0, transform: loaded ? 'none' : 'translateY(12px)', transition: 'all 1s ease 0.45s' }}>
+            <p className="text-base font-medium leading-relaxed text-white/65">
               "{content.heroQuote || 'Finally a hydration drink that actually tastes like something — not a lab experiment.'}"
             </p>
           </div>
 
-          {/* CTAs — stack on very small screens */}
+          {/* CTAs */}
           <div className="flex flex-wrap items-center gap-3 mb-8"
             style={{ opacity: loaded ? 1 : 0, transform: loaded ? 'none' : 'translateY(14px)', transition: 'all 1s ease 0.6s' }}>
             <Link to="/shop"
@@ -321,7 +309,7 @@ const Hero: React.FC<{ content: HomepageContent; firstProduct: ShopifyProductFul
               Shop Now
             </Link>
             <Link to="/ingredients"
-              className="text-sm font-black uppercase tracking-[0.3em] text-[#1A1A1A]/50 flex items-center gap-2">
+              className="text-sm font-black uppercase tracking-[0.3em] text-white/50 flex items-center gap-2">
               Why SALTD. <span style={{ color: ACCENT }}>→</span>
             </Link>
           </div>
@@ -329,18 +317,16 @@ const Hero: React.FC<{ content: HomepageContent; firstProduct: ShopifyProductFul
           {/* Location — desktop only */}
           <div className="hidden md:flex items-center gap-2"
             style={{ opacity: loaded ? 0.5 : 0, transition: 'opacity 1.2s ease 0.85s' }}>
-            <span className="text-xs font-black uppercase tracking-[0.4em] text-[#1A1A1A]/45">{coords}</span>
+            <span className="text-xs font-black uppercase tracking-[0.4em] text-white/40">{coords}</span>
             <span className="font-black" style={{ color: ACCENT }}>·</span>
             <span className="text-xs font-black uppercase tracking-[0.4em]" style={{ color: ACCENT }}>{city}</span>
           </div>
         </div>
-
-
       </div>
 
       {/* Scroll indicator — mobile only, bottom center */}
       <div className="md:hidden absolute bottom-6 left-1/2 -translate-x-1/2 opacity-40" aria-hidden>
-        <div className="w-px h-9 bg-black/20 relative overflow-hidden">
+        <div className="w-px h-9 bg-white/20 relative overflow-hidden">
           <div className="absolute top-0 inset-x-0 h-1/2" style={{ background: ACCENT, animation: 'sd 1.8s ease infinite' }} />
         </div>
       </div>
