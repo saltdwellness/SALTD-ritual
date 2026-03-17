@@ -239,7 +239,7 @@ const Hero: React.FC<{ content: HomepageContent; firstProduct: ShopifyProductFul
       {/* object-cover + absolute inset fills the section at any aspect ratio */}
       <video
         ref={videoRef}
-        className="absolute inset-0 w-full h-full object-cover"
+        className="absolute inset-0 w-full h-full object-contain md:object-cover"
         style={{
           opacity: loaded ? 1 : 0,
           transition: 'opacity 1.2s ease 0.15s',
