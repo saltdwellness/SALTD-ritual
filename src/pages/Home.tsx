@@ -212,18 +212,15 @@ const RotatingQuote: React.FC<{ quotes: string[]; loaded: boolean }> = ({ quotes
 const Hero: React.FC<{ content: HomepageContent; firstProduct: ShopifyProductFull | null }> = ({ content, firstProduct }) => {
   const [loaded, setLoaded] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
+  const videoMobileRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     const t = setTimeout(() => setLoaded(true), 80);
 
-    // Attempt autoplay — browsers require muted for autoplay to work
-    const vid = videoRef.current;
-    if (vid) {
-      vid.muted = true;
-      vid.play().catch(() => {
-        // Autoplay blocked (rare on mobile with muted) — video stays paused, static bg shows
-      });
-    }
+    // Attempt autoplay on both — browsers require muted for autoplay to work
+    [videoRef.current, videoMobileRef.current].forEach(vid => {
+      if (vid) { vid.muted = true; vid.play().catch(() => {}); }
+    });
     return () => clearTimeout(t);
   }, []);
 
@@ -236,26 +233,49 @@ const Hero: React.FC<{ content: HomepageContent; firstProduct: ShopifyProductFul
       style={{ height: '100svh', minHeight: 560, background: '#0D0D0D' }}>
 
       {/* ── Video background ── */}
-      {/* object-cover + absolute inset fills the section at any aspect ratio */}
-      <video
-        ref={videoRef}
-        className="absolute inset-0 w-full h-full object-contain md:object-cover"
-        style={{
-          opacity: loaded ? 1 : 0,
-          transition: 'opacity 1.2s ease 0.15s',
-          willChange: 'opacity',
-        }}
-        autoPlay
-        loop
-        muted
-        playsInline          // required for iOS inline playback
-        preload="auto"
-        aria-hidden
-      >
-        {/* webm first — better compression for modern browsers */}
-        <source src="/videos/hero.webm" type="video/webm" />
-        <source src="/videos/hero.mp4"  type="video/mp4" />
-      </video>
+      {/* Portrait video (1136×2018). Strategy:
+          - Desktop: object-cover fills the wide viewport naturally (video is tall enough)
+          - Mobile: scale to 100vw width, center vertically on the sachets (middle of video)
+            using a negative translateY so the interesting content stays in frame.
+            overflow-hidden on the section clips the top/bottom overhang. */}
+      <div className="absolute inset-0 overflow-hidden">
+        {/* Desktop wrapper — standard cover behaviour */}
+        <video
+          ref={videoRef}
+          className="hidden md:block absolute inset-0 w-full h-full object-cover"
+          style={{
+            opacity: loaded ? 1 : 0,
+            transition: 'opacity 1.2s ease 0.15s',
+            willChange: 'opacity',
+          }}
+          autoPlay loop muted playsInline preload="auto" aria-hidden
+        >
+          <source src="/videos/hero.webm" type="video/webm" />
+          <source src="/videos/hero.mp4"  type="video/mp4" />
+        </video>
+
+        {/* Mobile wrapper — width: 100vw, centered vertically */}
+        {/* The video is ~0.56 aspect ratio so at 100vw it's ~178vw tall.
+            We shift it up by 50% of its height minus 50vh to centre it,
+            then add a small nudge (-4vh) to favour the upper/centre where sachets sit. */}
+        <video
+          ref={videoMobileRef}
+          className="md:hidden absolute left-0"
+          style={{
+            width: '100vw',
+            height: 'auto',
+            top: '50%',
+            transform: 'translateY(calc(-50% - 4vh))',
+            opacity: loaded ? 1 : 0,
+            transition: 'opacity 1.2s ease 0.15s',
+            willChange: 'opacity',
+          }}
+          autoPlay loop muted playsInline preload="auto" aria-hidden
+        >
+          <source src="/videos/hero.webm" type="video/webm" />
+          <source src="/videos/hero.mp4"  type="video/mp4" />
+        </video>
+      </div>
 
       {/* ── Overlay gradient — ensures text is readable over any video frame ── */}
       {/* Desktop: dark left panel fading to semi-transparent right */}
