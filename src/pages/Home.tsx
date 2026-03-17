@@ -265,7 +265,7 @@ const Hero: React.FC<{ content: HomepageContent; firstProduct: ShopifyProductFul
             width: '100vw',
             height: 'auto',
             top: '50%',
-            transform: 'translateY(calc(-50% - 4vh))',
+            transform: 'translateY(-42%)',
             opacity: loaded ? 1 : 0,
             transition: 'opacity 1.2s ease 0.15s',
             willChange: 'opacity',
