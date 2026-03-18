@@ -37,20 +37,6 @@ const Footer: React.FC = () => {
                 <div className="w-5 h-[1.5px] bg-white/25 rounded-full" />
                 <span className="text-xs font-black uppercase tracking-[0.4em] text-white/35">Hydration.Club</span>
               </div>
-              <a
-                href="https://instagram.com/saltd.ritual"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 text-white/35 hover:text-white transition-colors"
-                aria-label="SALTD. on Instagram"
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
-                  <circle cx="12" cy="12" r="4"/>
-                  <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" stroke="none"/>
-                </svg>
-                <span className="text-xs font-black uppercase tracking-[0.35em]">@saltd.ritual</span>
-              </a>
             </div>
 
             {/* ── Col 2: Navigation — two columns ── */}
