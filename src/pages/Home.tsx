@@ -260,12 +260,15 @@ const Hero: React.FC<{ content: HomepageContent; firstProduct: ShopifyProductFul
             then add a small nudge (-4vh) to favour the upper/centre where sachets sit. */}
         <video
           ref={videoMobileRef}
-          className="md:hidden absolute left-0"
+          className="md:hidden"
           style={{
-            width: '100vw',
-            height: 'auto',
-            top: '50%',
-            transform: 'translateY(-42%)',
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            objectPosition: 'center center',
             opacity: loaded ? 1 : 0,
             transition: 'opacity 1.2s ease 0.15s',
             willChange: 'opacity',
