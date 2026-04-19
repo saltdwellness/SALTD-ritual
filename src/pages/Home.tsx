@@ -265,7 +265,7 @@ const Hero: React.FC<{ content: HomepageContent; firstProduct: ShopifyProductFul
         style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.03) 1px,transparent 1px)', backgroundSize: '80px 80px' }} />
 
       {/* ── Content ── */}
-      <div className="relative z-10 h-full flex flex-col justify-center px-5 sm:px-8 md:px-14 max-w-[1440px] mx-auto"
+      <div className="relative z-20 h-full flex flex-col justify-center px-5 sm:px-8 md:px-14 max-w-[1440px] mx-auto"
         style={{ paddingTop: 72 }}>
         <div className="w-full md:w-[54%]">
 
@@ -339,7 +339,7 @@ const Hero: React.FC<{ content: HomepageContent; firstProduct: ShopifyProductFul
           right: 0;
           top: 50%;
           transform: translateY(-50%) rotate(-2deg);
-          z-index: 15;
+          z-index: 5;
           padding: 18px 0;
           overflow: hidden;
           margin: 0 -3vw;
