@@ -246,16 +246,9 @@ const HeroMarquee: React.FC = () => (
 // Falls back gracefully if video fails to load (static bg color shows through).
 const Hero: React.FC<{ content: HomepageContent; firstProduct: ShopifyProductFull | null }> = ({ content, firstProduct }) => {
   const [loaded, setLoaded] = useState(false);
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const videoMobileRef = useRef<HTMLVideoElement>(null);
 
   useEffect(() => {
     const t = setTimeout(() => setLoaded(true), 80);
-
-    // Attempt autoplay on both — browsers require muted for autoplay to work
-    [videoRef.current, videoMobileRef.current].forEach(vid => {
-      if (vid) { vid.muted = true; vid.play().catch(() => {}); }
-    });
     return () => clearTimeout(t);
   }, []);
 
@@ -267,65 +260,9 @@ const Hero: React.FC<{ content: HomepageContent; firstProduct: ShopifyProductFul
     <section className="relative overflow-hidden"
       style={{ height: '100svh', minHeight: 560, background: '#0D0D0D' }}>
 
-      {/* ── Video background ── */}
-      {/* Portrait video (1136×2018). Strategy:
-          - Desktop: object-cover fills the wide viewport naturally (video is tall enough)
-          - Mobile: scale to 100vw width, center vertically on the sachets (middle of video)
-            using a negative translateY so the interesting content stays in frame.
-            overflow-hidden on the section clips the top/bottom overhang. */}
-      <div className="absolute inset-0 overflow-hidden">
-        {/* Desktop wrapper — standard cover behaviour */}
-        <video
-          ref={videoRef}
-          className="hidden md:block absolute inset-0 w-full h-full object-cover"
-          style={{
-            opacity: loaded ? 1 : 0,
-            transition: 'opacity 1.2s ease 0.15s',
-            willChange: 'opacity',
-          }}
-          autoPlay loop muted playsInline preload="auto" aria-hidden
-        >
-          <source src="/videos/hero.webm" type="video/webm" />
-          <source src="/videos/hero.mp4"  type="video/mp4" />
-        </video>
-
-        {/* Mobile wrapper — width: 100vw, centered vertically */}
-        {/* The video is ~0.56 aspect ratio so at 100vw it's ~178vw tall.
-            We shift it up by 50% of its height minus 50vh to centre it,
-            then add a small nudge (-4vh) to favour the upper/centre where sachets sit. */}
-        <video
-          ref={videoMobileRef}
-          className="md:hidden"
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-            objectPosition: 'center center',
-            opacity: loaded ? 1 : 0,
-            transition: 'opacity 1.2s ease 0.15s',
-            willChange: 'opacity',
-          }}
-          autoPlay loop muted playsInline preload="auto" aria-hidden
-        >
-          <source src="/videos/hero.webm" type="video/webm" />
-          <source src="/videos/hero.mp4"  type="video/mp4" />
-        </video>
-      </div>
-
-      {/* ── Overlay gradient — ensures text is readable over any video frame ── */}
-      {/* Desktop: dark left panel fading to semi-transparent right */}
-      <div className="absolute inset-0 pointer-events-none hidden md:block" aria-hidden
-        style={{ background: 'linear-gradient(to right, rgba(13,13,13,0.88) 0%, rgba(13,13,13,0.70) 38%, rgba(13,13,13,0.30) 65%, rgba(13,13,13,0.10) 100%)' }} />
-      {/* Mobile: stronger full overlay so text is always legible */}
-      <div className="md:hidden absolute inset-0 pointer-events-none" aria-hidden
-        style={{ background: 'rgba(13,13,13,0.72)' }} />
-
-      {/* Subtle grid over video */}
+      {/* Subtle grid */}
       <div className="absolute inset-0 pointer-events-none" aria-hidden
-        style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.025) 1px,transparent 1px)', backgroundSize: '80px 80px' }} />
+        style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.03) 1px,transparent 1px)', backgroundSize: '80px 80px' }} />
 
       {/* ── Content ── */}
       <div className="relative z-10 h-full flex flex-col justify-center px-5 sm:px-8 md:px-14 max-w-[1440px] mx-auto"
