@@ -265,7 +265,7 @@ const Hero: React.FC<{ content: HomepageContent; firstProduct: ShopifyProductFul
         style={{ backgroundImage: 'linear-gradient(rgba(255,255,255,0.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.03) 1px,transparent 1px)', backgroundSize: '80px 80px' }} />
 
       {/* ── Content ── */}
-      <div className="relative z-20 h-full flex flex-col justify-center px-5 sm:px-8 md:px-14 max-w-[1440px] mx-auto"
+      <div className="relative z-10 h-full flex flex-col justify-center px-5 sm:px-8 md:px-14 max-w-[1440px] mx-auto"
         style={{ paddingTop: 72 }}>
         <div className="w-full md:w-[54%]">
 
@@ -323,7 +323,8 @@ const Hero: React.FC<{ content: HomepageContent; firstProduct: ShopifyProductFul
       <HeroMarquee />
 
       {/* Scroll indicator — mobile only, bottom center */}
-      <div className="md:hidden absolute bottom-6 left-1/2 -translate-x-1/2 opacity-40 z-20" aria-hidden>
+      <div className="md:hidden absolute left-1/2 -translate-x-1/2 opacity-40 z-20" aria-hidden
+        style={{ bottom: 'calc(env(safe-area-inset-bottom, 0px) + 116px)' }}>
         <div className="w-px h-9 bg-white/20 relative overflow-hidden">
           <div className="absolute top-0 inset-x-0 h-1/2" style={{ background: ACCENT, animation: 'sd 1.8s ease infinite' }} />
         </div>
@@ -337,9 +338,9 @@ const Hero: React.FC<{ content: HomepageContent; firstProduct: ShopifyProductFul
           position: absolute;
           left: 0;
           right: 0;
-          top: 50%;
-          transform: translateY(-50%) rotate(-2deg);
-          z-index: 5;
+          bottom: 0;
+          transform: rotate(-2deg);
+          z-index: 15;
           padding: 18px 0;
           overflow: hidden;
           margin: 0 -3vw;
