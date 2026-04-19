@@ -204,6 +204,41 @@ const RotatingQuote: React.FC<{ quotes: string[]; loaded: boolean }> = ({ quotes
   );
 };
 
+// ─── Hero Marquee ─────────────────────────────────────────────────
+// Infinite horizontal scrolling banner strip at the bottom of the hero.
+// Uses 4 PNG banners (FEELING LOW + 3 colorways of SALTD. HYDRATE MORE).
+// Drop these files into /public/banners/ at the paths below.
+// Pure CSS animation, duplicated track for seamless loop, pause on hover,
+// respects prefers-reduced-motion.
+const HERO_BANNERS = [
+  '/banners/feeling-low.png',
+  '/banners/saltd-green.png',
+  '/banners/saltd-orange.png',
+  '/banners/saltd-purple.png',
+];
+
+const HeroMarquee: React.FC = () => (
+  <div className="hero-marquee" aria-hidden>
+    <div className="hero-marquee__track">
+      {/* two sets for a seamless loop */}
+      {[0, 1].map(set => (
+        <React.Fragment key={set}>
+          {HERO_BANNERS.map((src, i) => (
+            <img
+              key={`${set}-${i}`}
+              src={src}
+              alt=""
+              className="hero-marquee__banner"
+              loading="lazy"
+              draggable={false}
+            />
+          ))}
+        </React.Fragment>
+      ))}
+    </div>
+  </div>
+);
+
 // ─── Hero ─────────────────────────────────────────────────────────
 // Video background hero — autoplay looping video (muted, no controls).
 // Mobile: video scales to cover, text overlaid with strong gradient.
@@ -347,14 +382,62 @@ const Hero: React.FC<{ content: HomepageContent; firstProduct: ShopifyProductFul
         </div>
       </div>
 
-      {/* Scroll indicator — mobile only, bottom center */}
-      <div className="md:hidden absolute bottom-6 left-1/2 -translate-x-1/2 opacity-40" aria-hidden>
+      {/* Rotating banner marquee — full-bleed strip pinned to bottom of hero.
+          Sits above the video, slightly tilted for a sticker-stack feel. */}
+      <HeroMarquee />
+
+      {/* Scroll indicator — mobile only, lifted above the marquee strip */}
+      <div className="md:hidden absolute left-1/2 -translate-x-1/2 opacity-40 z-20" aria-hidden
+        style={{ bottom: 'calc(env(safe-area-inset-bottom, 0px) + 116px)' }}>
         <div className="w-px h-9 bg-white/20 relative overflow-hidden">
           <div className="absolute top-0 inset-x-0 h-1/2" style={{ background: ACCENT, animation: 'sd 1.8s ease infinite' }} />
         </div>
       </div>
 
-      <style>{`@keyframes sd{0%{transform:translateY(-100%)}100%{transform:translateY(200%)}}`}</style>
+      <style>{`
+        @keyframes sd { 0%{transform:translateY(-100%)} 100%{transform:translateY(200%)} }
+
+        /* ─── Hero marquee ─── */
+        .hero-marquee {
+          position: absolute;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          z-index: 15;
+          padding: 18px 0;
+          overflow: hidden;
+          transform: rotate(-2deg);
+          margin: 0 -3vw;
+          pointer-events: auto;
+          /* soft fade at both edges */
+          -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%);
+                  mask-image: linear-gradient(90deg, transparent 0, #000 6%, #000 94%, transparent 100%);
+        }
+        .hero-marquee__track {
+          display: flex;
+          gap: 18px;
+          width: max-content;
+          animation: hero-marquee-scroll 38s linear infinite;
+          will-change: transform;
+        }
+        .hero-marquee:hover .hero-marquee__track { animation-play-state: paused; }
+        .hero-marquee__banner {
+          flex: 0 0 auto;
+          height: clamp(64px, 8vw, 110px);
+          width: auto;
+          display: block;
+          border-radius: 4px;
+          user-select: none;
+          -webkit-user-drag: none;
+        }
+        @keyframes hero-marquee-scroll {
+          from { transform: translateX(0); }
+          to   { transform: translateX(-50%); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .hero-marquee__track { animation: none; }
+        }
+      `}</style>
     </section>
   );
 };
