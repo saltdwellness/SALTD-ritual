@@ -266,7 +266,7 @@ const Hero: React.FC<{ content: HomepageContent; firstProduct: ShopifyProductFul
 
       {/* ── Content ── */}
       <div className="relative z-10 h-full flex flex-col justify-center px-5 sm:px-8 md:px-14 max-w-[1440px] mx-auto"
-        style={{ paddingTop: 72 }}>
+        style={{ paddingTop: 180 }}>
         <div className="w-full md:w-[54%]">
 
           {/* Label */}
@@ -319,13 +319,11 @@ const Hero: React.FC<{ content: HomepageContent; firstProduct: ShopifyProductFul
         </div>
       </div>
 
-      {/* Rotating banner marquee — full-bleed strip pinned to bottom of hero.
-          Sits above the video, slightly tilted for a sticker-stack feel. */}
+      {/* Rotating banner marquee — pinned just below navbar at top of hero */}
       <HeroMarquee />
 
-      {/* Scroll indicator — mobile only, lifted above the marquee strip */}
-      <div className="md:hidden absolute left-1/2 -translate-x-1/2 opacity-40 z-20" aria-hidden
-        style={{ bottom: 'calc(env(safe-area-inset-bottom, 0px) + 116px)' }}>
+      {/* Scroll indicator — mobile only, bottom center */}
+      <div className="md:hidden absolute bottom-6 left-1/2 -translate-x-1/2 opacity-40 z-20" aria-hidden>
         <div className="w-px h-9 bg-white/20 relative overflow-hidden">
           <div className="absolute top-0 inset-x-0 h-1/2" style={{ background: ACCENT, animation: 'sd 1.8s ease infinite' }} />
         </div>
@@ -339,7 +337,7 @@ const Hero: React.FC<{ content: HomepageContent; firstProduct: ShopifyProductFul
           position: absolute;
           left: 0;
           right: 0;
-          bottom: 0;
+          top: 72px;
           z-index: 15;
           padding: 18px 0;
           overflow: hidden;
