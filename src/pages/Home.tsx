@@ -217,27 +217,35 @@ const HERO_BANNERS = [
   '/banners/saltd-purple.png',
 ];
 
-const HeroMarquee: React.FC = () => (
-  <div className="hero-marquee" aria-hidden>
-    <div className="hero-marquee__track">
-      {/* two sets for a seamless loop */}
-      {[0, 1].map(set => (
-        <React.Fragment key={set}>
-          {HERO_BANNERS.map((src, i) => (
-            <img
-              key={`${set}-${i}`}
-              src={src}
-              alt=""
-              className="hero-marquee__banner"
-              loading="lazy"
-              draggable={false}
-            />
-          ))}
-        </React.Fragment>
-      ))}
+const HeroMarquee: React.FC = () => {
+  const [ready, setReady] = React.useState(false);
+  React.useEffect(() => {
+    // Delay by one frame so animation starts after first paint — fixes frozen-on-load bug
+    const raf = requestAnimationFrame(() => setReady(true));
+    return () => cancelAnimationFrame(raf);
+  }, []);
+
+  return (
+    <div className="hero-marquee" aria-hidden>
+      <div className="hero-marquee__track" style={{ animationPlayState: ready ? 'running' : 'paused' }}>
+        {[0, 1].map(set => (
+          <React.Fragment key={set}>
+            {HERO_BANNERS.map((src, i) => (
+              <img
+                key={`${set}-${i}`}
+                src={src}
+                alt=""
+                className="hero-marquee__banner"
+                loading="eager"
+                draggable={false}
+              />
+            ))}
+          </React.Fragment>
+        ))}
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 // ─── Hero ─────────────────────────────────────────────────────────
 // Video background hero — autoplay looping video (muted, no controls).
