@@ -266,7 +266,7 @@ const Hero: React.FC<{ content: HomepageContent; firstProduct: ShopifyProductFul
 
       {/* ── Content ── */}
       <div className="relative z-10 h-full flex flex-col justify-center px-5 sm:px-8 md:px-14 max-w-[1440px] mx-auto"
-        style={{ paddingTop: 180 }}>
+        style={{ paddingTop: 72 }}>
         <div className="w-full md:w-[54%]">
 
           {/* Label */}
@@ -337,11 +337,11 @@ const Hero: React.FC<{ content: HomepageContent; firstProduct: ShopifyProductFul
           position: absolute;
           left: 0;
           right: 0;
-          top: 72px;
+          top: 50%;
+          transform: translateY(-50%) rotate(-2deg);
           z-index: 15;
           padding: 18px 0;
           overflow: hidden;
-          transform: rotate(-2deg);
           margin: 0 -3vw;
           pointer-events: auto;
           /* soft fade at both edges */
