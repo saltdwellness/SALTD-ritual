@@ -1,0 +1,1409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SALTD. — Investor Relations</title>
+  <meta name="robots" content="noindex, nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,300;1,400&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ── TOKENS ─────────────────────────────────────────────── */
+    :root {
+      --bg:      #002FA7;
+      --bg2:     #0038C8;
+      --white:   #ffffff;
+      --muted:   rgba(255,255,255,0.52);
+      --muted2:  rgba(255,255,255,0.18);
+      --font:    'Barlow', 'Helvetica Neue', sans-serif;
+      --nav-w:   72px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font);
+      background: #000;
+      color: var(--white);
+      overflow-x: hidden;
+    }
+
+    /* ── PASSWORD GATE ──────────────────────────────────────── */
+    #gate {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+    }
+    #gate::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px);
+      background-size: 100px 100px;
+      pointer-events: none;
+    }
+    #gate::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 80% 70% at 50% 50%, transparent 20%, var(--bg) 100%);
+      pointer-events: none;
+    }
+    .gate-inner {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 48px;
+      width: 100%;
+      max-width: 480px;
+      padding: 0 32px;
+    }
+    .gate-logo {
+      font-size: 56px;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      color: var(--white);
+    }
+    .gate-logo span { color: rgba(255,255,255,0.5); }
+    .gate-label {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-align: center;
+    }
+    .gate-form {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .gate-input {
+      width: 100%;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: var(--white);
+      font-family: var(--font);
+      font-size: 20px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      padding: 20px 24px;
+      outline: none;
+      text-align: center;
+      transition: border-color 0.2s;
+    }
+    .gate-input::placeholder { color: rgba(255,255,255,0.25); letter-spacing: 0.3em; }
+    .gate-input:focus { border-color: rgba(255,255,255,0.6); }
+    .gate-btn {
+      width: 100%;
+      background: var(--white);
+      color: var(--bg);
+      font-family: var(--font);
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      padding: 20px;
+      border: none;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .gate-btn:hover { opacity: 0.9; }
+    .gate-error {
+      font-size: 13px;
+      color: rgba(255,255,255,0.5);
+      text-align: center;
+      letter-spacing: 0.1em;
+      min-height: 20px;
+      transition: opacity 0.3s;
+    }
+    .gate-error.show { color: #ff6b6b; }
+    #gate.hide {
+      animation: gate-out 0.7s cubic-bezier(0.76,0,0.24,1) forwards;
+    }
+    @keyframes gate-out {
+      0%   { opacity: 1; transform: scale(1); }
+      100% { opacity: 0; transform: scale(1.04); pointer-events: none; }
+    }
+
+    /* ── SIDE NAV ───────────────────────────────────────────── */
+    #sidenav {
+      position: fixed;
+      left: 0; top: 0; bottom: 0;
+      width: var(--nav-w);
+      background: rgba(0,24,90,0.92);
+      backdrop-filter: blur(12px);
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 28px 0;
+      border-right: 1px solid rgba(255,255,255,0.08);
+    }
+    .nav-logo {
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      color: var(--white);
+      writing-mode: vertical-rl;
+      transform: rotate(180deg);
+      margin-bottom: auto;
+      user-select: none;
+    }
+    .nav-logo span { color: rgba(255,255,255,0.4); }
+    .nav-dots {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin: 0 auto;
+    }
+    .nav-dot {
+      width: 6px;
+      height: 6px;
+      background: rgba(255,255,255,0.25);
+      cursor: pointer;
+      transition: all 0.3s;
+      position: relative;
+      border: none;
+      padding: 0;
+    }
+    .nav-dot:hover,
+    .nav-dot.active {
+      background: var(--white);
+      transform: scale(1.5);
+    }
+    .nav-dot .dot-tip {
+      position: absolute;
+      left: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0,0,0,0.85);
+      color: var(--white);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      white-space: nowrap;
+      padding: 5px 10px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .nav-dot:hover .dot-tip { opacity: 1; }
+    .nav-num {
+      font-size: 11px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.3);
+      letter-spacing: 0.05em;
+      margin-top: auto;
+    }
+
+    /* ── MAIN CONTENT ───────────────────────────────────────── */
+    #main {
+      margin-left: var(--nav-w);
+    }
+
+    /* ── SECTIONS ───────────────────────────────────────────── */
+    .slide {
+      min-height: 100vh;
+      background: var(--bg);
+      display: flex;
+      flex-direction: column;
+      padding: clamp(60px, 8vw, 100px) clamp(40px, 6vw, 120px) clamp(60px, 6vw, 80px);
+      position: relative;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.16,1,0.3,1);
+    }
+    .slide.visible {
+      opacity: 1;
+      transform: none;
+    }
+    .slide:nth-child(even) { background: #001F7A; }
+
+    /* Decorative bg number */
+    .bg-num {
+      position: absolute;
+      right: -20px; bottom: -40px;
+      font-size: clamp(160px, 25vw, 480px);
+      font-weight: 900;
+      color: rgba(255,255,255,0.055);
+      line-height: 1;
+      pointer-events: none;
+      user-select: none;
+      letter-spacing: -0.05em;
+    }
+
+    /* Grid overlay */
+    .slide::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 80px 80px;
+      pointer-events: none;
+    }
+
+    .slide-inner { position: relative; z-index: 1; flex: 1; display: flex; flex-direction: column; }
+
+    /* ── SHARED TYPE ───────────────────────────────────────── */
+    .slide-label {
+      font-size: clamp(11px,1.2vw,14px);
+      font-weight: 600;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: clamp(32px,4vw,56px);
+    }
+    .sq { display:inline-block; width:10px; height:10px; background:var(--white); flex-shrink:0; }
+    .sq-lg { width:20px; height:20px; }
+    .sq-xl { width:36px; height:36px; }
+
+    .t-title {
+      font-size: clamp(32px, 5.5vw, 80px);
+      font-weight: 800;
+      line-height: 1.0;
+      letter-spacing: -0.02em;
+    }
+    .t-sub {
+      font-size: clamp(20px, 2.5vw, 36px);
+      font-weight: 300;
+      line-height: 1.5;
+      color: var(--muted);
+    }
+    .blue-txt { color: rgba(255,255,255,0.85); }
+    .muted { color: var(--muted); }
+
+    .rule { width: 48px; height: 2px; background: var(--white); margin-bottom: 32px; }
+
+    /* ── SLIDE 1: COVER ─────────────────────────────────────── */
+    #s1 {
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      min-height: 100vh;
+    }
+    #s1::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 80% 70% at 50% 50%, transparent 30%, var(--bg) 100%);
+      pointer-events: none;
+    }
+    #s1 .slide-inner { align-items: center; justify-content: center; gap: 32px; }
+    .cover-logo {
+      font-size: clamp(64px, 10vw, 140px);
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      line-height: 1;
+    }
+    .cover-logo span { color: rgba(255,255,255,0.35); }
+    .cover-tag {
+      font-size: clamp(12px, 1.4vw, 18px);
+      font-weight: 300;
+      letter-spacing: 0.5em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .cover-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      border: 1px solid rgba(255,255,255,0.4);
+      padding: clamp(10px,1.5vw,16px) clamp(20px,3vw,36px);
+      font-size: clamp(13px,1.4vw,18px);
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.8);
+      margin-top: 8px;
+    }
+
+    /* ── STAT CARDS ─────────────────────────────────────────── */
+    .stat-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: clamp(20px,3vw,60px);
+      margin-top: clamp(32px,4vw,52px);
+    }
+    .stat-card {
+      border-top: 2px solid rgba(255,255,255,0.9);
+      padding-top: clamp(20px,2.5vw,32px);
+    }
+    .stat-num {
+      font-size: clamp(48px, 7vw, 96px);
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -0.03em;
+      margin-bottom: 12px;
+    }
+    .stat-num sup { font-size: 0.45em; font-weight: 300; vertical-align: super; }
+    .stat-desc { font-size: clamp(14px,1.5vw,22px); color: var(--muted); line-height: 1.5; }
+
+    /* ── SOLUTION ───────────────────────────────────────────── */
+    .solution-split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(40px,6vw,80px);
+      margin-top: clamp(32px,4vw,52px);
+      flex: 1;
+      align-items: center;
+    }
+    .sol-item { display: flex; gap: 20px; align-items: flex-start; margin-bottom: 32px; }
+    .sol-item-text strong { font-size: clamp(16px,1.8vw,26px); font-weight: 700; display: block; margin-bottom: 6px; }
+    .sol-item-text span { font-size: clamp(13px,1.4vw,20px); color: var(--muted); font-weight: 300; line-height: 1.5; }
+
+    /* ── PRODUCT ────────────────────────────────────────────── */
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: clamp(16px,2.5vw,40px);
+      margin-top: clamp(32px,4vw,52px);
+      flex: 1;
+    }
+    .sku-card {
+      background: rgba(255,255,255,0.07);
+      padding: clamp(24px,3vw,48px) clamp(20px,2.5vw,40px);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      border-top: 3px solid var(--white);
+    }
+    .sku-num { font-size: 12px; font-weight: 700; letter-spacing: 0.3em; text-transform: uppercase; color: rgba(255,255,255,0.6); }
+    .sku-name { font-size: clamp(24px,3vw,44px); font-weight: 800; line-height: 1.0; letter-spacing: -0.02em; }
+    .sku-desc { font-size: clamp(13px,1.4vw,20px); color: var(--muted); font-weight: 300; line-height: 1.5; flex: 1; }
+
+    /* ── PIPELINE ───────────────────────────────────────────── */
+    .pipeline-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      margin-top: clamp(32px,4vw,52px);
+      flex: 1;
+    }
+    .pipe-col {
+      padding: clamp(24px,3vw,40px) clamp(20px,2.5vw,36px);
+      border-top: 3px solid var(--muted2);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .pipe-col.active { border-top-color: var(--white); background: rgba(255,255,255,0.08); }
+    .pipe-when { font-size: 12px; font-weight: 700; letter-spacing: 0.35em; text-transform: uppercase; color: rgba(255,255,255,0.5); }
+    .pipe-title { font-size: clamp(22px,2.5vw,40px); font-weight: 800; line-height: 1.05; letter-spacing: -0.02em; }
+    .pipe-body { font-size: clamp(12px,1.3vw,19px); color: var(--muted); font-weight: 300; line-height: 1.5; flex: 1; }
+    .pipe-tag { font-size: 12px; background: rgba(255,255,255,0.08); padding: 5px 12px; color: var(--muted); align-self: flex-start; }
+
+    /* ── MARKET ─────────────────────────────────────────────── */
+    .market-nums {
+      display: flex;
+      gap: clamp(24px,4vw,80px);
+      margin-top: clamp(32px,4vw,52px);
+      align-items: flex-start;
+    }
+    .market-block { flex: 1; }
+    .market-big { font-size: clamp(48px,7vw,100px); font-weight: 800; line-height: 1; letter-spacing: -0.03em; }
+    .market-sub { font-size: clamp(13px,1.4vw,22px); color: var(--muted); margin-top: 10px; font-weight: 300; line-height: 1.4; }
+    .market-label { font-size: 12px; font-weight: 600; letter-spacing: 0.3em; text-transform: uppercase; color: rgba(255,255,255,0.6); margin-bottom: 10px; }
+    .market-divider { width: 1px; background: var(--muted2); align-self: stretch; flex-shrink: 0; }
+    .market-insight {
+      margin-top: clamp(28px,4vw,56px);
+      padding: clamp(20px,2.5vw,36px) clamp(24px,3vw,48px);
+      border-left: 4px solid var(--white);
+      background: rgba(255,255,255,0.07);
+    }
+    .market-insight p { font-size: clamp(14px,1.6vw,26px); font-weight: 300; line-height: 1.6; font-style: italic; }
+    .market-insight cite { display: block; margin-top: 12px; font-size: clamp(11px,1.2vw,18px); color: var(--muted); font-style: normal; }
+
+    /* ── BIZ MODEL ──────────────────────────────────────────── */
+    .biz-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(16px,2vw,40px);
+      margin-top: clamp(32px,4vw,52px);
+    }
+    .biz-card {
+      background: rgba(255,255,255,0.07);
+      padding: clamp(24px,3vw,44px) clamp(20px,2.5vw,40px);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .biz-card.highlight { background: rgba(255,255,255,0.12); border-top: 3px solid var(--white); }
+    .phase-tag { font-size: 11px; font-weight: 700; letter-spacing: 0.25em; text-transform: uppercase; color: rgba(255,255,255,0.7); background: rgba(255,255,255,0.1); padding: 5px 12px; align-self: flex-start; }
+    .biz-title { font-size: clamp(20px,2vw,32px); font-weight: 700; display: flex; align-items: center; gap: 14px; }
+    .biz-body { font-size: clamp(13px,1.4vw,22px); color: var(--muted); font-weight: 300; line-height: 1.5; }
+    .ue-row { display: flex; gap: clamp(24px,4vw,48px); margin-top: 12px; }
+    .ue-val { font-size: clamp(28px,3.5vw,48px); font-weight: 800; line-height: 1; }
+    .ue-label { font-size: clamp(11px,1.2vw,18px); color: var(--muted); margin-top: 6px; }
+
+    /* ── GTM ────────────────────────────────────────────────── */
+    .gtm-phases {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+      margin-top: clamp(32px,4vw,52px);
+      flex: 1;
+    }
+    .gtm-phase {
+      padding: clamp(24px,3vw,40px) clamp(20px,2.5vw,36px);
+      border-top: 3px solid var(--muted2);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+    .gtm-phase.active { border-top-color: var(--white); background: rgba(255,255,255,0.07); }
+    .gtm-num { font-size: 11px; font-weight: 700; letter-spacing: 0.4em; text-transform: uppercase; color: rgba(255,255,255,0.5); }
+    .gtm-title { font-size: clamp(22px,2.8vw,40px); font-weight: 700; line-height: 1.1; }
+    .gtm-time { font-size: clamp(12px,1.3vw,20px); color: var(--muted); }
+    .gtm-items { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .gtm-items li { font-size: clamp(12px,1.3vw,20px); color: var(--muted); font-weight: 300; display: flex; gap: 10px; align-items: flex-start; line-height: 1.4; }
+    .gtm-items li::before { content: ''; display: inline-block; width: 6px; height: 6px; background: var(--white); flex-shrink: 0; margin-top: 7px; }
+
+    /* ── COMPETITION TABLE ─────────────────────────────────── */
+    .comp-wrap { overflow-x: auto; margin-top: clamp(24px,3vw,52px); }
+    .comp-table { width: 100%; table-layout: fixed; border-collapse: collapse; min-width: 600px; }
+    .comp-table th { font-size: clamp(10px,1.1vw,16px); font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 0 8px 16px; text-align: center; border-bottom: 1px solid var(--muted2); }
+    .comp-table th:first-child { text-align: left; }
+    .comp-table td { font-size: clamp(12px,1.3vw,20px); padding: clamp(10px,1.5vw,18px) 8px; text-align: center; border-bottom: 1px solid var(--muted2); color: var(--muted); }
+    .comp-table td:first-child { text-align: left; font-weight: 600; color: var(--white); }
+    .saltd-row { background: rgba(255,255,255,0.10); }
+    .saltd-row td:first-child { color: rgba(255,255,255,0.9); }
+    .saltd-row td { color: var(--white); }
+    .ck { font-size: clamp(16px,2vw,28px); }
+    .cx { font-size: clamp(14px,1.7vw,24px); opacity: 0.25; }
+
+    /* ── TEAM ───────────────────────────────────────────────── */
+    .team-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(32px,5vw,60px);
+      margin-top: clamp(32px,4vw,52px);
+    }
+    .team-card { display: flex; flex-direction: column; gap: 16px; }
+    .team-avatar {
+      width: clamp(64px,8vw,100px);
+      height: clamp(64px,8vw,100px);
+      background: rgba(255,255,255,0.1);
+      border: 2px solid rgba(255,255,255,0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: clamp(20px,3vw,36px);
+      font-weight: 800;
+      color: rgba(255,255,255,0.8);
+    }
+    .team-name { font-size: clamp(24px,3.5vw,48px); font-weight: 800; letter-spacing: -0.02em; }
+    .team-title { font-size: clamp(11px,1.2vw,18px); color: rgba(255,255,255,0.7); font-weight: 600; text-transform: uppercase; letter-spacing: 0.15em; }
+    .team-bio { font-size: clamp(13px,1.4vw,22px); color: var(--muted); font-weight: 300; line-height: 1.5; }
+    .info-box {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+      padding: clamp(20px,2.5vw,32px) clamp(24px,3vw,40px);
+      background: rgba(255,255,255,0.07);
+    }
+    .info-box-title { font-size: clamp(16px,1.6vw,24px); font-weight: 600; margin-bottom: 8px; }
+    .info-box-body { font-size: clamp(12px,1.3vw,20px); color: var(--muted); font-weight: 300; line-height: 1.5; }
+
+    /* ── VIDEO EMBED ────────────────────────────────────────── */
+    .video-embed {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      aspect-ratio: 16/9;
+      cursor: pointer;
+      transition: background 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+    .video-embed:hover { background: rgba(255,255,255,0.09); }
+    .video-embed iframe {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+    .video-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      color: var(--muted);
+      pointer-events: none;
+    }
+    .video-placeholder svg { opacity: 0.5; }
+    .video-placeholder p { font-size: clamp(12px,1.3vw,18px); font-weight: 500; letter-spacing: 0.2em; text-transform: uppercase; }
+    .video-placeholder small { font-size: 12px; opacity: 0.5; }
+
+    /* ── FINANCIAL PROJECTIONS ─────────────────────────────── */
+    .proj-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: clamp(20px,2.5vw,40px);
+      margin-top: clamp(32px,4vw,52px);
+    }
+    .proj-card {
+      border-top: 3px solid rgba(255,255,255,0.3);
+      padding-top: clamp(20px,2.5vw,32px);
+    }
+    .proj-card.highlight { border-top-color: var(--white); }
+    .proj-year { font-size: 11px; font-weight: 700; letter-spacing: 0.35em; text-transform: uppercase; color: rgba(255,255,255,0.5); margin-bottom: 14px; }
+    .proj-num { font-size: clamp(40px,6vw,80px); font-weight: 900; letter-spacing: -0.04em; line-height: 1; }
+    .proj-detail { font-size: clamp(12px,1.3vw,20px); color: var(--muted); margin-top: 14px; line-height: 1.6; }
+    .kpi-row { display: grid; grid-template-columns: repeat(4,1fr); background: rgba(255,255,255,0.07); padding: clamp(20px,2.5vw,32px) clamp(20px,3vw,40px); margin-top: clamp(24px,3vw,40px); gap: 0; }
+    .kpi-item { text-align: center; padding: 0 16px; }
+    .kpi-item + .kpi-item { border-left: 1px solid rgba(255,255,255,0.12); }
+    .kpi-val { font-size: clamp(24px,3vw,44px); font-weight: 800; }
+    .kpi-label { font-size: clamp(10px,1.1vw,16px); color: var(--muted); margin-top: 6px; }
+
+    /* ── UNIT ECONOMICS ─────────────────────────────────────── */
+    .ue-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(40px,6vw,80px); margin-top: clamp(32px,4vw,52px); }
+    .ue-section-label { font-size: 11px; font-weight: 700; letter-spacing: 0.35em; text-transform: uppercase; color: var(--muted); margin-bottom: clamp(20px,2.5vw,32px); }
+    .ue-row-item { display: flex; justify-content: space-between; align-items: center; padding: clamp(14px,1.8vw,20px) 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .ue-row-item.total { background: rgba(255,255,255,0.08); padding-left: 16px; padding-right: 16px; border-bottom: none; margin-top: 6px; }
+    .ue-row-label { font-size: clamp(13px,1.5vw,24px); color: var(--muted); }
+    .ue-row-val { font-size: clamp(16px,1.8vw,30px); font-weight: 700; }
+    .ue-mini-card { padding: clamp(20px,2.5vw,28px) clamp(20px,2.5vw,32px); background: rgba(255,255,255,0.07); margin-bottom: 16px; }
+    .ue-mini-label { font-size: clamp(12px,1.3vw,20px); color: var(--muted); margin-bottom: 8px; }
+    .ue-mini-val { font-size: clamp(28px,3.5vw,52px); font-weight: 800; }
+
+    /* ── DEFENSIBILITY ──────────────────────────────────────── */
+    .def-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(20px,2.5vw,40px); margin-top: clamp(32px,4vw,52px); }
+    .def-card { padding: clamp(24px,3vw,36px) clamp(24px,3vw,40px); background: rgba(255,255,255,0.07); display: flex; gap: 20px; align-items: flex-start; }
+    .def-title { font-size: clamp(18px,2vw,30px); font-weight: 700; margin-bottom: 10px; }
+    .def-body { font-size: clamp(12px,1.3vw,20px); color: var(--muted); font-weight: 300; line-height: 1.5; }
+
+    /* ── THE ASK ────────────────────────────────────────────── */
+    .ask-grid { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(40px,6vw,100px); margin-top: clamp(40px,5vw,60px); align-items: start; }
+    .ask-raising-label { font-size: 11px; font-weight: 700; letter-spacing: 0.4em; text-transform: uppercase; color: var(--muted); margin-bottom: 16px; }
+    .ask-amount { font-size: clamp(60px,9vw,120px); font-weight: 900; letter-spacing: -0.04em; line-height: 1; margin-bottom: 10px; }
+    .ask-round { font-size: clamp(16px,1.8vw,28px); color: var(--muted); font-weight: 300; margin-bottom: 40px; }
+    .ask-row { display: flex; justify-content: space-between; padding: clamp(12px,1.5vw,18px) 0; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .ask-row-label { font-size: clamp(13px,1.5vw,24px); color: var(--muted); }
+    .ask-row-val { font-size: clamp(14px,1.6vw,26px); font-weight: 700; }
+    .fund-bar-item { margin-bottom: clamp(16px,2vw,28px); }
+    .fund-bar-head { display: flex; justify-content: space-between; margin-bottom: 10px; }
+    .fund-bar-name { font-size: clamp(13px,1.5vw,24px); font-weight: 500; }
+    .fund-bar-pct { font-size: clamp(13px,1.5vw,24px); font-weight: 800; }
+    .fund-bar-track { height: 6px; background: var(--muted2); }
+    .fund-bar-fill { height: 100%; background: var(--white); transition: width 1.5s cubic-bezier(0.16,1,0.3,1); width: 0 !important; }
+    .fund-bar-fill.animated { width: var(--target-w) !important; }
+
+    /* ── TIMELINE / ROADMAP ─────────────────────────────────── */
+    .timeline { margin-top: clamp(32px,4vw,52px); position: relative; }
+    .timeline::before { content: ''; position: absolute; left: clamp(80px,12vw,200px); top: 20px; bottom: 20px; width: 2px; background: var(--muted2); }
+    .tl-item { display: grid; grid-template-columns: clamp(80px,12vw,200px) 1fr; gap: clamp(20px,3vw,40px); padding: clamp(16px,2vw,28px) 0; align-items: start; position: relative; }
+    .tl-date { font-size: clamp(11px,1.2vw,18px); font-weight: 600; color: rgba(255,255,255,0.6); text-align: right; padding-right: clamp(24px,3vw,48px); padding-top: 4px; }
+    .tl-dot { position: absolute; left: clamp(72px,11.2vw,191px); top: clamp(24px,2.8vw,36px); width: 16px; height: 16px; background: var(--white); }
+    .tl-title { font-size: clamp(16px,1.8vw,30px); font-weight: 700; margin-bottom: 6px; }
+    .tl-desc { font-size: clamp(12px,1.3vw,20px); color: var(--muted); font-weight: 300; line-height: 1.5; }
+
+    /* ── USE OF FUNDS ───────────────────────────────────────── */
+    .funds-split { display: grid; grid-template-columns: 1fr 1fr; gap: clamp(40px,6vw,80px); margin-top: clamp(32px,4vw,52px); }
+    .fund-detail-item { display: flex; gap: 20px; align-items: flex-start; margin-bottom: clamp(20px,2.5vw,32px); }
+    .fund-detail-icon { width: 10px; height: 10px; background: var(--white); flex-shrink: 0; margin-top: 8px; }
+    .fund-detail-text strong { font-size: clamp(16px,1.8vw,28px); font-weight: 700; display: block; margin-bottom: 6px; }
+    .fund-detail-text span { font-size: clamp(12px,1.3vw,20px); color: var(--muted); font-weight: 300; }
+
+    /* ── CLOSE SLIDE ────────────────────────────────────────── */
+    #s17 {
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      min-height: 100vh;
+    }
+    #s17::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 80% 70% at 50% 50%, transparent 30%, #000e40 100%);
+      pointer-events: none;
+    }
+    #s17 .slide-inner { align-items: center; justify-content: center; gap: 24px; }
+    .close-logo { font-size: clamp(48px,8vw,120px); font-weight: 900; letter-spacing: -0.04em; }
+    .close-logo span { color: rgba(255,255,255,0.3); }
+    .close-ask { font-size: clamp(48px,9vw,140px); font-weight: 900; letter-spacing: -0.04em; line-height: 1; }
+    .close-sub { font-size: clamp(16px,1.8vw,30px); font-weight: 300; color: var(--muted); letter-spacing: 0.1em; }
+    .close-contacts { display: flex; gap: clamp(32px,5vw,80px); justify-content: center; margin-top: 16px; flex-wrap: wrap; }
+    .contact-item { display: flex; flex-direction: column; gap: 6px; align-items: center; }
+    .contact-label { font-size: 11px; letter-spacing: 0.4em; text-transform: uppercase; color: var(--muted); }
+    .contact-val { font-size: clamp(16px,1.8vw,26px); font-weight: 600; }
+
+    /* ── ANALYTICS DWELL TRACKER ─────────────────────────────
+       Hook for GA4/Plausible — fires sectionView event with
+       section name and dwell time when leaving the viewport.
+    ─────────────────────────────────────────────────────────── */
+
+    /* ── MOBILE ─────────────────────────────────────────────── */
+    @media (max-width: 768px) {
+      :root { --nav-w: 0px; }
+
+      #sidenav {
+        width: 100%;
+        height: 52px;
+        flex-direction: row;
+        padding: 0 20px;
+        bottom: auto;
+        top: 0;
+        border-right: none;
+        border-bottom: 1px solid rgba(255,255,255,0.08);
+      }
+      .nav-logo { writing-mode: horizontal-tb; transform: none; margin-bottom: 0; margin-right: auto; font-size: 15px; }
+      .nav-dots { flex-direction: row; gap: 8px; }
+      .nav-num { display: none; }
+      .nav-dot .dot-tip { left: 50%; transform: translateX(-50%); top: 18px; bottom: auto; }
+      .nav-dot { width: 5px; height: 5px; }
+
+      #main { margin-left: 0; padding-top: 52px; }
+      .slide { padding: 48px 24px 48px; }
+
+      .stat-row,
+      .solution-split,
+      .product-grid,
+      .pipeline-grid,
+      .biz-grid,
+      .gtm-phases,
+      .team-grid,
+      .def-grid,
+      .ask-grid,
+      .funds-split,
+      .ue-grid,
+      .proj-grid,
+      .kpi-row { grid-template-columns: 1fr; }
+
+      .market-nums { flex-direction: column; gap: 32px; }
+      .market-divider { width: 100%; height: 1px; }
+      .pipe-col { border-top: none; border-left: 3px solid var(--muted2); }
+      .pipe-col.active { border-left-color: var(--white); }
+      .close-contacts { gap: 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── PASSWORD GATE ──────────────────────────────────────────── -->
+<div id="gate">
+  <div class="gate-inner">
+    <div class="gate-logo">SALTD<span>.</span></div>
+    <div class="gate-label">Investor Access · Confidential</div>
+    <div class="gate-form">
+      <input type="password" id="pw-input" class="gate-input" placeholder="· · · · · · · ·" autocomplete="off" />
+      <button class="gate-btn" onclick="checkPassword()">Enter</button>
+      <div class="gate-error" id="pw-error"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── SIDE NAV ───────────────────────────────────────────────── -->
+<nav id="sidenav">
+  <div class="nav-logo">SALTD<span>.</span></div>
+  <div class="nav-dots" id="nav-dots"></div>
+  <div class="nav-num" id="nav-num">01</div>
+</nav>
+
+<!-- ── MAIN ──────────────────────────────────────────────────── -->
+<main id="main">
+
+  <!-- 01 COVER -->
+  <section class="slide" id="s1" data-label="Cover" data-num="01">
+    <div class="slide-inner">
+      <div class="cover-logo">SALTD<span>.</span></div>
+      <div class="cover-tag">The New Ritual</div>
+      <div class="cover-pill"><span class="sq"></span> Seed Round &nbsp;·&nbsp; 2026</div>
+    </div>
+  </section>
+
+  <!-- 02 PROBLEM -->
+  <section class="slide" id="s2" data-label="The Problem" data-num="02">
+    <div class="bg-num">02</div>
+    <div class="slide-inner">
+      <div class="slide-label"><span class="sq"></span> The Problem</div>
+      <div class="t-title">India drinks water.<br><span class="blue-txt">It's not enough.</span></div>
+      <div class="stat-row">
+        <div class="stat-card">
+          <div class="stat-num">80<sup>%</sup></div>
+          <div class="stat-desc">of Indians are chronically dehydrated — without knowing it</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">1.4<sup>B</sup></div>
+          <div class="stat-desc">people losing electrolytes daily to heat, sweat, and stress</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">₹0</div>
+          <div class="stat-desc">spent by most on replenishment — the category is nearly invisible</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 SOLUTION -->
+  <section class="slide" id="s3" data-label="The Solution" data-num="03">
+    <div class="bg-num">03</div>
+    <div class="slide-inner">
+      <div class="slide-label"><span class="sq"></span> The Solution</div>
+      <div class="solution-split">
+        <div>
+          <div class="t-title" style="margin-bottom:24px;">One stick.<br>Real hydration.</div>
+          <div class="t-sub">SALTD. is a precision electrolyte powder in a tear-open stick. Drop it in water — any water — and transform it into functional hydration formulated for India's climate, with a proprietary blend of electrolytes, ashwagandha, and ginseng.</div>
+        </div>
+        <div>
+          <div class="sol-item">
+            <div class="sq sq-lg" style="margin-top:5px;flex-shrink:0;"></div>
+            <div class="sol-item-text"><strong>Science-backed electrolyte formula</strong><span>Sodium, Potassium, Magnesium, Calcium — ratios tuned for Indian heat and sweat loss</span></div>
+          </div>
+          <div class="sol-item">
+            <div class="sq sq-lg" style="margin-top:5px;flex-shrink:0;"></div>
+            <div class="sol-item-text"><strong>Proprietary adaptogen blend</strong><span>Ashwagandha + ginseng — stress resilience and cognitive support. A formulation no competitor has.</span></div>
+          </div>
+          <div class="sol-item">
+            <div class="sq sq-lg" style="margin-top:5px;flex-shrink:0;"></div>
+            <div class="sol-item-text"><strong>Zero sugar, clean label</strong><span>No artificial sweeteners, dyes, or fillers — built for daily ritual, not once-a-year sport</span></div>
+          </div>
+          <div class="sol-item">
+            <div class="sq sq-lg" style="margin-top:5px;flex-shrink:0;"></div>
+            <div class="sol-item-text"><strong>Made for everyone</strong><span>The office worker, the runner, the mother — not just athletes. A habit product, not a supplement.</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 04 PRODUCT -->
+  <section class="slide" id="s4" data-label="The Product" data-num="04">
+    <div class="bg-num">04</div>
+    <div class="slide-inner">
+      <div class="slide-label"><span class="sq"></span> The Product</div>
+      <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
+        <div class="t-title" style="line-height:1;">Three flavours.<br>Two pack sizes.</div>
+        <div class="t-sub" style="font-size:clamp(12px,1.3vw,20px);">Trial (10) &amp; Ritual (30) · ₹500 / ₹1,500</div>
+      </div>
+      <div class="product-grid">
+        <div class="sku-card" style="border-top-color:#8BC34A;">
+          <div class="sku-num" style="color:#8BC34A;">Flavour 01</div>
+          <div class="sku-name">Banta Lime Spark</div>
+          <div class="sku-desc">Inspired by India's street-side banta soda. Tangy, effervescent, instantly familiar — the drink everyone already loves, now functional.</div>
+        </div>
+        <div class="sku-card" style="border-top-color:#9C27B0;">
+          <div class="sku-num" style="color:#CE93D8;">Flavour 02</div>
+          <div class="sku-name">Kaala Khatta</div>
+          <div class="sku-desc">Black salt, raw tamarind, nostalgia. A flavour every Indian recognises — now in a stick that actually hydrates. Bold, tangy, unmistakably desi.</div>
+        </div>
+        <div class="sku-card" style="border-top-color:#FF7043;">
+          <div class="sku-num" style="color:#FFAB91;">Flavour 03</div>
+          <div class="sku-name">Peach Himalayan</div>
+          <div class="sku-desc">Soft peach with Himalayan pink salt mineral depth. The approachable, daily-ritual flavour — gentle enough to drink every morning.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 PIPELINE -->
+  <section class="slide" id="s5" data-label="Product Pipeline" data-num="05">
+    <div class="bg-num">05</div>
+    <div class="slide-inner">
+      <div class="slide-label"><span class="sq"></span> Product Pipeline</div>
+      <div class="t-title">We are building a platform,<br><span class="blue-txt">not a product.</span></div>
+      <div class="pipeline-grid" style="margin-top:clamp(24px,3vw,52px);">
+        <div class="pipe-col active">
+          <div class="pipe-when">Now</div>
+          <div class="pipe-title">Core Electrolytes</div>
+          <div class="pipe-body">3 flavours × 2 pack sizes. Build the daily ritual. Own the hydration habit.</div>
+          <div class="pipe-tag">Launch SKU</div>
+        </div>
+        <div class="pipe-col">
+          <div class="pipe-when">Year 1</div>
+          <div class="pipe-title">Pro Series</div>
+          <div class="pipe-body">Athlete-grade formula. Caffeine for pre-workout activation + dextrose for rapid glycogen replenishment. Higher AOV, same stick format.</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:auto;">
+            <span class="pipe-tag">Caffeine</span><span class="pipe-tag">Dextrose</span>
+          </div>
+        </div>
+        <div class="pipe-col">
+          <div class="pipe-when">Year 2</div>
+          <div class="pipe-title">Creatine Line</div>
+          <div class="pipe-body">Creatine electrolyte sticks + creatine gummies. India's creatine market is nascent — SALTD. enters as the premium, approachable brand.</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:auto;">
+            <span class="pipe-tag">Sticks</span><span class="pipe-tag">Gummies</span>
+          </div>
+        </div>
+        <div class="pipe-col">
+          <div class="pipe-when">Year 2–3</div>
+          <div class="pipe-title">RTD Innovation</div>
+          <div class="pipe-body">Proprietary twist-cap delivery — powder lives in the cap, twist to release into water. Fresh on demand. No preservatives, no shelf-stability compromise.</div>
+          <div class="pipe-tag">Proprietary format</div>
+        </div>
+      </div>
+      <div style="margin-top:24px;padding:clamp(16px,2vw,28px) clamp(20px,2.5vw,40px);background:rgba(255,255,255,0.07);border-left:4px solid var(--white);display:flex;align-items:center;gap:20px;">
+        <div class="sq sq-lg" style="flex-shrink:0;"></div>
+        <div class="t-sub" style="font-size:clamp(13px,1.5vw,24px);">Every product is the same ritual in a new form. SALTD. is the <strong>verb</strong> — hydration as a daily act — not a single SKU.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 MARKET -->
+  <section class="slide" id="s6" data-label="Market Opportunity" data-num="06">
+    <div class="bg-num">06</div>
+    <div class="slide-inner">
+      <div class="slide-label"><span class="sq"></span> Market Opportunity</div>
+      <div class="t-title">A category waiting<br>to be built in India.</div>
+      <div class="market-nums">
+        <div class="market-block">
+          <div class="market-label">Total Addressable</div>
+          <div class="market-big">$4.2B</div>
+          <div class="market-sub">India functional wellness &amp; hydration market by 2028</div>
+        </div>
+        <div class="market-divider"></div>
+        <div class="market-block">
+          <div class="market-label">Serviceable Market</div>
+          <div class="market-big">$620M</div>
+          <div class="market-sub">Premium electrolyte &amp; sports nutrition segment</div>
+        </div>
+        <div class="market-divider"></div>
+        <div class="market-block">
+          <div class="market-label">CAGR</div>
+          <div class="market-big">18%</div>
+          <div class="market-sub">India nutraceuticals &amp; functional foods growth rate</div>
+        </div>
+      </div>
+      <div class="market-insight">
+        <p>"The Indian wellness consumer is spending more, but the electrolyte category has no dominant brand. The shelf is wide open."</p>
+        <cite>— Market opportunity SALTD. is designed to own</cite>
+      </div>
+    </div>
+  </section>
+
+  <!-- 07 BUSINESS MODEL -->
+  <section class="slide" id="s7" data-label="Business Model" data-num="07">
+    <div class="bg-num">07</div>
+    <div class="slide-inner">
+      <div class="slide-label"><span class="sq"></span> Business Model</div>
+      <div class="t-title">DTC first. Then everywhere.</div>
+      <div class="biz-grid">
+        <div class="biz-card">
+          <div class="phase-tag">Phase 1 · Now</div>
+          <div class="biz-title"><div class="sq"></div>Direct-to-Consumer</div>
+          <div class="biz-body">Own the customer relationship, collect data, build brand. hydration.club ships nationwide with margin-rich DTC economics.</div>
+        </div>
+        <div class="biz-card">
+          <div class="phase-tag">Phase 2 · Year 1</div>
+          <div class="biz-title"><div class="sq"></div>Quick Commerce</div>
+          <div class="biz-body">Zepto, Blinkit, Swiggy Instamart — impulse and restock purchase at 10-minute delivery. High velocity, high visibility.</div>
+        </div>
+        <div class="biz-card">
+          <div class="phase-tag">Phase 3 · Year 2</div>
+          <div class="biz-title"><div class="sq"></div>Marketplace</div>
+          <div class="biz-body">Amazon India and Flipkart Health+ for scale, discovery, and repeat subscriptions. Category capture at national level.</div>
+        </div>
+        <div class="biz-card highlight">
+          <div class="biz-title" style="font-size:clamp(16px,1.6vw,24px);color:var(--muted);">Unit Economics</div>
+          <div class="ue-row" style="margin-top:8px;">
+            <div><div class="ue-val">₹50</div><div class="ue-label">Revenue / stick</div></div>
+            <div><div class="ue-val">~65%</div><div class="ue-label">Gross margin target</div></div>
+            <div><div class="ue-val">30×</div><div class="ue-label">Sticks per box</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 08 GO-TO-MARKET -->
+  <section class="slide" id="s8" data-label="Go-to-Market" data-num="08">
+    <div class="bg-num">08</div>
+    <div class="slide-inner">
+      <div class="slide-label"><span class="sq"></span> Go-to-Market</div>
+      <div class="t-title">Build the ritual, then the brand.</div>
+      <div class="gtm-phases">
+        <div class="gtm-phase active">
+          <div class="gtm-num">Phase 01</div>
+          <div class="gtm-title">Launch &amp; Seed</div>
+          <div class="gtm-time">Months 1–4</div>
+          <ul class="gtm-items">
+            <li>DTC website launch, hydration.club</li>
+            <li>Instagram &amp; reels-led content — the daily ritual</li>
+            <li>Micro-influencer seeding in fitness, wellness, urban lifestyle</li>
+            <li>Founder-led community building</li>
+          </ul>
+        </div>
+        <div class="gtm-phase">
+          <div class="gtm-num">Phase 02</div>
+          <div class="gtm-title">Grow &amp; Validate</div>
+          <div class="gtm-time">Months 5–8</div>
+          <ul class="gtm-items">
+            <li>Zepto, Blinkit, Instamart listings</li>
+            <li>Paid social activation on proven creative</li>
+            <li>Subscription model rollout on DTC</li>
+            <li>Corporate wellness pilot programs</li>
+          </ul>
+        </div>
+        <div class="gtm-phase">
+          <div class="gtm-num">Phase 03</div>
+          <div class="gtm-title">Scale</div>
+          <div class="gtm-time">Months 9–12</div>
+          <ul class="gtm-items">
+            <li>Amazon &amp; Flipkart Health+ launch</li>
+            <li>PR push — health media, national press</li>
+            <li>Gym &amp; studio channel partnerships</li>
+            <li>Series A preparation</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 09 MANUFACTURING VIDEO -->
+  <section class="slide" id="s9" data-label="Process &amp; R&D" data-num="09">
+    <div class="bg-num">09</div>
+    <div class="slide-inner">
+      <div class="slide-label"><span class="sq"></span> Manufacturing &amp; R&amp;D</div>
+      <div class="t-title" style="margin-bottom:clamp(24px,3vw,48px);">GMP certified.<br><span class="blue-txt">Formula owned by us.</span></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:clamp(16px,2vw,32px);flex:1;">
+        <div>
+          <!-- Replace VIDEO_ID_1 with your Vimeo/YouTube ID -->
+          <div class="video-embed" id="vid1" onclick="loadVideo('vid1','VIDEO_ID_1','vimeo')">
+            <div class="video-placeholder">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none"/></svg>
+              <p>Manufacturing Process</p>
+              <small>Click to play · Replace VIDEO_ID_1</small>
+            </div>
+          </div>
+          <div style="margin-top:14px;font-size:clamp(12px,1.3vw,18px);color:var(--muted);font-weight:300;line-height:1.5;">GMP + FDA certified 3rd party nutraceutical lab. Formula owned by SALTD. — not the manufacturer. FSSAI Relabeller License secured.</div>
+        </div>
+        <div>
+          <!-- Replace VIDEO_ID_2 with your Vimeo/YouTube ID -->
+          <div class="video-embed" id="vid2" onclick="loadVideo('vid2','VIDEO_ID_2','vimeo')">
+            <div class="video-placeholder">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none"/></svg>
+              <p>R&amp;D &amp; Formulation</p>
+              <small>Click to play · Replace VIDEO_ID_2</small>
+            </div>
+          </div>
+          <div style="margin-top:14px;font-size:clamp(12px,1.3vw,18px);color:var(--muted);font-weight:300;line-height:1.5;">Proprietary adaptogen blend — ashwagandha + ginseng layered on the electrolyte base. A formulation no competitor has.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 COMPETITION -->
+  <section class="slide" id="s10" data-label="Competition" data-num="10">
+    <div class="bg-num">10</div>
+    <div class="slide-inner">
+      <div class="slide-label"><span class="sq"></span> Competition</div>
+      <div class="t-title" style="font-size:clamp(24px,4vw,60px);">No one owns this space in India.</div>
+      <div class="comp-wrap">
+        <table class="comp-table">
+          <thead>
+            <tr>
+              <th>Brand</th>
+              <th>India-made</th>
+              <th>Clean label</th>
+              <th>Adaptogens</th>
+              <th>Daily ritual</th>
+              <th>Premium</th>
+              <th>Accessible price</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="saltd-row">
+              <td>SALTD.</td>
+              <td><span class="ck">✓</span></td>
+              <td><span class="ck">✓</span></td>
+              <td><span class="ck">✓</span></td>
+              <td><span class="ck">✓</span></td>
+              <td><span class="ck">✓</span></td>
+              <td><span class="ck">✓</span></td>
+            </tr>
+            <tr><td>LMNT</td><td><span class="cx">✗</span></td><td><span class="ck">✓</span></td><td><span class="cx">✗</span></td><td><span class="cx">✗</span></td><td><span class="ck">✓</span></td><td><span class="cx">✗</span></td></tr>
+            <tr><td>Liquid I.V.</td><td><span class="cx">✗</span></td><td><span class="cx">✗</span></td><td><span class="cx">✗</span></td><td><span class="cx">✗</span></td><td><span class="ck">✓</span></td><td><span class="cx">✗</span></td></tr>
+            <tr><td>Gatorade / ORS</td><td><span class="ck">✓</span></td><td><span class="cx">✗</span></td><td><span class="cx">✗</span></td><td><span class="cx">✗</span></td><td><span class="cx">✗</span></td><td><span class="ck">✓</span></td></tr>
+            <tr><td>Local ORS brands</td><td><span class="ck">✓</span></td><td><span class="cx">✗</span></td><td><span class="cx">✗</span></td><td><span class="cx">✗</span></td><td><span class="cx">✗</span></td><td><span class="ck">✓</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div style="margin-top:clamp(16px,2vw,28px);font-size:clamp(12px,1.3vw,20px);color:var(--muted);font-weight:300;">
+        <strong style="color:var(--white);">+ SALTD. is Qcommerce-ready</strong> — Zepto, Blinkit, Instamart from Day 1. No competitor in this table has an India quick-commerce strategy.
+      </div>
+    </div>
+  </section>
+
+  <!-- 11 TEAM -->
+  <section class="slide" id="s11" data-label="Team" data-num="11">
+    <div class="bg-num">11</div>
+    <div class="slide-inner">
+      <div class="slide-label"><span class="sq"></span> The Team</div>
+      <div class="t-title">Built by operators who care.</div>
+      <div class="team-grid">
+        <div class="team-card">
+          <div class="team-avatar">SG</div>
+          <div class="team-name">Siddharth Goel</div>
+          <div class="team-title">Founder &amp; CEO</div>
+          <div class="team-bio">Product development and brand. Drives formula, identity, and go-to-market. SAP functional consultant with enterprise supply-chain experience — brings operational rigour to D2C.</div>
+        </div>
+        <div class="team-card">
+          <div class="team-avatar">SK</div>
+          <div class="team-name">Shourya Khanna</div>
+          <div class="team-title">Co-Founder &amp; COO</div>
+          <div class="team-bio">Client relations and financial operations. Manages supply chain and capital structure.</div>
+        </div>
+      </div>
+      <div style="margin-top:clamp(24px,3vw,48px);display:grid;grid-template-columns:1fr 1fr;gap:clamp(16px,2vw,40px);">
+        <div class="info-box">
+          <div class="sq sq-lg" style="flex-shrink:0;margin-top:4px;"></div>
+          <div>
+            <div class="info-box-title">Advisors</div>
+            <div class="info-box-body" style="font-style:italic;opacity:0.5;">[ Add: advisor names, roles, e.g. FMCG veteran, D2C operator, nutritionist ]</div>
+          </div>
+        </div>
+        <div class="info-box">
+          <div class="sq sq-lg" style="flex-shrink:0;margin-top:4px;"></div>
+          <div>
+            <div class="info-box-title">Regulatory &amp; Manufacturing</div>
+            <div class="info-box-body">FSSAI Relabeller License secured · Manufactured by a GMP + FDA certified nutraceutical lab · Formula owned by SALTD.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 12 FINANCIAL PROJECTIONS -->
+  <section class="slide" id="s12" data-label="Financials" data-num="12">
+    <div class="bg-num">12</div>
+    <div class="slide-inner">
+      <div class="slide-label"><span class="sq"></span> Financial Projections</div>
+      <div class="t-title">Path to ₹10Cr<br>by Year 3.</div>
+      <div class="proj-grid">
+        <div class="proj-card">
+          <div class="proj-year">Year 1 — 2026–27</div>
+          <div class="proj-num">₹[X]Cr</div>
+          <div class="proj-detail">[X,XXX] boxes sold<br>DTC + Qcommerce<br>3 flavours, 2 SKUs</div>
+        </div>
+        <div class="proj-card">
+          <div class="proj-year">Year 2 — 2027–28</div>
+          <div class="proj-num">₹[X]Cr</div>
+          <div class="proj-detail">Pro Series launch<br>Amazon + Flipkart live<br>Creatine line begins</div>
+        </div>
+        <div class="proj-card highlight">
+          <div class="proj-year">Year 3 — 2028–29</div>
+          <div class="proj-num">₹10Cr+</div>
+          <div class="proj-detail">RTD twist-cap launch<br>National retail presence<br>Series A deployed</div>
+        </div>
+      </div>
+      <div class="kpi-row">
+        <div class="kpi-item"><div class="kpi-val">₹[XX]</div><div class="kpi-label">CAC target</div></div>
+        <div class="kpi-item"><div class="kpi-val">₹[XX]</div><div class="kpi-label">12-mo LTV</div></div>
+        <div class="kpi-item"><div class="kpi-val">[X]:1</div><div class="kpi-label">LTV:CAC ratio</div></div>
+        <div class="kpi-item"><div class="kpi-val">Mo.[X]</div><div class="kpi-label">Breakeven month</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 13 UNIT ECONOMICS -->
+  <section class="slide" id="s13" data-label="Unit Economics" data-num="13">
+    <div class="bg-num">13</div>
+    <div class="slide-inner">
+      <div class="slide-label"><span class="sq"></span> Unit Economics</div>
+      <div class="t-title">The numbers work.</div>
+      <div class="ue-grid">
+        <div>
+          <div class="ue-section-label">Per Stick — Ritual Pack (30)</div>
+          <div class="ue-row-item"><span class="ue-row-label">Retail price</span><span class="ue-row-val">₹50</span></div>
+          <div class="ue-row-item"><span class="ue-row-label">COGS (formula + packaging)</span><span class="ue-row-val" style="opacity:0.45;font-style:italic;">₹[XX]</span></div>
+          <div class="ue-row-item"><span class="ue-row-label">Fulfilment + shipping</span><span class="ue-row-val" style="opacity:0.45;font-style:italic;">₹[XX]</span></div>
+          <div class="ue-row-item"><span class="ue-row-label">Payment gateway (~2%)</span><span class="ue-row-val">₹1</span></div>
+          <div class="ue-row-item total"><span class="ue-row-label" style="font-weight:700;color:var(--white);">Gross Profit / stick</span><span class="ue-row-val" style="opacity:0.45;font-style:italic;font-size:clamp(20px,2.5vw,38px);">₹[XX]</span></div>
+          <div style="display:flex;justify-content:space-between;padding:12px 16px 0;"><span style="font-size:clamp(12px,1.3vw,20px);color:var(--muted);">Gross margin</span><span style="font-size:clamp(16px,1.8vw,28px);font-weight:800;opacity:0.45;font-style:italic;">[XX]%</span></div>
+        </div>
+        <div>
+          <div class="ue-section-label">Customer Economics</div>
+          <div class="ue-mini-card"><div class="ue-mini-label">Avg. boxes / customer / year</div><div class="ue-mini-val" style="opacity:0.45;font-style:italic;">[X] boxes</div></div>
+          <div class="ue-mini-card"><div class="ue-mini-label">12-month LTV</div><div class="ue-mini-val" style="opacity:0.45;font-style:italic;">₹[X,XXX]</div></div>
+          <div class="ue-mini-card"><div class="ue-mini-label">Target CAC (blended)</div><div class="ue-mini-val" style="opacity:0.45;font-style:italic;">₹[XXX]</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 14 DEFENSIBILITY -->
+  <section class="slide" id="s14" data-label="Why We Win" data-num="14">
+    <div class="bg-num">14</div>
+    <div class="slide-inner">
+      <div class="slide-label"><span class="sq"></span> Defensibility</div>
+      <div class="t-title">Why SALTD. is hard to copy.</div>
+      <div class="def-grid">
+        <div class="def-card">
+          <div class="sq sq-lg" style="flex-shrink:0;margin-top:4px;"></div>
+          <div><div class="def-title">Proprietary RTD Format</div><div class="def-body">The twist-cap powder delivery system is a novel product mechanism — file IP before Series A. A hard asset no competitor can replicate quickly.</div></div>
+        </div>
+        <div class="def-card">
+          <div class="sq sq-lg" style="flex-shrink:0;margin-top:4px;"></div>
+          <div><div class="def-title">Brand as Ritual</div><div class="def-body">Tata and HUL can make an electrolyte. They cannot build "The New Ritual." Brand identity compounded over time is a moat mass-market players can't buy.</div></div>
+        </div>
+        <div class="def-card">
+          <div class="sq sq-lg" style="flex-shrink:0;margin-top:4px;"></div>
+          <div><div class="def-title">Customer Data Flywheel</div><div class="def-body">DTC-first means we own the customer relationship. Every repeat purchase teaches us who our buyer is — data no retail-first competitor has.</div></div>
+        </div>
+        <div class="def-card">
+          <div class="sq sq-lg" style="flex-shrink:0;margin-top:4px;"></div>
+          <div><div class="def-title">Proprietary Formula</div><div class="def-body">Ashwagandha, ginseng, and a full electrolyte matrix. Manufactured by a GMP + FDA certified nutraceutical lab under our FSSAI Relabeller License. Formula owned by SALTD.</div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 15 THE ASK -->
+  <section class="slide" id="s15" data-label="The Ask" data-num="15">
+    <div class="bg-num">15</div>
+    <div class="slide-inner">
+      <div class="slide-label"><span class="sq"></span> The Ask</div>
+      <div class="ask-grid">
+        <div>
+          <div class="ask-raising-label">Raising</div>
+          <div class="ask-amount">$1M</div>
+          <div class="ask-round">Seed Round · 2026</div>
+          <div class="ask-row"><span class="ask-row-label">Pre-money valuation</span><span class="ask-row-val" style="opacity:0.45;font-style:italic;">$[X]M</span></div>
+          <div class="ask-row"><span class="ask-row-label">Equity offered</span><span class="ask-row-val" style="opacity:0.45;font-style:italic;">[X]%</span></div>
+          <div class="ask-row"><span class="ask-row-label">Instrument</span><span class="ask-row-val" style="opacity:0.45;font-style:italic;">[ SAFE / Equity / CCD ]</span></div>
+          <div class="ask-row" style="border:none;"><span class="ask-row-label">Committed so far</span><span class="ask-row-val" style="opacity:0.45;font-style:italic;">₹[X]L</span></div>
+        </div>
+        <div>
+          <div class="ue-section-label">Use of Funds</div>
+          <div class="fund-bar-item">
+            <div class="fund-bar-head"><span class="fund-bar-name">Inventory &amp; Manufacturing</span><span class="fund-bar-pct">40%</span></div>
+            <div class="fund-bar-track"><div class="fund-bar-fill" style="--target-w:40%;"></div></div>
+          </div>
+          <div class="fund-bar-item">
+            <div class="fund-bar-head"><span class="fund-bar-name">Marketing &amp; DTC Growth</span><span class="fund-bar-pct">35%</span></div>
+            <div class="fund-bar-track"><div class="fund-bar-fill" style="--target-w:35%;"></div></div>
+          </div>
+          <div class="fund-bar-item">
+            <div class="fund-bar-head"><span class="fund-bar-name">Operations &amp; Tech</span><span class="fund-bar-pct">15%</span></div>
+            <div class="fund-bar-track"><div class="fund-bar-fill" style="--target-w:15%;"></div></div>
+          </div>
+          <div class="fund-bar-item">
+            <div class="fund-bar-head"><span class="fund-bar-name">Team &amp; Advisors</span><span class="fund-bar-pct">10%</span></div>
+            <div class="fund-bar-track"><div class="fund-bar-fill" style="--target-w:10%;"></div></div>
+          </div>
+          <div style="margin-top:24px;padding:clamp(14px,1.8vw,24px) clamp(16px,2vw,28px);border-left:4px solid var(--white);background:rgba(255,255,255,0.07);font-size:clamp(12px,1.3vw,18px);color:var(--muted);font-style:italic;">[ Add: 18-month runway calculation ]</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 16 ROADMAP -->
+  <section class="slide" id="s16" data-label="Roadmap" data-num="16">
+    <div class="bg-num">16</div>
+    <div class="slide-inner">
+      <div class="slide-label"><span class="sq"></span> Roadmap</div>
+      <div class="t-title">12 months to market leadership.</div>
+      <div class="timeline">
+        <div class="tl-item"><div class="tl-date">Q2 2026</div><div class="tl-dot"></div><div class="tl-content"><div class="tl-title">Seed Close &amp; Production Run</div><div class="tl-desc">Close seed round, finalize formula, place first inventory order, launch hydration.club DTC</div></div></div>
+        <div class="tl-item"><div class="tl-date">Q3 2026</div><div class="tl-dot"></div><div class="tl-content"><div class="tl-title">DTC Launch &amp; Content Engine</div><div class="tl-desc">Website live, influencer seeding, first 1,000 customers, ritual-building content campaign</div></div></div>
+        <div class="tl-item"><div class="tl-date">Q4 2026</div><div class="tl-dot"></div><div class="tl-content"><div class="tl-title">Quick Commerce + Pro Series Launch</div><div class="tl-desc">Zepto, Blinkit listings live. Pro Series drops — caffeine + dextrose for athletes. Subscription model, corporate wellness pilots.</div></div></div>
+        <div class="tl-item"><div class="tl-date">Q1–Q2 2027</div><div class="tl-dot"></div><div class="tl-content"><div class="tl-title">Creatine Line + Amazon/Flipkart</div><div class="tl-desc">Creatine electrolyte sticks and gummies launch. National marketplace scale. Series A fundraise begins.</div></div></div>
+        <div class="tl-item"><div class="tl-date">2028</div><div class="tl-dot"></div><div class="tl-content"><div class="tl-title">RTD Twist-Cap Format</div><div class="tl-desc">Proprietary ready-to-drink format — powder in the cap, twist to activate. Category-defining product, retail &amp; D2C.</div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 17 CLOSE -->
+  <section class="slide" id="s17" data-label="Close" data-num="17">
+    <div class="slide-inner">
+      <div class="close-logo">SALTD<span>.</span></div>
+      <div class="close-ask">$1,000,000</div>
+      <div class="close-sub">Seed Round · Join the ritual.</div>
+      <div class="close-contacts">
+        <div class="contact-item"><span class="contact-label">Founder</span><span class="contact-val">Siddharth Goel</span></div>
+        <div class="contact-item"><span class="contact-label">Website</span><span class="contact-val">hydration.club</span></div>
+        <div class="contact-item"><span class="contact-label">Co-founder</span><span class="contact-val">Shourya Khanna</span></div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+/* ── CONFIG ────────────────────────────────────────────────────── */
+// Change this to your investor password
+const INVESTOR_PASSWORD = 'saltd2026';
+
+// Analytics hook — set to 'ga4', 'plausible', or 'none'
+const ANALYTICS_PROVIDER = 'none';
+// If GA4: set your measurement ID
+const GA4_ID = 'G-XXXXXXXXXX';
+
+/* ── PASSWORD GATE ─────────────────────────────────────────────── */
+const STORAGE_KEY = 'saltd_inv_auth';
+
+function checkPassword() {
+  const val = document.getElementById('pw-input').value;
+  const err = document.getElementById('pw-error');
+  if (val === INVESTOR_PASSWORD) {
+    sessionStorage.setItem(STORAGE_KEY, '1');
+    const gate = document.getElementById('gate');
+    gate.classList.add('hide');
+    gate.addEventListener('animationend', () => gate.remove(), { once: true });
+    initSite();
+  } else {
+    err.textContent = 'Incorrect password. Please try again.';
+    err.classList.add('show');
+    document.getElementById('pw-input').value = '';
+    document.getElementById('pw-input').focus();
+    setTimeout(() => err.classList.remove('show'), 3000);
+  }
+}
+
+document.getElementById('pw-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') checkPassword();
+});
+
+// Skip gate if already authed this session
+if (sessionStorage.getItem(STORAGE_KEY)) {
+  document.getElementById('gate').remove();
+  initSite();
+}
+
+/* ── ANALYTICS ─────────────────────────────────────────────────── */
+function trackSection(label, dwellMs) {
+  if (ANALYTICS_PROVIDER === 'ga4' && window.gtag) {
+    gtag('event', 'section_view', { section_name: label, dwell_ms: dwellMs });
+  } else if (ANALYTICS_PROVIDER === 'plausible' && window.plausible) {
+    plausible('Section View', { props: { section: label, dwell_ms: dwellMs } });
+  }
+}
+
+/* ── SITE INIT ──────────────────────────────────────────────────── */
+function initSite() {
+  buildNav();
+  initScrollObserver();
+  initDwellTracker();
+  animateBarsOnVisible();
+}
+
+/* ── NAV DOTS ───────────────────────────────────────────────────── */
+function buildNav() {
+  const slides = document.querySelectorAll('.slide');
+  const container = document.getElementById('nav-dots');
+  slides.forEach((slide, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'nav-dot';
+    btn.setAttribute('aria-label', slide.dataset.label || `Section ${i+1}`);
+    const tip = document.createElement('span');
+    tip.className = 'dot-tip';
+    tip.textContent = slide.dataset.label || '';
+    btn.appendChild(tip);
+    btn.addEventListener('click', () => {
+      slide.scrollIntoView({ behavior: 'smooth' });
+    });
+    container.appendChild(btn);
+  });
+}
+
+/* ── SCROLL OBSERVER ────────────────────────────────────────────── */
+function initScrollObserver() {
+  const slides = document.querySelectorAll('.slide');
+  const dots   = document.querySelectorAll('.nav-dot');
+  const numEl  = document.getElementById('nav-num');
+
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        const idx = [...slides].indexOf(entry.target);
+        dots.forEach(d => d.classList.remove('active'));
+        if (dots[idx]) dots[idx].classList.add('active');
+        if (numEl) numEl.textContent = entry.target.dataset.num || String(idx+1).padStart(2,'0');
+      }
+    });
+  }, { threshold: 0.25 });
+
+  slides.forEach(s => io.observe(s));
+}
+
+/* ── DWELL TRACKER ──────────────────────────────────────────────── */
+function initDwellTracker() {
+  const slides = document.querySelectorAll('.slide');
+  const entryTimes = new Map();
+
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      const label = entry.target.dataset.label || entry.target.id;
+      if (entry.isIntersecting) {
+        entryTimes.set(label, Date.now());
+      } else {
+        const entered = entryTimes.get(label);
+        if (entered) {
+          const dwell = Date.now() - entered;
+          trackSection(label, dwell);
+          entryTimes.delete(label);
+        }
+      }
+    });
+  }, { threshold: 0.4 });
+
+  slides.forEach(s => io.observe(s));
+}
+
+/* ── FUND BARS ANIMATION ────────────────────────────────────────── */
+function animateBarsOnVisible() {
+  const bars = document.querySelectorAll('.fund-bar-fill');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('animated');
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.5 });
+  bars.forEach(b => io.observe(b));
+}
+
+/* ── VIDEO EMBEDS ───────────────────────────────────────────────── */
+function loadVideo(containerId, videoId, provider) {
+  if (videoId === 'VIDEO_ID_1' || videoId === 'VIDEO_ID_2') {
+    alert('Replace VIDEO_ID_1 / VIDEO_ID_2 in the HTML with your actual Vimeo or YouTube video IDs.');
+    return;
+  }
+  const container = document.getElementById(containerId);
+  let src = '';
+  if (provider === 'vimeo') {
+    src = `https://player.vimeo.com/video/${videoId}?autoplay=1&color=ffffff&title=0&byline=0&portrait=0`;
+  } else {
+    src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`;
+  }
+  const iframe = document.createElement('iframe');
+  iframe.src = src;
+  iframe.allow = 'autoplay; fullscreen; picture-in-picture';
+  iframe.allowFullscreen = true;
+  container.querySelector('.video-placeholder').style.display = 'none';
+  container.appendChild(iframe);
+  container.onclick = null;
+}
+</script>
+
+</body>
+</html>
